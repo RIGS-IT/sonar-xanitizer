@@ -10,4 +10,5 @@ Check the GitHub Wiki for further information and the issues section for known p
 
 ## Description / Features
 This plugin integrates the results of the Xanitizer security analysis into SonarQube. It parses an XML report created by Xanitizer and creates SonarQube issues for the non-informational security findings.
+
 Xanitizer can be downloaded for free at <a href="http://www.xanitizer.net" >http://www.xanitizer.net</a>. 
