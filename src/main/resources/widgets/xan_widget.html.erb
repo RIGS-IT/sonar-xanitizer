@@ -1,0 +1,118 @@
+<%
+tooltip = message('widget.as_calculated_on_x', :params => l(@snapshot.created_at))
+%>
+
+<div class="widget-row">
+	<div class="widget-span widget-span-3">
+		<div class="widget-measure-container">
+			<div class="widget-measure widget-measure-main">
+				<span class="widget-label"><%= message('widget.xanitizer.name') -%></span>
+				<span class="nowrap">
+					<%= format_measure('XanFindingMetric_All', :url => url_for_drilldown('XanFindingMetric_All')) -%>
+					<%= trend_icon(measure('XanFindingMetric_All')) %>
+				</span>
+			</div>
+			<div class="widget-measure">
+				<span class="widget-label"><%= message('metric.XanFindingMetric_New.name') -%></span>
+				<span class="nowrap">
+					<%= format_measure('XanFindingMetric_New', :url => url_for_drilldown('XanFindingMetric_New')) -%>
+					<%= trend_icon(measure('XanFindingMetric_New')) %>
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="widget-span widget-span-3">
+		<table class="data widget-barchar">
+			<tbody>
+				<tr>
+					<td class="thin nowrap">
+						<i class="icon-severity-blocker"></i>
+						<%= message('blocker') -%>
+					</td>
+					<td class="thin right nowrap">
+						<a href="<%= url_for(:controller => 'component_issues', :action => 'index') -%>?id=<%= url_encode(@project.key) -%>
+							#resolved=false|severities=BLOCKER|tags=xanitizer" class="widget-link drilldown_BLOCKER" title="<%= tooltip -%>" data-toggle="tooltip" 
+							data-placement="bottom">
+							<%= format_measure('XanFindingMetric_Blocker') -%>
+						</a>
+					</td>
+					<td class="thin nowrap">
+						<%= trend_icon(measure('XanFindingMetric_Blocker')) %>
+					</td>
+				</tr>
+				<tr>
+					<td class="thin nowrap">
+						<i class="icon-severity-critical"></i>
+						<%= message('critical') -%>
+					</td>
+					<td class="thin right nowrap">
+						<a href="<%= url_for(:controller => 'component_issues', :action => 'index') -%>?id=<%= url_encode(@project.key) -%>
+							#resolved=false|severities=CRITICAL|tags=xanitizer" class="widget-link drilldown_CRITICAL" title="<%= tooltip -%>" data-toggle="tooltip" 
+							data-placement="bottom">
+							<%= format_measure('XanFindingMetric_Critical') -%>
+						</a>
+					</td>
+					<td class="thin nowrap">
+						<span>
+							<%= trend_icon(measure('XanFindingMetric_Critical')) %>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="thin nowrap">
+						<i class="icon-severity-major"></i>
+						<%= message('major') -%>
+					</td>
+					<td class="thin right nowrap">
+						<a href="<%= url_for(:controller => 'component_issues', :action => 'index') -%>?id=<%= url_encode(@project.key) -%>
+							#resolved=false|severities=MAJOR|tags=xanitizer" class="widget-link drilldown_MAJOR" title="<%= tooltip -%>" data-toggle="tooltip" 
+							data-placement="bottom">
+							<%= format_measure('XanFindingMetric_Major') -%>
+						</a>
+					</td>
+					<td class="thin nowrap">
+						<span>
+							<%= trend_icon(measure('XanFindingMetric_Major')) %>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="thin nowrap">
+						<i class="icon-severity-minor"></i>
+						<%= message('minor') -%>
+					</td>
+					<td class="thin right nowrap">
+						<a href="<%= url_for(:controller => 'component_issues', :action => 'index') -%>?id=<%= url_encode(@project.key) -%>
+							#resolved=false|severities=MINOR|tags=xanitizer" class="widget-link drilldown_MINOR" title="<%= tooltip -%>" data-toggle="tooltip" 
+							data-placement="bottom">
+							<%= format_measure('XanFindingMetric_Minor') -%>
+						</a>
+					</td>
+					<td class="thin nowrap">
+						<span>
+							<%= trend_icon(measure('XanFindingMetric_Minor')) %>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="thin nowrap">
+						<i class="icon-severity-info"></i>
+						<%= message('info') -%>
+					</td>
+					<td class="thin right nowrap">
+						<a href="<%= url_for(:controller => 'component_issues', :action => 'index') -%>?id=<%= url_encode(@project.key) -%>
+							#resolved=false|severities=INFO|tags=xanitizer" class="widget-link drilldown_INFO" title="<%= tooltip -%>" data-toggle="tooltip" 
+							data-placement="bottom">
+							<%= format_measure('XanFindingMetric_Info') -%>
+						</a>
+					</td>
+					<td class="thin nowrap">
+						<span>
+							<%= trend_icon(measure('XanFindingMetric_Info')) %>
+						</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
