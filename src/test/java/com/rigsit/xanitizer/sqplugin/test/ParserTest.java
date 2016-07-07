@@ -1,0 +1,64 @@
+/** 
+ * SonarQube Xanitizer Plugin
+ * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * mailto: info@rigs-it.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * Created on 05.07.2016
+ *
+ */
+package com.rigsit.xanitizer.sqplugin.test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
+
+/**
+ * @author nwe
+ *
+ */
+public class ParserTest {
+
+	@Test
+	public void testDummy() {
+		final XMLReportParser parser = new XMLReportParser();
+		final File reportFile = new File(getClass().getResource("/webgoat-Findings-List.xml").getFile());
+		try {
+			final XMLReportContent content = parser.parse(reportFile);
+			
+			assertEquals("version 2.3.0, build no. 84 of 01.07.16", content.getToolVersionOrNull());
+			assertEquals("2.3.0", content.getToolVersionShortOrNull());
+			
+			final List<XMLReportFinding> findings = content.getXMLReportFindings();
+			assertEquals(912, findings.size());
+			
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+}
