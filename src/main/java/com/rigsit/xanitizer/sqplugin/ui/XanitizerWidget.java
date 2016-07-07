@@ -32,7 +32,7 @@ import org.sonar.api.web.WidgetCategory;
 @UserRole(UserRole.USER)
 @Description("The Xanitizer widget")
 @WidgetCategory("Xanitizer")
-public class XanWidget extends AbstractRubyTemplate implements RubyRailsWidget {
+public class XanitizerWidget extends AbstractRubyTemplate implements RubyRailsWidget {
 
 	@Override
 	public String getId() {
