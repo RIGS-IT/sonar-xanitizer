@@ -17,7 +17,7 @@
  * 
  * Created on May 30, 2016
  */
-package com.rigsit.xanitizer.sqplugin.batch;
+package com.rigsit.xanitizer.sqplugin.reportparser;
 
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;

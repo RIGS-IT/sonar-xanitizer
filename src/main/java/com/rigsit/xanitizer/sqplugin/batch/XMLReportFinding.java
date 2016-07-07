@@ -19,6 +19,8 @@
  */
 package com.rigsit.xanitizer.sqplugin.batch;
 
+import com.rigsit.xanitizer.sqplugin.reportparser.FindingKind;
+
 /**
  * @author rust
  *
