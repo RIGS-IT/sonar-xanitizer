@@ -31,7 +31,7 @@ import org.sonar.api.measures.Metrics;
  * @author rust
  * 
  */
-public final class XanMetrics implements Metrics {
+public final class XanitizerMetrics implements Metrics {
 
 	private static final String DOMAIN = "Xanitizer Findings";
 
@@ -161,7 +161,7 @@ public final class XanMetrics implements Metrics {
 
 	private final List<Metric> metrics;
 
-	public XanMetrics() {
+	public XanitizerMetrics() {
 		final List<Metric> resultAccu = new ArrayList<>();
 		resultAccu.add(ALL_XAN_FINDINGS_METRIC);
 		resultAccu.add(NEW_FINDINGS_METRIC);
