@@ -27,7 +27,6 @@ import org.sonar.api.Property;
 import org.sonar.api.SonarPlugin;
 
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
-import com.rigsit.xanitizer.sqplugin.reportparser.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 
 /**

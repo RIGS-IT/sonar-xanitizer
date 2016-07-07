@@ -17,7 +17,7 @@
  * 
  * Created on October 10, 2015
  */
-package com.rigsit.xanitizer.sqplugin.batch;
+package com.rigsit.xanitizer.sqplugin;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -56,11 +56,12 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
-import com.rigsit.xanitizer.sqplugin.XanRule;
-import com.rigsit.xanitizer.sqplugin.XanRulesDefinition;
-import com.rigsit.xanitizer.sqplugin.XanSonarQubePlugin;
+import com.rigsit.xanitizer.sqplugin.batch.XMLReportContent;
+import com.rigsit.xanitizer.sqplugin.batch.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.batch.XMLReportNode;
+import com.rigsit.xanitizer.sqplugin.batch.XMLReportParser;
 import com.rigsit.xanitizer.sqplugin.metrics.Util;
-import com.rigsit.xanitizer.sqplugin.metrics.XanMetrics;
+import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 
 /**
  * @author rust
@@ -78,7 +79,7 @@ public class XanitizerSensor implements Sensor {
 	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
 
-	private final String repositoryKey = XanRulesDefinition.getRepositoryKey();
+	private final String repositoryKey = XanitizerRulesDefinition.getRepositoryKey();
 
 	private final Set<String> activeXanRuleNames = new HashSet<>();
 
@@ -87,7 +88,7 @@ public class XanitizerSensor implements Sensor {
 		this.javaResourceLocator = javaResourceLocator;
 
 		final String reportFileStringOrNull = settings
-				.getString(XanSonarQubePlugin.XAN_XML_REPORT_FILE);
+				.getString(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
 		if (reportFileStringOrNull == null) {
 			reportFile = null;
 		} else {
@@ -95,7 +96,7 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
-			if (activeRule.ruleKey().repository().equals(XanRulesDefinition.getRepositoryKey())) {
+			if (activeRule.ruleKey().repository().equals(XanitizerRulesDefinition.getRepositoryKey())) {
 				final String ruleAsString = activeRule.ruleKey().rule();
 				activeXanRuleNames.add(ruleAsString);
 			}
@@ -110,7 +111,7 @@ public class XanitizerSensor implements Sensor {
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
 		if (reportFile == null) {
-			LOG.error("Xanitizer parameter " + XanSonarQubePlugin.XAN_XML_REPORT_FILE
+			LOG.error("Xanitizer parameter " + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
 					+ " not specified; skipping");
 			return;
 		}
@@ -277,7 +278,7 @@ public class XanitizerSensor implements Sensor {
 			// No line number.
 			final int lineNumber = -1;
 			generateIssueOnInputFileOrProject(null, project, lineNumber,
-					XanRule.mkForFindingOrNull(finding), mkOWASPDepCheckFindingDescription(finding),
+					XanitizerRule.mkForFindingOrNull(finding), mkOWASPDepCheckFindingDescription(finding),
 					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
 		} else {
 			final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
@@ -285,7 +286,7 @@ public class XanitizerSensor implements Sensor {
 
 			generateIssueOnInputFileOrProject(inputFileOrNull, project,
 					normalizeLineNo(finding.getLineNoOrMinus1()),
-					XanRule.mkForFindingOrNull(finding), mkGenericFindingDescription(finding),
+					XanitizerRule.mkForFindingOrNull(finding), mkGenericFindingDescription(finding),
 					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
 		}
 	}
@@ -297,7 +298,7 @@ public class XanitizerSensor implements Sensor {
 		final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
 				sensorContext);
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				normalizeLineNo(finding.getLineNoOrMinus1()), XanRule.mkForFindingOrNull(finding),
+				normalizeLineNo(finding.getLineNoOrMinus1()), XanitizerRule.mkForFindingOrNull(finding),
 				"User-defined finding for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
 						+ finding.getDescriptionOrNull()
@@ -320,7 +321,7 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				normalizeLineNo(finding.getLineNoOrMinus1()), XanRule.mkForFindingOrNull(finding),
+				normalizeLineNo(finding.getLineNoOrMinus1()), XanitizerRule.mkForFindingOrNull(finding),
 				"Special code location for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
 						+ mkDescriptionSuffixForLocation(inputFileOrNull,
@@ -343,7 +344,7 @@ public class XanitizerSensor implements Sensor {
 
 		final InputFile inputFileOrNull = mkInputFileOrNull(endNode, sensorContext);
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				normalizeLineNo(endNode.getLineNoOrMinus1()), XanRule.mkForFindingOrNull(finding),
+				normalizeLineNo(endNode.getLineNoOrMinus1()), XanitizerRule.mkForFindingOrNull(finding),
 				"Taint path for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
 						+ "', path starting at " + mkLocationString(startNode, sensorContext)
@@ -501,7 +502,7 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	private boolean generateIssueOnInputFileOrProject(final InputFile inputFileOrNull,
-			final Project project, final int lineNo, final XanRule rule,
+			final Project project, final int lineNo, final XanitizerRule rule,
 			final String descriptionOrNull, final XMLReportFinding xanFinding,
 			final String analysisDatePresentation,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
@@ -538,11 +539,11 @@ public class XanitizerSensor implements Sensor {
 
 		final String matchCode = xanFinding.getMatchCode();
 		if ("NOT".equals(matchCode)) {
-			incrementValueForResourceAndContainingResources(XanMetrics.getMetricForNewXanFindings(),
+			incrementValueForResourceAndContainingResources(XanitizerMetrics.getMetricForNewXanFindings(),
 					resourceToBeUsed, project, metricValuesAccu);
 		}
 
-		final Metric metricForSeverity = XanMetrics.getMetricForSeverity(severity);
+		final Metric metricForSeverity = XanitizerMetrics.getMetricForSeverity(severity);
 		if (metricForSeverity != null) {
 			incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed,
 					project, metricValuesAccu);
@@ -552,7 +553,7 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	private void createNewIssue(final InputFile inputFileOrNull, final Project project,
-			final int lineNo, final XanRule rule, final String descriptionOrNull,
+			final int lineNo, final XanitizerRule rule, final String descriptionOrNull,
 			final XMLReportFinding xanFinding, final String analysisDatePresentation,
 			final SensorContext sensorContext, final Resource resourceToBeUsed,
 			final Severity severity, final RuleKey ruleKey) {
@@ -599,9 +600,9 @@ public class XanitizerSensor implements Sensor {
 
 	private List<Metric> mkMetrics(final String bugTypeId) {
 		final List<Metric> result = new ArrayList<>();
-		result.add(XanMetrics.getMetricForAllXanFindings());
+		result.add(XanitizerMetrics.getMetricForAllXanFindings());
 
-		final Metric metricOrNull = XanMetrics.mkMetricForBugTypeIdOrNull(bugTypeId);
+		final Metric metricOrNull = XanitizerMetrics.mkMetricForBugTypeIdOrNull(bugTypeId);
 		if (metricOrNull != null) {
 			result.add(metricOrNull);
 		}

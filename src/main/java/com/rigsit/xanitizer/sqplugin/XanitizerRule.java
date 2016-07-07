@@ -23,7 +23,7 @@ package com.rigsit.xanitizer.sqplugin;
 import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.rule.Severity;
 
-import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.batch.XMLReportFinding;
 
 /**
  * @author nwe
