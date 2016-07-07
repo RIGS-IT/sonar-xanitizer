@@ -96,7 +96,8 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
-			if (activeRule.ruleKey().repository().equals(XanitizerRulesDefinition.getRepositoryKey())) {
+			if (activeRule.ruleKey().repository()
+					.equals(XanitizerRulesDefinition.getRepositoryKey())) {
 				final String ruleAsString = activeRule.ruleKey().rule();
 				activeXanRuleNames.add(ruleAsString);
 			}
@@ -111,13 +112,14 @@ public class XanitizerSensor implements Sensor {
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
 		if (reportFile == null) {
-			LOG.error("Xanitizer parameter " + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
-					+ " not specified; skipping");
+			LOG.error("Xanitizer parameter '" + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
+					+ "' not specified in project settings. Skipping analysis.");
 			return;
 		}
 
 		if (!reportFile.isFile()) {
-			LOG.error("Xanitizer XML report file '" + reportFile + "' not found; skipping");
+			LOG.error(
+					"Xanitizer XML report file '" + reportFile + "' not found. Skipping analysis.");
 			return;
 		}
 
@@ -129,27 +131,29 @@ public class XanitizerSensor implements Sensor {
 		try {
 			content = parser.parse(reportFile);
 		} catch (final Exception ex) {
-			LOG.error("Exception caught while parsing Xanitizer XML report file; skipping", ex);
+			LOG.error("Exception caught while parsing Xanitizer XML report file '" + reportFile
+					+ "'.", ex);
 			return;
 		}
 
 		final String toolVersionShortOrNull = content.getToolVersionShortOrNull();
 		if (toolVersionShortOrNull == null) {
-			LOG.error("No attribute xanitizerVersionShort found in XML report; skipping");
+			LOG.error("No attribute 'xanitizerVersionShort' found in XML report file '"
+					+ reportFile + "'. Skipping analysis.");
 			return;
 		}
 
 		final String errMsgOrNull = checkVersion(toolVersionShortOrNull, 2, 3, -1);
 		if (errMsgOrNull != null) {
-			LOG.error("Could not parse xanitizerVersionShort attribute: " + errMsgOrNull
-					+ "; skipping");
+			LOG.error("Could not parse attribute 'xanitizerVersionShort' in XML report file '"
+					+ reportFile + "': " + errMsgOrNull + ". Skipping analysis.");
 			return;
 		}
 
 		final long analysisEndDate = content.getAnalysisEndDate();
 		if (analysisEndDate == 0) {
 			LOG.error(
-					"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed");
+					"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed!");
 			return;
 		}
 
@@ -278,8 +282,9 @@ public class XanitizerSensor implements Sensor {
 			// No line number.
 			final int lineNumber = -1;
 			generateIssueOnInputFileOrProject(null, project, lineNumber,
-					XanitizerRule.mkForFindingOrNull(finding), mkOWASPDepCheckFindingDescription(finding),
-					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+					XanitizerRule.mkForFindingOrNull(finding),
+					mkOWASPDepCheckFindingDescription(finding), finding, analysisDatePresentation,
+					metricValuesAccu, sensorContext);
 		} else {
 			final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
 					sensorContext);
@@ -298,7 +303,8 @@ public class XanitizerSensor implements Sensor {
 		final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
 				sensorContext);
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				normalizeLineNo(finding.getLineNoOrMinus1()), XanitizerRule.mkForFindingOrNull(finding),
+				normalizeLineNo(finding.getLineNoOrMinus1()),
+				XanitizerRule.mkForFindingOrNull(finding),
 				"User-defined finding for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
 						+ finding.getDescriptionOrNull()
@@ -321,7 +327,8 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				normalizeLineNo(finding.getLineNoOrMinus1()), XanitizerRule.mkForFindingOrNull(finding),
+				normalizeLineNo(finding.getLineNoOrMinus1()),
+				XanitizerRule.mkForFindingOrNull(finding),
 				"Special code location for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
 						+ mkDescriptionSuffixForLocation(inputFileOrNull,
@@ -344,7 +351,8 @@ public class XanitizerSensor implements Sensor {
 
 		final InputFile inputFileOrNull = mkInputFileOrNull(endNode, sensorContext);
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				normalizeLineNo(endNode.getLineNoOrMinus1()), XanitizerRule.mkForFindingOrNull(finding),
+				normalizeLineNo(endNode.getLineNoOrMinus1()),
+				XanitizerRule.mkForFindingOrNull(finding),
 				"Taint path for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
 						+ "', path starting at " + mkLocationString(startNode, sensorContext)
@@ -539,8 +547,9 @@ public class XanitizerSensor implements Sensor {
 
 		final String matchCode = xanFinding.getMatchCode();
 		if ("NOT".equals(matchCode)) {
-			incrementValueForResourceAndContainingResources(XanitizerMetrics.getMetricForNewXanFindings(),
-					resourceToBeUsed, project, metricValuesAccu);
+			incrementValueForResourceAndContainingResources(
+					XanitizerMetrics.getMetricForNewXanFindings(), resourceToBeUsed, project,
+					metricValuesAccu);
 		}
 
 		final Metric metricForSeverity = XanitizerMetrics.getMetricForSeverity(severity);
