@@ -22,7 +22,7 @@ package com.rigsit.xanitizer.sqplugin;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.plugins.java.Java;
 
-public final class XanRulesDefinition implements RulesDefinition {
+public final class XanitizerRulesDefinition implements RulesDefinition {
 
 	@Override
 	public void define(final Context context) {
@@ -33,7 +33,7 @@ public final class XanRulesDefinition implements RulesDefinition {
 		final NewRepository repository = context.createRepository(repositoryKey, languageKey)
 				.setName(repositoryName);
 
-		for (final XanRule xanitizerRule : XanRule.values()) {
+		for (final XanitizerRule xanitizerRule : XanitizerRule.values()) {
 			final NewRule newRule = repository.createRule(xanitizerRule.name());
 			newRule.setName(xanitizerRule.getPresentationName());
 			newRule.setHtmlDescription(xanitizerRule.getShortHTMLDescription());

@@ -31,15 +31,15 @@ import org.sonar.plugins.java.Java;
  * @author rust
  *
  */
-public class XanQualityProfile extends ProfileDefinition {
+public class XanitizerQualityProfile extends ProfileDefinition {
 
 	@Override
 	public RulesProfile createProfile(final ValidationMessages validation) {
 		final RulesProfile rulesProfile = RulesProfile.create("Xanitizer", Java.KEY);
 
 		// Add Xanitizer rules.
-		for (final XanRule xanRule : XanRule.values()) {
-			final Rule rule = Rule.create(XanRulesDefinition.getRepositoryKey(), xanRule.name());
+		for (final XanitizerRule xanRule : XanitizerRule.values()) {
+			final Rule rule = Rule.create(XanitizerRulesDefinition.getRepositoryKey(), xanRule.name());
 			rulesProfile.activateRule(rule, null /* optionalSeverity */);
 		}
 

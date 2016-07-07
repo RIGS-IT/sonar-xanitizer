@@ -26,15 +26,14 @@ import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.SonarPlugin;
 
-import com.rigsit.xanitizer.sqplugin.batch.XanitizerSensor;
-import com.rigsit.xanitizer.sqplugin.metrics.XanMetrics;
-import com.rigsit.xanitizer.sqplugin.ui.XanWidget;
+import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
+import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 
 /**
  * @author rust
  * 
  */
-@Properties({ @Property(key = XanSonarQubePlugin.XAN_XML_REPORT_FILE,
+@Properties({ @Property(key = XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE,
 
 		name = "Xanitizer XML Report File",
 
@@ -50,7 +49,7 @@ import com.rigsit.xanitizer.sqplugin.ui.XanWidget;
 		global = false, project = true
 
 		) })
-public class XanSonarQubePlugin extends SonarPlugin {
+public class XanitizerSonarQubePlugin extends SonarPlugin {
 
 	public static final String XAN_XML_REPORT_FILE = "xanitizer.xmlReportFile";
 
@@ -58,15 +57,15 @@ public class XanSonarQubePlugin extends SonarPlugin {
 	public List<Class<?>> getExtensions() {
 		return (List) Arrays.asList(
 
-				XanRulesDefinition.class
+				XanitizerRulesDefinition.class
 
 		, XanitizerSensor.class
 
-		, XanMetrics.class
+		, XanitizerMetrics.class
 
-		, XanQualityProfile.class
+		, XanitizerQualityProfile.class
 
-		, XanWidget.class
+		, XanitizerWidget.class
 
 		);
 	}

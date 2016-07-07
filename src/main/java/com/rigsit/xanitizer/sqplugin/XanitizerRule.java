@@ -23,45 +23,45 @@ package com.rigsit.xanitizer.sqplugin;
 import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.rule.Severity;
 
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 
 /**
  * @author nwe
  *
  */
-public enum XanRule {
+public enum XanitizerRule {
 
 	TAINT_PATH("Xanitizer Taint Path",
 			"An identified taint path. The used location is the end of the path, i.e., the location where potentially manipulated data can cause harm.",
 			RuleStatus.READY, Severity.MAJOR,
 
-			XanRule.XANITIZER_TAG, XanRule.SECURITY_TAG),
+			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG),
 
 	SPECIAL_CODE_LOCATION("Xanitizer Special Code Location",
 			"Some special location has been found in the code.", RuleStatus.READY, Severity.MAJOR,
 
-			XanRule.XANITIZER_TAG, XanRule.SECURITY_TAG),
+			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG),
 
 	USER_FINDING("Xanitizer User-Specified Finding", "A user-specified finding", RuleStatus.READY,
 			Severity.MAJOR,
 
-			XanRule.XANITIZER_TAG, XanRule.SECURITY_TAG),
+			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG),
 
 	GENERIC_FINDING("Xanitizer Finding (other)", "Other kinds of Xanitizer findings",
 			RuleStatus.READY, Severity.MAJOR,
 
-			XanRule.XANITIZER_TAG, XanRule.SECURITY_TAG),
+			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG),
 
 	FINDBUGS_FINDING("Xanitizer Findbugs Finding",
 			"Findbugs findings that are determined via Xanitizer", RuleStatus.READY, Severity.MAJOR,
 
-			XanRule.XANITIZER_TAG, XanRule.SECURITY_TAG, XanRule.FINDBUGS_TAG),
+			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG, XanitizerRule.FINDBUGS_TAG),
 
 	OWASP_DEPENDENCY_CHECK_FINDING("Xanitizer OWASP Dependency Check Findings",
 			"OWASP dependency check findings that are determined via Xanitizer", RuleStatus.READY,
 			Severity.MAJOR,
 
-			XanRule.XANITIZER_TAG, XanRule.SECURITY_TAG, XanRule.OWASP_TAG),
+			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG, XanitizerRule.OWASP_TAG),
 
 	;
 
@@ -80,7 +80,7 @@ public enum XanRule {
 	 * @author rust
 	 * 
 	 */
-	private XanRule(final String presentationName, final String shortDescription,
+	private XanitizerRule(final String presentationName, final String shortDescription,
 			final RuleStatus status, final String severity, final String... tags) {
 		this.presentationName = presentationName;
 		this.shortDescription = shortDescription;
@@ -127,7 +127,7 @@ public enum XanRule {
 		return shortDescription;
 	}
 
-	public static XanRule mkForFindingOrNull(final XMLReportFinding finding) {
+	public static XanitizerRule mkForFindingOrNull(final XMLReportFinding finding) {
 		switch (finding.getFindingKind()) {
 		case USER:
 			return USER_FINDING;
@@ -142,7 +142,7 @@ public enum XanRule {
 		}
 	}
 
-	private static XanRule mkGenericRule(final XMLReportFinding finding) {
+	private static XanitizerRule mkGenericRule(final XMLReportFinding finding) {
 		if ("PlugIn:Findbugs".equals(finding.getFindingProducer())) {
 			return FINDBUGS_FINDING;
 		}
