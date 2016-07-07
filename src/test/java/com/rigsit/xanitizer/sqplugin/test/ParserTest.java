@@ -30,6 +30,8 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.xml.sax.SAXException;
 
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
@@ -41,6 +43,8 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
  *
  */
 public class ParserTest {
+	
+	private static final Logger LOG = Loggers.get(ParserTest.class);
 
 	@Test
 	public void testDummy() {
@@ -56,7 +60,7 @@ public class ParserTest {
 			assertEquals(912, findings.size());
 			
 		} catch (SAXException | IOException | ParserConfigurationException e) {
-			e.printStackTrace();
+			LOG.error("Error parsing report file", e);
 			fail(e.getMessage());
 		}
 	}
