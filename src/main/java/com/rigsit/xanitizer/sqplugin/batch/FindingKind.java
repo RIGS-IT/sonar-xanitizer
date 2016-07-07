@@ -19,6 +19,9 @@
  */
 package com.rigsit.xanitizer.sqplugin.batch;
 
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 /**
  * @author rust
  *
@@ -28,10 +31,13 @@ public enum FindingKind {
 
 	;
 
+	private static final Logger LOG = Loggers.get(FindingKind.class);
+
 	static FindingKind mk(final String s) {
 		try {
 			return FindingKind.valueOf(s);
-		} catch (final Exception ex) {
+		} catch (final IllegalArgumentException ex) {
+			LOG.info("Unexpected finding kind: " + s, ex);
 			return OTHER;
 		}
 	}

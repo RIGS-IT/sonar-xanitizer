@@ -25,8 +25,6 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.utils.ValidationMessages;
 import org.sonar.plugins.java.Java;
 
-import com.rigsit.xanitizer.sqplugin.XanRulesDefinition.XanRule;
-
 /**
  * A profile for the Xanitizer rules.
  * 
@@ -34,9 +32,6 @@ import com.rigsit.xanitizer.sqplugin.XanRulesDefinition.XanRule;
  *
  */
 public class XanQualityProfile extends ProfileDefinition {
-
-	public XanQualityProfile() {
-	}
 
 	@Override
 	public RulesProfile createProfile(final ValidationMessages validation) {

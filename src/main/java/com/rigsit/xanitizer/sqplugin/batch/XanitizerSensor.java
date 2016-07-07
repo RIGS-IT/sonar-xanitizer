@@ -56,8 +56,8 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
+import com.rigsit.xanitizer.sqplugin.XanRule;
 import com.rigsit.xanitizer.sqplugin.XanRulesDefinition;
-import com.rigsit.xanitizer.sqplugin.XanRulesDefinition.XanRule;
 import com.rigsit.xanitizer.sqplugin.XanSonarQubePlugin;
 import com.rigsit.xanitizer.sqplugin.metrics.Util;
 import com.rigsit.xanitizer.sqplugin.metrics.XanMetrics;
@@ -67,31 +67,37 @@ import com.rigsit.xanitizer.sqplugin.metrics.XanMetrics;
  * 
  */
 public class XanitizerSensor implements Sensor {
-	private static Logger LOG = Loggers.get(XanitizerSensor.class);
+	private static final Logger LOG = Loggers.get(XanitizerSensor.class);
 
-	private final JavaResourceLocator m_JavaResourceLocator;
-	private final File m_ReportFile;
+	private static final Pattern TOOL_VERSION_PATTERN = Pattern
+			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
 
-	private final String m_RepositoryKey = XanRulesDefinition.getRepositoryKey();
+	private static final DateFormat DATE_WITH_TIME_FORMATTER = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
 
-	private final Set<String> m_ActiveXanRuleNames = new HashSet<>();
+	private final JavaResourceLocator javaResourceLocator;
+	private final File reportFile;
+
+	private final String repositoryKey = XanRulesDefinition.getRepositoryKey();
+
+	private final Set<String> activeXanRuleNames = new HashSet<>();
 
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator, final Settings settings,
 			final ActiveRules activeRules) {
-		m_JavaResourceLocator = javaResourceLocator;
+		this.javaResourceLocator = javaResourceLocator;
 
 		final String reportFileStringOrNull = settings
 				.getString(XanSonarQubePlugin.XAN_XML_REPORT_FILE);
 		if (reportFileStringOrNull == null) {
-			m_ReportFile = null;
+			reportFile = null;
 		} else {
-			m_ReportFile = new File(reportFileStringOrNull);
+			reportFile = new File(reportFileStringOrNull);
 		}
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
 			if (activeRule.ruleKey().repository().equals(XanRulesDefinition.getRepositoryKey())) {
 				final String ruleAsString = activeRule.ruleKey().rule();
-				m_ActiveXanRuleNames.add(ruleAsString);
+				activeXanRuleNames.add(ruleAsString);
 			}
 		}
 	}
@@ -103,24 +109,24 @@ public class XanitizerSensor implements Sensor {
 
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
-		if (m_ReportFile == null) {
+		if (reportFile == null) {
 			LOG.error("Xanitizer parameter " + XanSonarQubePlugin.XAN_XML_REPORT_FILE
 					+ " not specified; skipping");
 			return;
 		}
 
-		if (!m_ReportFile.isFile()) {
-			LOG.error("Xanitizer XML report file '" + m_ReportFile + "' not found; skipping");
+		if (!reportFile.isFile()) {
+			LOG.error("Xanitizer XML report file '" + reportFile + "' not found; skipping");
 			return;
 		}
 
-		LOG.info("Reading Xanitizer findings from '" + m_ReportFile + "' for project '"
+		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '"
 				+ project.name() + "'");
 
 		final XMLReportParser parser = new XMLReportParser();
 		final XMLReportContent content;
 		try {
-			content = parser.parse(m_ReportFile, true);
+			content = parser.parse(reportFile);
 		} catch (final Exception ex) {
 			LOG.error("Exception caught while parsing Xanitizer XML report file; skipping", ex);
 			return;
@@ -132,36 +138,38 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		{
-			final String errMsgOrNull;
-			if (null != (errMsgOrNull = checkVersion(toolVersionShortOrNull, 2, 3, -1))) {
-				LOG.error("Could not parse xanitizerVersionShort attribute: " + errMsgOrNull
-						+ "; skipping");
-				return;
-			}
+		final String errMsgOrNull = checkVersion(toolVersionShortOrNull, 2, 3, -1);
+		if (errMsgOrNull != null) {
+			LOG.error("Could not parse xanitizerVersionShort attribute: " + errMsgOrNull
+					+ "; skipping");
+			return;
 		}
+
+		final long analysisEndDate = content.getAnalysisEndDate();
+		if (analysisEndDate == 0) {
+			LOG.error(
+					"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed");
+			return;
+		}
+
+		final String analysisDatePresentation = convertToDateWithTimeString(
+				new Date(analysisEndDate));
+
+		createMeasures(project, sensorContext, analysisDatePresentation, content);
+	}
+
+	private void createMeasures(final Project project, final SensorContext sensorContext,
+			final String analysisDatePresentation, final XMLReportContent content) {
 
 		final Map<Metric, Map<Resource, Integer>> metricValues = new LinkedHashMap<>();
 
-		{
-			final long analysisEndDate = content.getAnalysisEndDate();
-			if (analysisEndDate == 0) {
-				LOG.error(
-						"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed");
-				return;
-			}
+		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation
+				+ "; findings: " + content.getXMLReportFindings().size());
 
-			final String analysisDatePresentation = convertToDateWithTimeString(
-					new Date(analysisEndDate));
-
-			LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation
-					+ "; findings: " + content.getXMLReportFindings().size());
-
-			// Generate issues for findings.
-			for (final XMLReportFinding f : content.getXMLReportFindings()) {
-				generateIssuesForFinding(f, metricValues, analysisDatePresentation, project,
-						sensorContext);
-			}
+		// Generate issues for findings.
+		for (final XMLReportFinding f : content.getXMLReportFindings()) {
+			generateIssuesForFinding(f, metricValues, analysisDatePresentation, project,
+					sensorContext);
 		}
 
 		// Metrics: Counts of different findings.
@@ -180,9 +188,6 @@ public class XanitizerSensor implements Sensor {
 			}
 		}
 	}
-
-	private final static Pattern TOOL_VERSION_PATTERN = Pattern
-			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
 
 	private static String checkVersion(final String shortToolVersion, final int majorNeeded,
 			final int minorNeeded, final int patchNeeded) {
@@ -215,21 +220,16 @@ public class XanitizerSensor implements Sensor {
 						+ shortToolVersion + "'";
 			}
 
-			if (minorNo == minorNeeded) {
-				if (patchNo < patchNeeded) {
-					return "XML report file version: when the major and minor version is " + majorNo
-							+ "." + minorNo + ", the patch number must be at least " + patchNeeded
-							+ ": '" + shortToolVersion + "'";
-				}
+			if (minorNo == minorNeeded && patchNo < patchNeeded) {
+				return "XML report file version: when the major and minor version is " + majorNo
+						+ "." + minorNo + ", the patch number must be at least " + patchNeeded
+						+ ": '" + shortToolVersion + "'";
 			}
 		}
 
 		// Fine.
 		return null;
 	}
-
-	private static final DateFormat DATE_WITH_TIME_FORMATTER = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
 
 	private static String convertToDateWithTimeString(Date date) {
 		return DATE_WITH_TIME_FORMATTER.format(date);
@@ -239,93 +239,116 @@ public class XanitizerSensor implements Sensor {
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
 			final String analysisDatePresentation, final Project project,
 			final SensorContext sensorContext) {
-		InputFile inputFileOrNull;
 
 		switch (finding.getFindingKind()) {
-		case PATH: {
-			final XMLReportNode startNode = finding.getStartNodeOfPathOrNull();
-			final XMLReportNode endNode = finding.getEndNodeOfPathOrNull();
-
-			if (startNode == null || endNode == null) {
-				LOG.error("start or end node missing for path finding " + finding.getFindingID()
-						+ "; skipping");
-				return;
-			}
-
-			inputFileOrNull = mkInputFileOrNull(endNode, sensorContext);
-			generateIssueOnInputFileOrProject(inputFileOrNull, project,
-					normalizeLineNo(endNode.getLineNoOrMinus1()),
-					XanRule.mkForFindingOrNull(finding),
-					"Taint path for problem type '"
-							+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
-							+ "', path starting at " + mkLocationString(startNode, sensorContext)
-							+ " and ending at " + mkLocationString(endNode, sensorContext),
-					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
-		}
+		case PATH:
+			generateTaintPathIssue(finding, metricValuesAccu, analysisDatePresentation, project,
+					sensorContext);
 			break;
-
-		case SPECIAL: {
-			inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(), sensorContext);
-			final XMLReportNode node = finding.getNodeOrNull();
-
-			if (node == null) {
-				LOG.error("node missing for special finding " + finding.getFindingID()
-						+ "; skipping");
-				return;
-			}
-
-			generateIssueOnInputFileOrProject(inputFileOrNull, project,
-					normalizeLineNo(finding.getLineNoOrMinus1()),
-					XanRule.mkForFindingOrNull(finding),
-					"Special code location for problem type '"
-							+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
-							+ mkDescriptionSuffixForLocation(inputFileOrNull,
-									mkLocationString(node, sensorContext)),
-					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+		case SPECIAL:
+			generateSpecialCodeIssue(finding, metricValuesAccu, analysisDatePresentation, project,
+					sensorContext);
 			break;
-		}
-
 		case USER:
-			inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(), sensorContext);
-			generateIssueOnInputFileOrProject(inputFileOrNull, project,
-					normalizeLineNo(finding.getLineNoOrMinus1()),
-					XanRule.mkForFindingOrNull(finding),
-					"User-defined finding for problem type '"
-							+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
-							+ finding.getDescriptionOrNull()
-							+ mkDescriptionSuffixForLocation(inputFileOrNull,
-									mkLocationForUserFindingString(finding)),
-					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+			generateUserIssue(finding, metricValuesAccu, analysisDatePresentation, project,
+					sensorContext);
 			break;
-
 		case GENERIC:
-			/*
-			 * If this is an OWASP Dependency Check finding, create an issue on
-			 * the root project.
-			 */
-			if (finding.getFindingProducer().toLowerCase().contains("owaspdependencycheck")) {
-
-				// No line number.
-				final int lineNumber = -1;
-				generateIssueOnInputFileOrProject(null, project, lineNumber,
-						XanRule.mkForFindingOrNull(finding),
-						mkOWASPDepCheckFindingDescription(finding), finding,
-						analysisDatePresentation, metricValuesAccu, sensorContext);
-			} else {
-				inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(), sensorContext);
-
-				generateIssueOnInputFileOrProject(inputFileOrNull, project,
-						normalizeLineNo(finding.getLineNoOrMinus1()),
-						XanRule.mkForFindingOrNull(finding), mkGenericFindingDescription(finding),
-						finding, analysisDatePresentation, metricValuesAccu, sensorContext);
-			}
+			generateGenericIssue(finding, metricValuesAccu, analysisDatePresentation, project,
+					sensorContext);
 			break;
-
 		default:
 			// Nothing to do.
 			LOG.error("Unexpected Xanitizer finding kind:" + finding.getFindingKind());
 			break;
 		}
+	}
+
+	private void generateGenericIssue(final XMLReportFinding finding,
+			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
+			final String analysisDatePresentation, final Project project,
+			final SensorContext sensorContext) {
+		/*
+		 * If this is an OWASP Dependency Check finding, create an issue on the
+		 * root project.
+		 */
+		if (finding.getFindingProducer().toLowerCase().contains("owaspdependencycheck")) {
+
+			// No line number.
+			final int lineNumber = -1;
+			generateIssueOnInputFileOrProject(null, project, lineNumber,
+					XanRule.mkForFindingOrNull(finding), mkOWASPDepCheckFindingDescription(finding),
+					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+		} else {
+			final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
+					sensorContext);
+
+			generateIssueOnInputFileOrProject(inputFileOrNull, project,
+					normalizeLineNo(finding.getLineNoOrMinus1()),
+					XanRule.mkForFindingOrNull(finding), mkGenericFindingDescription(finding),
+					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+		}
+	}
+
+	private void generateUserIssue(final XMLReportFinding finding,
+			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
+			final String analysisDatePresentation, final Project project,
+			final SensorContext sensorContext) {
+		final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
+				sensorContext);
+		generateIssueOnInputFileOrProject(inputFileOrNull, project,
+				normalizeLineNo(finding.getLineNoOrMinus1()), XanRule.mkForFindingOrNull(finding),
+				"User-defined finding for problem type '"
+						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
+						+ finding.getDescriptionOrNull()
+						+ mkDescriptionSuffixForLocation(inputFileOrNull,
+								mkLocationForUserFindingString(finding)),
+				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+	}
+
+	private void generateSpecialCodeIssue(final XMLReportFinding finding,
+			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
+			final String analysisDatePresentation, final Project project,
+			final SensorContext sensorContext) {
+		final InputFile inputFileOrNull = mkInputFileOrNull(finding.getClassFQNOrNull(),
+				sensorContext);
+		final XMLReportNode node = finding.getNodeOrNull();
+
+		if (node == null) {
+			LOG.error("node missing for special finding " + finding.getFindingID() + "; skipping");
+			return;
+		}
+
+		generateIssueOnInputFileOrProject(inputFileOrNull, project,
+				normalizeLineNo(finding.getLineNoOrMinus1()), XanRule.mkForFindingOrNull(finding),
+				"Special code location for problem type '"
+						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
+						+ mkDescriptionSuffixForLocation(inputFileOrNull,
+								mkLocationString(node, sensorContext)),
+				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+	}
+
+	private void generateTaintPathIssue(final XMLReportFinding finding,
+			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
+			final String analysisDatePresentation, final Project project,
+			final SensorContext sensorContext) {
+		final XMLReportNode startNode = finding.getStartNodeOfPathOrNull();
+		final XMLReportNode endNode = finding.getEndNodeOfPathOrNull();
+
+		if (startNode == null || endNode == null) {
+			LOG.error("start or end node missing for path finding " + finding.getFindingID()
+					+ "; skipping");
+			return;
+		}
+
+		final InputFile inputFileOrNull = mkInputFileOrNull(endNode, sensorContext);
+		generateIssueOnInputFileOrProject(inputFileOrNull, project,
+				normalizeLineNo(endNode.getLineNoOrMinus1()), XanRule.mkForFindingOrNull(finding),
+				"Taint path for problem type '"
+						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
+						+ "', path starting at " + mkLocationString(startNode, sensorContext)
+						+ " and ending at " + mkLocationString(endNode, sensorContext),
+				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
 	}
 
 	private String mkLocationForUserFindingString(final XMLReportFinding finding) {
@@ -363,32 +386,13 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	private static String mkOWASPDepCheckFindingDescription(final XMLReportFinding finding) {
-		final String origAbsFileOrNull = finding.getOriginalAbsFileOrNull();
 
-		final String descOrNull = finding.getDescriptionOrNull();
-		final String extraDescOrNull = finding.getExtraDescriptionOrNull();
-
-		return "OWASP Dependency Check"
-				+ (origAbsFileOrNull == null ? "" : "with " + origAbsFileOrNull) + ":\n"
-
-				+ (descOrNull == null && extraDescOrNull == null ? "- no description available -"
-						: "")
-
-				+ (descOrNull == null ? "" : descOrNull)
-
-				+ (descOrNull != null && extraDescOrNull != null ? "\n" : "")
-
-				+ (extraDescOrNull == null ? "" : extraDescOrNull);
+		final StringBuilder sb = new StringBuilder("OWASP Dependency Check");
+		appendDescription(sb, finding);
+		return sb.toString();
 	}
 
 	private static String mkGenericFindingDescription(final XMLReportFinding finding) {
-		final String origAbsFileOrNull = finding.getOriginalAbsFileOrNull();
-
-		String descOrNull = finding.getDescriptionOrNull();
-		if (descOrNull != null && descOrNull.isEmpty()) {
-			descOrNull = null;
-		}
-		final String extraDescOrNull = finding.getExtraDescriptionOrNull();
 
 		final String prefix;
 		if (finding.getFindingProducer().toLowerCase().contains("findbugs")) {
@@ -397,18 +401,32 @@ public class XanitizerSensor implements Sensor {
 			prefix = "Generic";
 		}
 
-		return prefix + " finding" + (origAbsFileOrNull == null ? "" : " with " + origAbsFileOrNull)
-				+ ":\n"
+		final StringBuilder sb = new StringBuilder(prefix + " finding");
+		appendDescription(sb, finding);
+		return sb.toString();
 
-				+ (descOrNull == null && extraDescOrNull == null ? "- no description available -"
-						: "")
+	}
 
-				+ (descOrNull == null ? "" : descOrNull)
+	private static void appendDescription(final StringBuilder sb, final XMLReportFinding finding) {
+		final String origAbsFileOrNull = finding.getOriginalAbsFileOrNull();
+		final String descOrNull = finding.getDescriptionOrNull();
+		final String extraDescOrNull = finding.getExtraDescriptionOrNull();
 
-				+ (descOrNull != null && extraDescOrNull != null ? "\n" : "")
+		if (origAbsFileOrNull != null) {
+			sb.append(" with " + origAbsFileOrNull + ":\n");
+		}
 
-				+ (extraDescOrNull == null ? "" : extraDescOrNull);
-
+		if ((descOrNull == null || descOrNull.isEmpty())
+				&& (extraDescOrNull == null || extraDescOrNull.isEmpty())) {
+			sb.append("- no description available -");
+		} else {
+			if (descOrNull != null && !descOrNull.isEmpty()) {
+				sb.append(descOrNull + "\n");
+			}
+			if (extraDescOrNull != null && !extraDescOrNull.isEmpty()) {
+				sb.append(extraDescOrNull);
+			}
+		}
 	}
 
 	private String mkLocationString(final XMLReportNode node, final SensorContext sensorContext) {
@@ -431,19 +449,14 @@ public class XanitizerSensor implements Sensor {
 	private InputFile mkInputFileOrNull(final XMLReportNode nodeOrNull,
 			final SensorContext sensorContext) {
 		if (nodeOrNull == null) {
-			// LOG.warn("XANITIZER: nodeOrNull == null");
 			return null;
 		}
 		final String classFQNOrNull = nodeOrNull.getClassFQNOrNull();
 		if (classFQNOrNull == null) {
-			// LOG.warn("XANITIZER: no class found in node '" +
-			// nodeOrNull.getId() + "'");
 			return null;
 		}
-		final Resource resource = m_JavaResourceLocator.findResourceByClassName(classFQNOrNull);
+		final Resource resource = javaResourceLocator.findResourceByClassName(classFQNOrNull);
 		if (resource == null) {
-			// LOG.warn("XANITIZER: no resource found for " + classFQNOrNull + "
-			// (from <Node>)");
 			return null;
 		}
 
@@ -468,11 +481,8 @@ public class XanitizerSensor implements Sensor {
 
 		// Use first matching input file, or none.
 		for (final InputFile inputFile : inputFilesIterable) {
-			// LOG.info("Input file found for resource: " + absoluteFilePath);
 			return inputFile;
 		}
-
-		// LOG.warn("No input file found for resource: " + absoluteFilePath);
 
 		return null;
 	}
@@ -482,11 +492,8 @@ public class XanitizerSensor implements Sensor {
 		if (classFQNOrNull == null) {
 			return null;
 		}
-		final Resource resourceOrNull = m_JavaResourceLocator
-				.findResourceByClassName(classFQNOrNull);
+		final Resource resourceOrNull = javaResourceLocator.findResourceByClassName(classFQNOrNull);
 		if (resourceOrNull == null) {
-			// LOG.warn("XANITIZER: no resource found for " + xFileOrNull + "
-			// (from <XFile>)");
 			return null;
 		}
 
@@ -508,7 +515,7 @@ public class XanitizerSensor implements Sensor {
 			return false;
 		}
 
-		if (!m_ActiveXanRuleNames.contains(rule.toString())) {
+		if (!activeXanRuleNames.contains(rule.toString())) {
 			return false;
 		}
 
@@ -516,67 +523,71 @@ public class XanitizerSensor implements Sensor {
 				: sensorContext.getResource(inputFileOrNull);
 
 		final Severity severity = mkSeverity(xanFinding);
-		final RuleKey ruleKey = RuleKey.of(m_RepositoryKey, rule.name());
+		final RuleKey ruleKey = RuleKey.of(repositoryKey, rule.name());
 
-		final NewIssue newIssue = sensorContext.newIssue();
-
-		{
-			newIssue.forRule(ruleKey).overrideSeverity(severity);
-
-			final NewIssueLocation newIssueLocation = newIssue.newLocation();
-
-			if (inputFileOrNull != null) {
-				newIssueLocation.on(inputFileOrNull);
-
-				// If line number exceeds the current length of the file,
-				// SonarQube will crash. So check length for robustness.
-				if (lineNo > 0 && lineNo <= inputFileOrNull.lines()) {
-					final TextRange textRange = inputFileOrNull.selectLine(lineNo);
-					newIssueLocation.at(textRange);
-				}
-			} else {
-				final InputModule inputModule = new DefaultInputModule(project.getKey());
-				newIssueLocation.on(inputModule);
-			}
-
-			final String msg = (descriptionOrNull != null ? descriptionOrNull
-					: rule.getShortHTMLDescription())
-					+ mkIdSuffixForFinding(xanFinding, analysisDatePresentation);
-
-			newIssueLocation.message(msg);
-
-			newIssue.at(newIssueLocation);
-		}
+		createNewIssue(inputFileOrNull, project, lineNo, rule, descriptionOrNull, xanFinding,
+				analysisDatePresentation, sensorContext, resourceToBeUsed, severity, ruleKey);
 
 		final String problemTypeId = xanFinding.getProblemTypeId();
+
+		final List<Metric> metrics = mkMetrics(problemTypeId);
+		for (final Metric metric : metrics) {
+			incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project,
+					metricValuesAccu);
+		}
+
+		final String matchCode = xanFinding.getMatchCode();
+		if ("NOT".equals(matchCode)) {
+			incrementValueForResourceAndContainingResources(XanMetrics.getMetricForNewXanFindings(),
+					resourceToBeUsed, project, metricValuesAccu);
+		}
+
+		final Metric metricForSeverity = XanMetrics.getMetricForSeverity(severity);
+		if (metricForSeverity != null) {
+			incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed,
+					project, metricValuesAccu);
+		}
+
+		return true;
+	}
+
+	private void createNewIssue(final InputFile inputFileOrNull, final Project project,
+			final int lineNo, final XanRule rule, final String descriptionOrNull,
+			final XMLReportFinding xanFinding, final String analysisDatePresentation,
+			final SensorContext sensorContext, final Resource resourceToBeUsed,
+			final Severity severity, final RuleKey ruleKey) {
+		final NewIssue newIssue = sensorContext.newIssue();
+
+		newIssue.forRule(ruleKey).overrideSeverity(severity);
+
+		final NewIssueLocation newIssueLocation = newIssue.newLocation();
+
+		if (inputFileOrNull != null) {
+			newIssueLocation.on(inputFileOrNull);
+
+			// If line number exceeds the current length of the file,
+			// SonarQube will crash. So check length for robustness.
+			if (lineNo > 0 && lineNo <= inputFileOrNull.lines()) {
+				final TextRange textRange = inputFileOrNull.selectLine(lineNo);
+				newIssueLocation.at(textRange);
+			}
+		} else {
+			final InputModule inputModule = new DefaultInputModule(project.getKey());
+			newIssueLocation.on(inputModule);
+		}
+
+		final String msg = (descriptionOrNull != null ? descriptionOrNull
+				: rule.getShortHTMLDescription())
+				+ mkIdSuffixForFinding(xanFinding, analysisDatePresentation);
+
+		newIssueLocation.message(msg);
+
+		newIssue.at(newIssueLocation);
 
 		newIssue.save();
 
 		LOG.debug("Issue saved: " + resourceToBeUsed + ":" + lineNo + " - " + ruleKey + " - "
 				+ descriptionOrNull);
-
-		{
-			final List<Metric> metrics = mkMetricsForRule(rule, problemTypeId);
-			for (final Metric metric : metrics) {
-				incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project,
-						metricValuesAccu);
-			}
-
-			final String matchCode = xanFinding.getMatchCode();
-			if (matchCode.equals("NOT")) {
-				incrementValueForResourceAndContainingResources(
-						XanMetrics.getMetricForNewXanFindings(), resourceToBeUsed, project,
-						metricValuesAccu);
-			}
-
-			final Metric metricForSeverity = XanMetrics.getMetricForSeverity(severity);
-			if (metricForSeverity != null) {
-				incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed,
-						project, metricValuesAccu);
-			}
-		}
-
-		return true;
 	}
 
 	private String mkIdSuffixForFinding(final XMLReportFinding xanFinding,
@@ -586,7 +597,7 @@ public class XanitizerSensor implements Sensor {
 				+ ")";
 	}
 
-	private List<Metric> mkMetricsForRule(final XanRule rule, final String bugTypeId) {
+	private List<Metric> mkMetrics(final String bugTypeId) {
 		final List<Metric> result = new ArrayList<>();
 		result.add(XanMetrics.getMetricForAllXanFindings());
 
@@ -645,19 +656,23 @@ public class XanitizerSensor implements Sensor {
 			return Severity.BLOCKER;
 
 		default:
-			// For the rest, we use the rating.
-			final double rating = xanFinding.getRating();
-			if (rating > 7) {
-				return Severity.CRITICAL;
-			}
-			if (rating > 4) {
-				return Severity.MAJOR;
-			}
-			if (rating > 1) {
-				return Severity.MINOR;
-			}
-			return Severity.INFO;
+			return mkSeverityFromRating(xanFinding);
 		}
+	}
+
+	private Severity mkSeverityFromRating(final XMLReportFinding xanFinding) {
+		// For the rest, we use the rating.
+		final double rating = xanFinding.getRating();
+		if (rating > 7) {
+			return Severity.CRITICAL;
+		}
+		if (rating > 4) {
+			return Severity.MAJOR;
+		}
+		if (rating > 1) {
+			return Severity.MINOR;
+		}
+		return Severity.INFO;
 	}
 
 	@Override

@@ -25,25 +25,25 @@ package com.rigsit.xanitizer.sqplugin.batch;
  */
 public class XMLReportFinding {
 
-	private final int m_FindingID;
-	private final String m_ProblemTypeId;
-	private final FindingKind m_FindingKind;
-	private final String m_FindingProducer;
-	private final int m_LineNoOrMinus1;
+	private final int findingID;
+	private final String problemTypeId;
+	private final FindingKind findingKind;
+	private final String findingProducer;
+	private final int lineNoOrMinus1;
 
-	private final String m_DescriptionOrNull;
-	private final String m_ExtraDescriptionOrNull;
+	private final String descriptionOrNull;
+	private final String extraDescriptionOrNull;
 
-	private final String m_ClassFQNOrNull;
-	private final String m_OriginalAbsFileOrNull;
-	private final String m_ClassificationOrNull;
-	private final double m_Rating;
-	private final String m_MatchCode;
-	private final String m_PersistenceStringOrNull;
+	private final String classFQNOrNull;
+	private final String originalAbsFileOrNull;
+	private final String classificationOrNull;
+	private final double rating;
+	private final String matchCode;
+	private final String persistenceStringOrNull;
 
-	private final XMLReportNode m_NodeOrNull;
-	private final XMLReportNode m_StartNodeOfPathOrNull;
-	private final XMLReportNode m_EndNodeOfPathOrNull;
+	private final XMLReportNode nodeOrNull;
+	private final XMLReportNode startNodeOfPathOrNull;
+	private final XMLReportNode endNodeOfPathOrNull;
 
 	public XMLReportFinding(final int findingID, final String problemTypeId,
 			final FindingKind findingKind, final String findingProducer, final int lineNoOrMinus1,
@@ -54,89 +54,89 @@ public class XMLReportFinding {
 			final String classificationOrNull, final double rating, final String matchCode,
 			final String persistenceStringOrNull, final XMLReportNode nodeOrNull,
 			final XMLReportNode startNodeOfPathOrNull, final XMLReportNode endNodeOfPathOrNull) {
-		m_FindingID = findingID;
-		m_ProblemTypeId = problemTypeId;
-		m_FindingKind = findingKind;
-		m_FindingProducer = findingProducer;
-		m_LineNoOrMinus1 = lineNoOrMinus1;
+		this.findingID = findingID;
+		this.problemTypeId = problemTypeId;
+		this.findingKind = findingKind;
+		this.findingProducer = findingProducer;
+		this.lineNoOrMinus1 = lineNoOrMinus1;
 
-		m_DescriptionOrNull = descriptionOrNull;
-		m_ExtraDescriptionOrNull = extraDescriptionOrNull;
+		this.descriptionOrNull = descriptionOrNull;
+		this.extraDescriptionOrNull = extraDescriptionOrNull;
 
-		m_ClassFQNOrNull = classFQNOrNull;
-		m_OriginalAbsFileOrNull = originalAbsFileOrNull;
-		m_ClassificationOrNull = classificationOrNull;
-		m_Rating = rating;
-		m_MatchCode = matchCode;
-		m_PersistenceStringOrNull = persistenceStringOrNull;
+		this.classFQNOrNull = classFQNOrNull;
+		this.originalAbsFileOrNull = originalAbsFileOrNull;
+		this.classificationOrNull = classificationOrNull;
+		this.rating = rating;
+		this.matchCode = matchCode;
+		this.persistenceStringOrNull = persistenceStringOrNull;
 
-		m_NodeOrNull = nodeOrNull;
-		m_StartNodeOfPathOrNull = startNodeOfPathOrNull;
-		m_EndNodeOfPathOrNull = endNodeOfPathOrNull;
+		this.nodeOrNull = nodeOrNull;
+		this.startNodeOfPathOrNull = startNodeOfPathOrNull;
+		this.endNodeOfPathOrNull = endNodeOfPathOrNull;
 	}
 
 	public int getFindingID() {
-		return m_FindingID;
+		return findingID;
 	}
 
 	public String getProblemTypeId() {
-		return m_ProblemTypeId;
+		return problemTypeId;
 	}
 
 	public FindingKind getFindingKind() {
-		return m_FindingKind;
+		return findingKind;
 	}
 
 	public String getFindingProducer() {
-		return m_FindingProducer;
+		return findingProducer;
 	}
 
 	public int getLineNoOrMinus1() {
-		return m_LineNoOrMinus1;
+		return lineNoOrMinus1;
 	}
 
 	public String getDescriptionOrNull() {
-		return m_DescriptionOrNull;
+		return descriptionOrNull;
 	}
 
 	public String getExtraDescriptionOrNull() {
-		return m_ExtraDescriptionOrNull;
+		return extraDescriptionOrNull;
 	}
 
 	public String getClassFQNOrNull() {
-		return m_ClassFQNOrNull;
+		return classFQNOrNull;
 	}
 
 	public String getOriginalAbsFileOrNull() {
-		return m_OriginalAbsFileOrNull;
+		return originalAbsFileOrNull;
 	}
 
 	public String getFindingClassificationOrNull() {
-		return m_ClassificationOrNull;
+		return classificationOrNull;
 	}
 
 	public double getRating() {
-		return m_Rating;
+		return rating;
 	}
 
 	public String getMatchCode() {
-		return m_MatchCode;
+		return matchCode;
 	}
 
 	public String getPersistenceStringOrNull() {
-		return m_PersistenceStringOrNull;
+		return persistenceStringOrNull;
 	}
 
 	public XMLReportNode getNodeOrNull() {
-		return m_NodeOrNull;
+		return nodeOrNull;
 	}
 
 	public XMLReportNode getStartNodeOfPathOrNull() {
-		return m_StartNodeOfPathOrNull;
+		return startNodeOfPathOrNull;
 	}
 
 	public XMLReportNode getEndNodeOfPathOrNull() {
-		return m_EndNodeOfPathOrNull;
+		return endNodeOfPathOrNull;
 	}
 
 }

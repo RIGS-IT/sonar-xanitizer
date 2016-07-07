@@ -33,9 +33,9 @@ import org.sonar.api.measures.Metrics;
  */
 public final class XanMetrics implements Metrics {
 
-	private final static String DOMAIN = "Xanitizer Findings";
+	private static final String DOMAIN = "Xanitizer Findings";
 
-	private final static String PFIX = "XanFindingMetric_";
+	private static final String PFIX = "XanFindingMetric_";
 
 	private static final Metric ALL_XAN_FINDINGS_METRIC;
 	private static final Metric NEW_FINDINGS_METRIC;
@@ -159,7 +159,7 @@ public final class XanMetrics implements Metrics {
 				.create();
 	}
 
-	private final List<Metric> m_Metrics;
+	private final List<Metric> metrics;
 
 	public XanMetrics() {
 		final List<Metric> resultAccu = new ArrayList<>();
@@ -181,12 +181,12 @@ public final class XanMetrics implements Metrics {
 		}
 
 		// Result is ready.
-		m_Metrics = resultAccu;
+		metrics = resultAccu;
 	}
 
 	@Override
 	public List<Metric> getMetrics() {
-		return m_Metrics;
+		return metrics;
 	}
 
 	public static Metric mkMetricForBugTypeIdOrNull(final String bugTypeId) {

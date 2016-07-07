@@ -28,46 +28,43 @@ import java.util.List;
  */
 public class XMLReportContent {
 
-	private String m_ToolVersionOrNull;
-	private String m_ToolVersionShortOrNull;
+	private String toolVersionOrNull;
+	private String toolVersionShortOrNull;
 
-	private long m_AnalysisEndDate;
+	private long analysisEndDate;
 
-	private List<XMLReportFinding> m_XMLReportFindings = new ArrayList<>();
-
-	public XMLReportContent() {
-	}
+	private List<XMLReportFinding> xmlReportFindings = new ArrayList<>();
 
 	public void setToolVersion(final String version) {
-		m_ToolVersionOrNull = version;
+		toolVersionOrNull = version;
 	}
 
 	public String getToolVersionOrNull() {
-		return m_ToolVersionOrNull;
+		return toolVersionOrNull;
 	}
 
 	public void setToolVersionShort(final String versionShort) {
-		m_ToolVersionShortOrNull = versionShort;
+		toolVersionShortOrNull = versionShort;
 	}
 
 	public String getToolVersionShortOrNull() {
-		return m_ToolVersionShortOrNull;
+		return toolVersionShortOrNull;
 	}
 
 	public void add(final XMLReportFinding f) {
-		m_XMLReportFindings.add(f);
+		xmlReportFindings.add(f);
 	}
 
 	public List<XMLReportFinding> getXMLReportFindings() {
-		return m_XMLReportFindings;
+		return xmlReportFindings;
 	}
 
 	public void setAnalysisEndDate(final long l) {
-		m_AnalysisEndDate = l;
+		analysisEndDate = l;
 	}
 
 	public long getAnalysisEndDate() {
-		return m_AnalysisEndDate;
+		return analysisEndDate;
 	}
 
 }

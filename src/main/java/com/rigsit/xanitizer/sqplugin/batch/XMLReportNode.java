@@ -25,27 +25,27 @@ package com.rigsit.xanitizer.sqplugin.batch;
  */
 public class XMLReportNode {
 
-	private final String m_ClassFQNOrNull;
-	private final int m_LineNoOrMinus1;
-	private final String m_XFilePersistenceOrNull;
+	private final String classFQNOrNull;
+	private final int lineNoOrMinus1;
+	private final String xFilePersistenceOrNull;
 
 	public XMLReportNode(final String classFQNOrEmpty, final int lineNoOrMinus1,
 			final String urlOrEmpty) {
-		m_ClassFQNOrNull = classFQNOrEmpty.isEmpty() ? null : classFQNOrEmpty;
-		m_LineNoOrMinus1 = lineNoOrMinus1;
-		m_XFilePersistenceOrNull = urlOrEmpty.isEmpty() ? null : urlOrEmpty;
+		this.classFQNOrNull = classFQNOrEmpty.isEmpty() ? null : classFQNOrEmpty;
+		this.lineNoOrMinus1 = lineNoOrMinus1;
+		this.xFilePersistenceOrNull = urlOrEmpty.isEmpty() ? null : urlOrEmpty;
 	}
 
 	public String getClassFQNOrNull() {
-		return m_ClassFQNOrNull;
+		return classFQNOrNull;
 	}
 
 	public int getLineNoOrMinus1() {
-		return m_LineNoOrMinus1;
+		return lineNoOrMinus1;
 	}
 
 	public String getXFilePersistenceOrNull() {
-		return m_XFilePersistenceOrNull;
+		return xFilePersistenceOrNull;
 	}
 
 }

@@ -24,6 +24,11 @@ package com.rigsit.xanitizer.sqplugin.metrics;
  * 
  */
 public class Util {
+	
+	private Util() {
+		// hide constructor
+	}
+	
 	public static String mkPresentationNameForBugTypeId(final String bugTypeId) {
 		String candidate = GeneratedBugTypeIds.PRESENTATION_NAMES.get(bugTypeId);
 		if (candidate == null) {
