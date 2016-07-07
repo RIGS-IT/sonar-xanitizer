@@ -56,12 +56,12 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportContent;
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportFinding;
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportNode;
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportParser;
 import com.rigsit.xanitizer.sqplugin.metrics.Util;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
 
 /**
  * @author rust

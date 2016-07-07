@@ -17,9 +17,7 @@
  * 
  * Created on May 30, 2016
  */
-package com.rigsit.xanitizer.sqplugin.batch;
-
-import com.rigsit.xanitizer.sqplugin.reportparser.FindingKind;
+package com.rigsit.xanitizer.sqplugin.reportparser;
 
 /**
  * @author rust

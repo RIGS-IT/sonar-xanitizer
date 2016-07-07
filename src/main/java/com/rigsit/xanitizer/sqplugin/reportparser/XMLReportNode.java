@@ -17,7 +17,7 @@
  * 
  * Created on May 31, 2016
  */
-package com.rigsit.xanitizer.sqplugin.batch;
+package com.rigsit.xanitizer.sqplugin.reportparser;
 
 /**
  * @author rust

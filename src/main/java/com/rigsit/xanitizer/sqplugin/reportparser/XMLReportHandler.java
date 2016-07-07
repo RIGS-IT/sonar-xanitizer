@@ -18,15 +18,13 @@
  * Created on 06.07.2016
  *
  */
-package com.rigsit.xanitizer.sqplugin.batch;
+package com.rigsit.xanitizer.sqplugin.reportparser;
 
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.rigsit.xanitizer.sqplugin.reportparser.FindingKind;
 
 /**
  * @author nwe

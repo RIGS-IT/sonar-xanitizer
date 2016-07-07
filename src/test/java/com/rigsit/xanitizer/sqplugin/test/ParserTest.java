@@ -32,9 +32,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportContent;
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportFinding;
-import com.rigsit.xanitizer.sqplugin.batch.XMLReportParser;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
 
 /**
  * @author nwe
