@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3636" findingsNotRemovedByFilter="3636" problemFindingsNotRemovedByFilter="912">
+
+
+  <finding id="3306" kind="SANITIZER">
+    <problemType>IO Stream Resource Leak</problemType>
+    <problemTypeId>rl:IOStreamResourceLeak</problemTypeId>
+    <producer>BuiltIn:TAINTPATHS</producer>
+    <category>Hint: Applied Sanitizers</category>
+    <rating>0.00</rating>
+    <classification>Harmless</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AbstractLesson</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AbstractLesson</class>
+    <file>AbstractLesson.java</file>
+    <line>321</line>
+    <description><![CDATA[
+AbstractLesson.java (<Source Code>/org/owasp/webgoat/lessons):321
+
+An identified sanitizer for problem type 'IO Stream Resource Leak'.
+Taint Sanitizer: close()
+
+Matching pattern in sanitizer kind 'Close IO Resource Sanitizer': void java.io.Closeable.close()
+]]></description>
+    <node lineNo="321" classFQN="org.owasp.webgoat.lessons.AbstractLesson" xFilePersistence="org.owasp.webgoat.lessons.AbstractLesson"/>
+  </finding>
+
+
+  <finding id="3172" kind="SANITIZER">
+    <problemType>Socket Resource Leak</problemType>
+    <problemTypeId>rl:SocketResourceLeak</problemTypeId>
+    <producer>BuiltIn:TAINTPATHS</producer>
+    <category>Hint: Applied Sanitizers</category>
+    <rating>0.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AbstractLesson</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AbstractLesson</class>
+    <file>AbstractLesson.java</file>
+    <line>321</line>
+    <description><![CDATA[
+AbstractLesson.java (<Source Code>/org/owasp/webgoat/lessons):321
+
+An identified sanitizer for problem type 'Socket Resource Leak'.
+Taint Sanitizer: close()
+
+Matching pattern in sanitizer kind 'Close IO Resource Sanitizer': void java.io.Closeable.close()
+]]></description>
+    <node lineNo="321" classFQN="org.owasp.webgoat.lessons.AbstractLesson" xFilePersistence="org.owasp.webgoat.lessons.AbstractLesson"/>
+  </finding>
+</XanitizerFindingsList>

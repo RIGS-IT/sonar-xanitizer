@@ -27,7 +27,7 @@ import org.sonar.api.utils.log.Loggers;
  *
  */
 public enum FindingKind {
-	PATH, SPECIAL, USER, GENERIC, OTHER,
+	PATH, SPECIAL, USER, GENERIC, NON_TAINTED, SANITIZER, OTHER,
 
 	;
 
@@ -36,7 +36,7 @@ public enum FindingKind {
 	static FindingKind mk(final String s) {
 		try {
 			return FindingKind.valueOf(s);
-		} catch (final IllegalArgumentException ex) {
+		} catch (final IllegalArgumentException | NullPointerException ex) {
 			LOG.info("Unexpected finding kind: " + s, ex);
 			return OTHER;
 		}

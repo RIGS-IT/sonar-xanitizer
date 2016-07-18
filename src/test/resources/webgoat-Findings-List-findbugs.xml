@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3636" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+
+
+  <finding id="3391" kind="GENERIC">
+    <problemType>Class defines equals() and uses Object.hashCode()</problemType>
+    <problemTypeId>HE_EQUALS_USE_HASHCODE</problemTypeId>
+    <producer>PlugIn:Findbugs</producer>
+    <category>Security: Findbugs Bad Practice</category>
+    <rating>3.00</rating>
+    <classification>Should Fix</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AbstractLesson</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AbstractLesson</class>
+    <file>AbstractLesson.java</file>
+    <line>189</line>
+    <description><![CDATA[
+AbstractLesson.java (<Source Code>/org/owasp/webgoat/lessons):189
+
+Findbugs Description:
+ This class overrides equals(Object), but does not override hashCode(), and inherits the implementation of hashCode() from java.lang.Object (which returns the identity hash code, an arbitrary value assigned to the object by the VM).  Therefore, the class is very likely to violate the invariant that equal objects must have equal hashcodes. 
+If you don't think instances of this class will ever be inserted into a HashMap/HashTable, the recommended hashCode implementation to use is: 
+public int hashCode() {
+  assert false : "hashCode not designed";
+  return 42; // any arbitrary constant will do
+  }
+
+- In method org.owasp.webgoat.lessons.AbstractLesson.equals(Object)
+
+]]></description>
+    <extraDescription><![CDATA[
+- In method org.owasp.webgoat.lessons.AbstractLesson.equals(Object)
+]]></extraDescription>
+    <originalAbsFile><![CDATA[
+file:/C:/Users/nwe/.Xanitizer/XanitizerProject-webgoat/SourceCode/org/owasp/webgoat/lessons/AbstractLesson.java]]></originalAbsFile>
+    <node lineNo="189" classFQN="org.owasp.webgoat.lessons.AbstractLesson" xFilePersistence="org.owasp.webgoat.lessons.AbstractLesson"/>
+  </finding>
+
+
+  <finding id="3394" kind="GENERIC">
+    <problemType>Class inherits equals() and uses Object.hashCode()</problemType>
+    <problemTypeId>HE_INHERITS_EQUALS_USE_HASHCODE</problemTypeId>
+    <producer>PlugIn:Findbugs</producer>
+    <category>Security: Findbugs Bad Practice</category>
+    <rating>3.00</rating>
+    <classification>Falsely Reported</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AccessControlMatrix</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AccessControlMatrix</class>
+    <file>AccessControlMatrix.java</file>
+    <line>48</line>
+    <description><![CDATA[
+AccessControlMatrix.java (<Source Code>/org/owasp/webgoat/lessons):48
+
+Findbugs Description:
+ This class inherits equals(Object) from an abstract superclass, and hashCode() from java.lang.Object (which returns the identity hash code, an arbitrary value assigned to the object by the VM).  Therefore, the class is very likely to violate the invariant that equal objects must have equal hashcodes. 
+If you don't want to define a hashCode method, and/or don't believe the object will ever be put into a HashMap/Hashtable, define the hashCode() method to throw UnsupportedOperationException.]]></description>
+    <originalAbsFile><![CDATA[
+file:/C:/Users/nwe/.Xanitizer/XanitizerProject-webgoat/SourceCode/org/owasp/webgoat/lessons/AccessControlMatrix.java]]></originalAbsFile>
+    <node lineNo="48" classFQN="org.owasp.webgoat.lessons.AccessControlMatrix" xFilePersistence="org.owasp.webgoat.lessons.AccessControlMatrix"/>
+  </finding>
+</XanitizerFindingsList>

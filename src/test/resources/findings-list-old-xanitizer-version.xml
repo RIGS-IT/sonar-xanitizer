@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.2.0, build no. 81 of 04.05.16" timeStamp="2016-05-03 19:36:50" allFindings="3574" findingsNotRemovedByFilter="4" problemFindingsNotRemovedByFilter="4">
+
+
+  <finding id="37">
+    <problemType>Command Injection</problemType>
+    <problemTypeId>ci:CommandInjection</problemTypeId>
+    <category>Security: Taint Paths</category>
+    <rating>6.92</rating>
+    <classification>Must Fix</classification>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-05-03 19:36:50 - new</date>
+    <package>org.owasp.webgoat.util</package>
+    <class>Exec</class>
+    <file>Exec.java</file>
+    <description><![CDATA[
+Exec.java (<Source Code>/org/owasp/webgoat/util):107
+	<-
+ParameterParser.java (<Source Code>/org/owasp/webgoat/session):615
+
+An identified taint path for the problem type 'Command Injection'
+Matching pattern in source kind 'Servlet Request Input': java.lang.String[] javax.servlet.ServletRequest.getParameterValues(java.lang.String)
+
+Matching pattern in sink kind 'Command Injection': java.lang.Process java.lang.Runtime.exec(java.lang.String[])
+]]></description>
+  </finding>
+
+
+  <finding id="36">
+    <problemType>Command Injection</problemType>
+    <problemTypeId>ci:CommandInjection</problemTypeId>
+    <category>Security: Taint Paths</category>
+    <rating>6.92</rating>
+    <classification>Must Fix</classification>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-05-03 19:36:50 - new</date>
+    <package>org.owasp.webgoat.util</package>
+    <class>Exec</class>
+    <file>Exec.java</file>
+    <description><![CDATA[
+Exec.java (<Source Code>/org/owasp/webgoat/util):289
+	<-
+ParameterParser.java (<Source Code>/org/owasp/webgoat/session):615
+
+An identified taint path for the problem type 'Command Injection'
+Matching pattern in source kind 'Servlet Request Input': java.lang.String[] javax.servlet.ServletRequest.getParameterValues(java.lang.String)
+
+Matching pattern in sink kind 'Command Injection': java.lang.Process java.lang.Runtime.exec(java.lang.String)
+]]></description>
+  </finding>
+
+
+  <finding id="38">
+    <problemType>Command Injection</problemType>
+    <problemTypeId>ci:CommandInjection</problemTypeId>
+    <category>Security: Taint Paths</category>
+    <rating>4.80</rating>
+    <classification>Must Fix</classification>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-05-03 19:36:50 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>WSDLScanning</class>
+    <file>WSDLScanning.java</file>
+    <description><![CDATA[
+WSDLScanning.java (<Source Code>/org/owasp/webgoat/lessons):148
+	<-
+ParameterParser.java (<Source Code>/org/owasp/webgoat/session):581
+
+An identified taint path for the problem type 'Command Injection'
+Matching pattern in source kind 'Servlet Request Input': java.lang.String[] javax.servlet.ServletRequest.getParameterValues(java.lang.String)
+
+Matching pattern in sink kind 'Command Injection': void javax.xml.rpc.Call.setOperationName(javax.xml.namespace.QName)
+]]></description>
+  </finding>
+
+
+  <finding id="39">
+    <problemType>Command Injection</problemType>
+    <problemTypeId>ci:CommandInjection</problemTypeId>
+    <category>Security: Taint Paths</category>
+    <rating>3.50</rating>
+    <classification>Must Fix</classification>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-05-03 19:36:50 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>WSDLScanning</class>
+    <file>WSDLScanning.java</file>
+    <description><![CDATA[
+WSDLScanning.java (<Source Code>/org/owasp/webgoat/lessons):153
+	<-
+WSDLScanning.java (<Source Code>/org/owasp/webgoat/lessons):153
+
+An identified taint path for the problem type 'Command Injection'
+Matching pattern in source kind 'Servlet Request Input': java.lang.String javax.servlet.http.HttpServletRequest.getContextPath()
+
+Matching pattern in sink kind 'Command Injection': void javax.xml.rpc.Call.setTargetEndpointAddress(java.lang.String)
+]]></description>
+  </finding>
+</XanitizerFindingsList>

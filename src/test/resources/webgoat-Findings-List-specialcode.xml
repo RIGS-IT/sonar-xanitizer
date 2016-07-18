@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3636" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+
+
+  <finding id="3574" kind="SPECIAL">
+    <problemType>Hard-Coded Credentials in Variables: username</problemType>
+    <problemTypeId>LiteralStringsInVariablesSearch:username</problemTypeId>
+    <producer>BuiltIn:SPECIAL_CODE_CHECKER</producer>
+    <category>Security: Special Code</category>
+    <rating>8.00</rating>
+    <classification>Could Improve</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AbstractLesson</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AbstractLesson</class>
+    <file>AbstractLesson.java</file>
+    <line>82</line>
+    <description><![CDATA[
+AbstractLesson.java (<Source Code>/org/owasp/webgoat/lessons):82
+
+An identified special code for problem type 'Hard-Coded Credentials in Variables: username'.
+Literal credential in field 'USER_ROLE'
+
+Information about matching pattern in special code kind not available.
+]]></description>
+    <node lineNo="82" classFQN="org.owasp.webgoat.lessons.AbstractLesson" xFilePersistence="org.owasp.webgoat.lessons.AbstractLesson"/>
+  </finding>
+
+
+  <finding id="3594" kind="SPECIAL">
+    <problemType>Hard-Coded Credentials in Variables: username</problemType>
+    <problemTypeId>LiteralStringsInVariablesSearch:username</problemTypeId>
+    <producer>BuiltIn:SPECIAL_CODE_CHECKER</producer>
+    <category>Security: Special Code</category>
+    <rating>8.00</rating>
+    <classification>Duplicate</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AccessControlMatrix</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AccessControlMatrix</class>
+    <file>AccessControlMatrix.java</file>
+    <line>57</line>
+    <description><![CDATA[
+AccessControlMatrix.java (<Source Code>/org/owasp/webgoat/lessons):57
+
+An identified special code for problem type 'Hard-Coded Credentials in Variables: username'.
+Literal credential in field 'USER'
+
+Information about matching pattern in special code kind not available.
+]]></description>
+    <node lineNo="57" classFQN="org.owasp.webgoat.lessons.AccessControlMatrix" xFilePersistence="org.owasp.webgoat.lessons.AccessControlMatrix"/>
+  </finding>
+</XanitizerFindingsList>

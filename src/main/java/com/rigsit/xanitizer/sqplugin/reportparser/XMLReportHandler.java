@@ -70,10 +70,7 @@ public class XMLReportHandler extends DefaultHandler {
 
 		switch (qName) {
 		case "XanitizerFindingsList":
-			xmlReportContent.setToolVersion(attributes.getValue("xanitizerVersion"));
-			xmlReportContent.setToolVersionShort(attributes.getValue("xanitizerVersionShort"));
-			xmlReportContent
-					.setAnalysisEndDate(Long.parseLong(attributes.getValue("timeStampLong")));
+			startFindingsList(attributes);
 			break;
 		case "node":
 			nodeOrNull = mkNodeFromAttributes(attributes);
@@ -86,10 +83,23 @@ public class XMLReportHandler extends DefaultHandler {
 			break;
 		case "finding":
 			findingId = Integer.parseInt(attributes.getValue("id"));
-			findingKind = FindingKind.mk(attributes.getValue("kind"));
+			final String kind = attributes.getValue("kind");
+			if (kind != null) {
+				findingKind = FindingKind.mk(kind);
+			}
 			break;
 		default:
 			// do nothing
+		}
+	}
+
+	private void startFindingsList(final Attributes attributes) {
+		xmlReportContent.setToolVersion(attributes.getValue("xanitizerVersion"));
+		xmlReportContent.setToolVersionShort(attributes.getValue("xanitizerVersionShort"));
+
+		final String timestamp = attributes.getValue("timeStampLong");
+		if (timestamp != null) {
+			xmlReportContent.setAnalysisEndDate(Long.parseLong(timestamp));
 		}
 	}
 
@@ -181,8 +191,9 @@ public class XMLReportHandler extends DefaultHandler {
 		if (hasCollectedAllRelevantData()) {
 
 			// Skip informational findings.
-			if (!"Information".equals(classificationOrNull)) {
-
+			if (shouldSkipFinding()) {
+				LOG.info("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
+			} else {
 				final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId,
 						findingKind, producer, lineNo, descriptionOrNull, extraDescriptionOrNull,
 						mkClassFQNOrNull(pckgPath, clazz), originalAbsFileOrNull,
@@ -196,6 +207,22 @@ public class XMLReportHandler extends DefaultHandler {
 		}
 
 		resetData();
+	}
+
+	private boolean shouldSkipFinding() {
+		switch (classificationOrNull) {
+		case "Information":
+		case "Duplicate":
+		case "Harmless":
+		case "Ignore":
+		case "Falsely Reported":
+		case "Intended":
+		case "Obsolete":
+		case "Code Quality":
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	private boolean hasCollectedAllRelevantData() {

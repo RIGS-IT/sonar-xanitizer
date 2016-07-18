@@ -20,8 +20,6 @@
 package com.rigsit.xanitizer.sqplugin;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,8 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -62,6 +58,7 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
+import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
 /**
  * @author rust
@@ -70,30 +67,15 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
 public class XanitizerSensor implements Sensor {
 	private static final Logger LOG = Loggers.get(XanitizerSensor.class);
 
-	private static final Pattern TOOL_VERSION_PATTERN = Pattern
-			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
-
-	private static final DateFormat DATE_WITH_TIME_FORMATTER = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
-
 	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
-
-	private final String repositoryKey = XanitizerRulesDefinition.getRepositoryKey();
 
 	private final Set<String> activeXanRuleNames = new HashSet<>();
 
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator, final Settings settings,
 			final ActiveRules activeRules) {
 		this.javaResourceLocator = javaResourceLocator;
-
-		final String reportFileStringOrNull = settings
-				.getString(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
-		if (reportFileStringOrNull == null) {
-			reportFile = null;
-		} else {
-			reportFile = new File(reportFileStringOrNull);
-		}
+		this.reportFile = SensorUtil.geReportFile(settings);
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
 			if (activeRule.ruleKey().repository()
@@ -106,22 +88,12 @@ public class XanitizerSensor implements Sensor {
 
 	@Override
 	public boolean shouldExecuteOnProject(final Project project) {
-		return true;
+		return reportFile != null;
 	}
 
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
-		if (reportFile == null) {
-			LOG.error("Xanitizer parameter '" + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
-					+ "' not specified in project settings. Skipping analysis.");
-			return;
-		}
-
-		if (!reportFile.isFile()) {
-			LOG.error(
-					"Xanitizer XML report file '" + reportFile + "' not found. Skipping analysis.");
-			return;
-		}
+		assert reportFile != null;
 
 		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '"
 				+ project.name() + "'");
@@ -138,12 +110,12 @@ public class XanitizerSensor implements Sensor {
 
 		final String toolVersionShortOrNull = content.getToolVersionShortOrNull();
 		if (toolVersionShortOrNull == null) {
-			LOG.error("No attribute 'xanitizerVersionShort' found in XML report file '"
-					+ reportFile + "'. Skipping analysis.");
+			LOG.error("No attribute 'xanitizerVersionShort' found in XML report file '" + reportFile
+					+ "'. Skipping analysis.");
 			return;
 		}
 
-		final String errMsgOrNull = checkVersion(toolVersionShortOrNull, 2, 3, -1);
+		final String errMsgOrNull = SensorUtil.checkVersion(toolVersionShortOrNull, 2, 3, -1);
 		if (errMsgOrNull != null) {
 			LOG.error("Could not parse attribute 'xanitizerVersionShort' in XML report file '"
 					+ reportFile + "': " + errMsgOrNull + ". Skipping analysis.");
@@ -157,14 +129,15 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		final String analysisDatePresentation = convertToDateWithTimeString(
-				new Date(analysisEndDate));
-
-		createMeasures(project, sensorContext, analysisDatePresentation, content);
+		createMeasures(project, sensorContext, analysisEndDate, content);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void createMeasures(final Project project, final SensorContext sensorContext,
-			final String analysisDatePresentation, final XMLReportContent content) {
+			final long analysisEndDate, final XMLReportContent content) {
+
+		final String analysisDatePresentation = SensorUtil
+				.convertToDateWithTimeString(new Date(analysisEndDate));
 
 		final Map<Metric, Map<Resource, Integer>> metricValues = new LinkedHashMap<>();
 
@@ -194,52 +167,7 @@ public class XanitizerSensor implements Sensor {
 		}
 	}
 
-	private static String checkVersion(final String shortToolVersion, final int majorNeeded,
-			final int minorNeeded, final int patchNeeded) {
-		final Matcher m = TOOL_VERSION_PATTERN.matcher(shortToolVersion);
-		if (!m.matches()) {
-			return "XML report file version does not match <number>.<number>[,<number>]: '"
-					+ shortToolVersion + "'";
-		}
-		final int majorNo = Integer.parseInt(m.group(1));
-		final int minorNo = Integer.parseInt(m.group(2));
-
-		final int patchNo;
-		final String patchNoString = m.group(3);
-		if (patchNoString == null) {
-			// Does not exist.
-			patchNo = -1;
-		} else {
-			patchNo = Integer.parseInt(patchNoString);
-		}
-
-		if (majorNo < majorNeeded) {
-			return "XML report file version: major version number must be at least " + majorNeeded
-					+ ": '" + shortToolVersion + "'";
-		}
-
-		if (majorNo == majorNeeded) {
-			if (minorNo < minorNeeded) {
-				return "XML report file version: when the major version is " + majorNo
-						+ ", the minor version number must be at least " + minorNeeded + ": '"
-						+ shortToolVersion + "'";
-			}
-
-			if (minorNo == minorNeeded && patchNo < patchNeeded) {
-				return "XML report file version: when the major and minor version is " + majorNo
-						+ "." + minorNo + ", the patch number must be at least " + patchNeeded
-						+ ": '" + shortToolVersion + "'";
-			}
-		}
-
-		// Fine.
-		return null;
-	}
-
-	private static String convertToDateWithTimeString(Date date) {
-		return DATE_WITH_TIME_FORMATTER.format(date);
-	}
-
+	@SuppressWarnings("rawtypes")
 	private void generateIssuesForFinding(final XMLReportFinding finding,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
 			final String analysisDatePresentation, final Project project,
@@ -259,6 +187,8 @@ public class XanitizerSensor implements Sensor {
 					sensorContext);
 			break;
 		case GENERIC:
+		case NON_TAINTED:
+		case SANITIZER:
 			generateGenericIssue(finding, metricValuesAccu, analysisDatePresentation, project,
 					sensorContext);
 			break;
@@ -269,6 +199,7 @@ public class XanitizerSensor implements Sensor {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void generateGenericIssue(final XMLReportFinding finding,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
 			final String analysisDatePresentation, final Project project,
@@ -296,6 +227,7 @@ public class XanitizerSensor implements Sensor {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void generateUserIssue(final XMLReportFinding finding,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
 			final String analysisDatePresentation, final Project project,
@@ -307,12 +239,13 @@ public class XanitizerSensor implements Sensor {
 				XanitizerRule.mkForFindingOrNull(finding),
 				"User-defined finding for problem type '"
 						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
-						+ finding.getDescriptionOrNull()
+						+ finding.getDescription()
 						+ mkDescriptionSuffixForLocation(inputFileOrNull,
 								mkLocationForUserFindingString(finding)),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void generateSpecialCodeIssue(final XMLReportFinding finding,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
 			final String analysisDatePresentation, final Project project,
@@ -336,6 +269,7 @@ public class XanitizerSensor implements Sensor {
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void generateTaintPathIssue(final XMLReportFinding finding,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
 			final String analysisDatePresentation, final Project project,
@@ -418,22 +352,21 @@ public class XanitizerSensor implements Sensor {
 
 	private static void appendDescription(final StringBuilder sb, final XMLReportFinding finding) {
 		final String origAbsFileOrNull = finding.getOriginalAbsFileOrNull();
-		final String descOrNull = finding.getDescriptionOrNull();
-		final String extraDescOrNull = finding.getExtraDescriptionOrNull();
+		final String desc = finding.getDescription();
+		final String extraDesc = finding.getExtraDescription();
 
 		if (origAbsFileOrNull != null) {
 			sb.append(" with " + origAbsFileOrNull + ":\n");
 		}
 
-		if ((descOrNull == null || descOrNull.isEmpty())
-				&& (extraDescOrNull == null || extraDescOrNull.isEmpty())) {
+		if (desc.isEmpty() && extraDesc.isEmpty()) {
 			sb.append("- no description available -");
 		} else {
-			if (descOrNull != null && !descOrNull.isEmpty()) {
-				sb.append(descOrNull + "\n");
+			if (!desc.isEmpty()) {
+				sb.append(desc + "\n");
 			}
-			if (extraDescOrNull != null && !extraDescOrNull.isEmpty()) {
-				sb.append(extraDescOrNull);
+			if (!extraDesc.isEmpty()) {
+				sb.append(extraDesc);
 			}
 		}
 	}
@@ -509,6 +442,7 @@ public class XanitizerSensor implements Sensor {
 		return mkInputFileOrNullFromResource(resourceOrNull, sensorContext);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private boolean generateIssueOnInputFileOrProject(final InputFile inputFileOrNull,
 			final Project project, final int lineNo, final XanitizerRule rule,
 			final String descriptionOrNull, final XMLReportFinding xanFinding,
@@ -531,8 +465,9 @@ public class XanitizerSensor implements Sensor {
 		final Resource resourceToBeUsed = inputFileOrNull == null ? project
 				: sensorContext.getResource(inputFileOrNull);
 
-		final Severity severity = mkSeverity(xanFinding);
-		final RuleKey ruleKey = RuleKey.of(repositoryKey, rule.name());
+		final Severity severity = SensorUtil.mkSeverity(xanFinding);
+		final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
+				rule.name());
 
 		createNewIssue(inputFileOrNull, project, lineNo, rule, descriptionOrNull, xanFinding,
 				analysisDatePresentation, sensorContext, resourceToBeUsed, severity, ruleKey);
@@ -607,6 +542,7 @@ public class XanitizerSensor implements Sensor {
 				+ ")";
 	}
 
+	@SuppressWarnings("rawtypes")
 	private List<Metric> mkMetrics(final String bugTypeId) {
 		final List<Metric> result = new ArrayList<>();
 		result.add(XanitizerMetrics.getMetricForAllXanFindings());
@@ -619,6 +555,7 @@ public class XanitizerSensor implements Sensor {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static void incrementValueForResourceAndContainingResources(final Metric metric,
 			final Resource resource, final Project project,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu) {
@@ -638,6 +575,7 @@ public class XanitizerSensor implements Sensor {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static void incrementValue(final Metric metric, final Resource resource,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu) {
 		Map<Resource, Integer> innerMap = metricValuesAccu.get(metric);
@@ -652,37 +590,6 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		innerMap.put(resource, 1 + value);
-	}
-
-	private Severity mkSeverity(final XMLReportFinding xanFinding) {
-		final String findingClassification = xanFinding.getFindingClassificationOrNull();
-		if (findingClassification == null) {
-			// Should not occur.
-			return Severity.MINOR;
-		}
-		switch (findingClassification.toUpperCase()) {
-		case "MUST_FIX":
-		case "URGENT_FIX":
-			return Severity.BLOCKER;
-
-		default:
-			return mkSeverityFromRating(xanFinding);
-		}
-	}
-
-	private Severity mkSeverityFromRating(final XMLReportFinding xanFinding) {
-		// For the rest, we use the rating.
-		final double rating = xanFinding.getRating();
-		if (rating > 7) {
-			return Severity.CRITICAL;
-		}
-		if (rating > 4) {
-			return Severity.MAJOR;
-		}
-		if (rating > 1) {
-			return Severity.MINOR;
-		}
-		return Severity.INFO;
 	}
 
 	@Override

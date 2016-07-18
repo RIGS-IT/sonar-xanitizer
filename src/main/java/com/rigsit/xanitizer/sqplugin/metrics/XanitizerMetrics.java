@@ -31,6 +31,7 @@ import org.sonar.api.measures.Metrics;
  * @author rust
  * 
  */
+@SuppressWarnings("rawtypes")
 public final class XanitizerMetrics implements Metrics {
 
 	private static final String DOMAIN = "Xanitizer Findings";

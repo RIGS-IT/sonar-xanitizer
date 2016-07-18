@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3638" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+
+
+  <finding id="3637" kind="USER">
+    <problemType>Log Injection</problemType>
+    <problemTypeId>ci:LogInjection</problemTypeId>
+    <producer>BuiltIn:USER</producer>
+    <category>User: Manually Defined Findings</category>
+    <rating>8.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>XanitizerNonResource:No File Selected</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <file>No File Selected</file>
+    <line>-1</line>
+    <description><![CDATA[
+No File Selected
+]]></description>
+    <comment><![CDATA[
+test 1]]></comment>
+    <node lineNo="-1" classFQN="No File Selected" xFilePersistence="XanitizerNonResource:No File Selected"/>
+  </finding>
+
+
+  <finding id="3638" kind="USER">
+    <problemType>Log Injection</problemType>
+    <problemTypeId>ci:LogInjection</problemTypeId>
+    <producer>BuiltIn:USER</producer>
+    <category>User: Manually Defined Findings</category>
+    <rating>5.00</rating>
+    <classification>Information</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>XanitizerNonResource:No File Selected</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <file>No File Selected</file>
+    <line>-1</line>
+    <description><![CDATA[
+No File Selected
+]]></description>
+    <comment><![CDATA[
+test 2]]></comment>
+    <node lineNo="-1" classFQN="No File Selected" xFilePersistence="XanitizerNonResource:No File Selected"/>
+  </finding>
+</XanitizerFindingsList>

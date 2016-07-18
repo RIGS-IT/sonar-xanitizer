@@ -49,23 +49,25 @@ import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 		global = false, project = true
 
 		) })
+
+
 public class XanitizerSonarQubePlugin extends SonarPlugin {
 
 	public static final String XAN_XML_REPORT_FILE = "xanitizer.xmlReportFile";
 
 	@Override
 	public List<Class<?>> getExtensions() {
-		return (List) Arrays.asList(
+		return Arrays.asList(
 
-				XanitizerRulesDefinition.class
+				XanitizerRulesDefinition.class,
 
-		, XanitizerSensor.class
+				XanitizerSensor.class,
 
-		, XanitizerMetrics.class
+				XanitizerMetrics.class,
 
-		, XanitizerQualityProfile.class
+				XanitizerQualityProfile.class,
 
-		, XanitizerWidget.class
+				XanitizerWidget.class
 
 		);
 	}

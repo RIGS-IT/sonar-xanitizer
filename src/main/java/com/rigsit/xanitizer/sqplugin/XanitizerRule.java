@@ -132,6 +132,8 @@ public enum XanitizerRule {
 		case USER:
 			return USER_FINDING;
 		case GENERIC:
+		case NON_TAINTED:
+		case SANITIZER:
 			return mkGenericRule(finding);
 		case SPECIAL:
 			return SPECIAL_CODE_LOCATION;

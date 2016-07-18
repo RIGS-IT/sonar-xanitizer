@@ -95,11 +95,17 @@ public class XMLReportFinding {
 		return lineNoOrMinus1;
 	}
 
-	public String getDescriptionOrNull() {
+	public String getDescription() {
+		if (descriptionOrNull == null) {
+			return "";
+		}
 		return descriptionOrNull;
 	}
 
-	public String getExtraDescriptionOrNull() {
+	public String getExtraDescription() {
+		if (extraDescriptionOrNull == null) {
+			return "";
+		}
 		return extraDescriptionOrNull;
 	}
 

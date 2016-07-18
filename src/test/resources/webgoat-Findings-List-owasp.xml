@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3636" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+
+
+  <finding id="3560" kind="GENERIC">
+    <problemType>Libraries with known vulnerabilities</problemType>
+    <problemTypeId>OWASPDependencyCheckBugTypeID</problemTypeId>
+    <producer>PlugIn:OWASPDependencyCheck</producer>
+    <category>Security: OWASP Dependency Check</category>
+    <rating>5.80</rating>
+    <classification>Could Fix</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <file>axis-1.2.jar</file>
+    <line>-2</line>
+    <description><![CDATA[
+axis-1.2.jar: CVE-2012-5784
+axis-1.2.jar (C:/Users/nwe/Desktop/Xanitizer-2.3.0/examples/webgoat/WEB-INF/lib)
+
+National Vulnerability Database of NIST reports:
+Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.
+]]></description>
+    <extraDescription><![CDATA[
+National Vulnerability Database of NIST reports:
+Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.]]></extraDescription>
+    <originalAbsFile><![CDATA[
+C:\Users\nwe\Desktop\Xanitizer-1.0.0\examples\webgoat\WEB-INF\lib\axis-1.2.jar]]></originalAbsFile>
+    <node lineNo="-2" classFQN="${INSTALL_DIR}/examples/webgoat/WEB-INF/lib/axis-1.2.jar" xFilePersistence="XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar"/>
+  </finding>
+
+
+  <finding id="3559" kind="GENERIC">
+    <problemType>Libraries with known vulnerabilities</problemType>
+    <problemTypeId>OWASPDependencyCheckBugTypeID</problemTypeId>
+    <producer>PlugIn:OWASPDependencyCheck</producer>
+    <category>Security: OWASP Dependency Check</category>
+    <rating>5.80</rating>
+    <classification>Intended</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <file>axis-1.2.jar</file>
+    <line>-2</line>
+    <description><![CDATA[
+axis-1.2.jar: CVE-2014-3596
+axis-1.2.jar (C:/Users/nwe/Desktop/Xanitizer-2.3.0/examples/webgoat/WEB-INF/lib)
+
+National Vulnerability Database of NIST reports:
+The getCN function in Apache Axis 1.4 and earlier does not properly verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via a certificate with a subject that specifies a common name in a field that is not the CN field.  NOTE: this issue exists because of an incomplete fix for CVE-2012-5784.
+]]></description>
+    <extraDescription><![CDATA[
+National Vulnerability Database of NIST reports:
+The getCN function in Apache Axis 1.4 and earlier does not properly verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via a certificate with a subject that specifies a common name in a field that is not the CN field.  NOTE: this issue exists because of an incomplete fix for CVE-2012-5784.]]></extraDescription>
+    <originalAbsFile><![CDATA[
+C:\Users\nwe\Desktop\Xanitizer-1.0.0\examples\webgoat\WEB-INF\lib\axis-1.2.jar]]></originalAbsFile>
+    <node lineNo="-2" classFQN="${INSTALL_DIR}/examples/webgoat/WEB-INF/lib/axis-1.2.jar" xFilePersistence="XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar"/>
+  </finding>
+</XanitizerFindingsList>

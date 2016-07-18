@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3636" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+
+
+  <finding id="2777" kind="NON_TAINTED">
+    <problemType>Privacy Leak</problemType>
+    <problemTypeId>pl:PrivacyLeak</problemTypeId>
+    <producer>BuiltIn:TAINTPATHS</producer>
+    <category>Hint: Non-tainted Sinks</category>
+    <rating>0.00</rating>
+    <classification>Ignore</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AbstractLesson</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AbstractLesson</class>
+    <file>AbstractLesson.java</file>
+    <line>324</line>
+    <description><![CDATA[
+AbstractLesson.java (<Source Code>/org/owasp/webgoat/lessons):324
+
+An identified data flow sink. But uncritical for 'Privacy Leak' because it is not reached by any taint path of this problem type.
+Taint Sink: println(...)
+
+Matching pattern in sink kind 'System Output': void java.io.PrintStream.print*(**)
+]]></description>
+    <node lineNo="324" classFQN="org.owasp.webgoat.lessons.AbstractLesson" xFilePersistence="org.owasp.webgoat.lessons.AbstractLesson"/>
+  </finding>
+
+
+  <finding id="2106" kind="NON_TAINTED">
+    <problemType>Manipulated File System Access</problemType>
+    <problemTypeId>pt:PathTraversal</problemTypeId>
+    <producer>BuiltIn:TAINTPATHS</producer>
+    <category>Hint: Non-tainted Sinks</category>
+    <rating>0.00</rating>
+    <classification>Must Fix</classification>
+    <matchCode>NOT</matchCode>
+    <xFilePersistence>org.owasp.webgoat.lessons.AbstractLesson</xFilePersistence>
+    <reviewed>Reviewed</reviewed>
+    <date>2016-07-01 16:42:25 - new</date>
+    <package>org.owasp.webgoat.lessons</package>
+    <class>AbstractLesson</class>
+    <file>AbstractLesson.java</file>
+    <line>418</line>
+    <description><![CDATA[
+AbstractLesson.java (<Source Code>/org/owasp/webgoat/lessons):418
+
+An identified data flow sink. But uncritical for 'Manipulated File System Access' because it is not reached by any taint path of this problem type.
+Taint Sink: java.io.FileReader(...)
+
+Matching pattern in sink kind 'Manipulated File System Access': java.io.FileReader(java.lang.String)
+]]></description>
+    <node lineNo="418" classFQN="org.owasp.webgoat.lessons.AbstractLesson" xFilePersistence="org.owasp.webgoat.lessons.AbstractLesson"/>
+  </finding>
+</XanitizerFindingsList>
