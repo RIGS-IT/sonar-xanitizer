@@ -62,7 +62,7 @@
         <version>1.15</version>
         <extensions>true</extensions>
         <configuration>
-          <pluginClass>com.rigsit.xanitizer.sqplugin.XanSonarQubePlugin</pluginClass>
+          <pluginClass>com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin</pluginClass>
           <pluginKey>xanitizer</pluginKey>
           <pluginName>Xanitizer</pluginName>
           <pluginDescription>A plugin displaying the results of the Xanitizer analyis.</pluginDescription>
