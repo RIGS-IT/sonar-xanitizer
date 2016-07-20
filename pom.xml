@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>com.rigsit</groupId>
-  <artifactId>com.rigsit.xanitizer.sqplugin</artifactId>
+  <artifactId>sonar-xanitizer-plugin</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>sonar-plugin</packaging>
 
