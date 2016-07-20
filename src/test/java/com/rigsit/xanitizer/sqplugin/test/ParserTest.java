@@ -292,7 +292,7 @@ public class ParserTest {
 	public void testUnsupportedVersion() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/findings-List-old-xanitizer-version.xml").getFile());
+				getClass().getResource("/webgoat-Findings-List-oldversion.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
