@@ -80,6 +80,12 @@ public class SensorUtil {
 
 	public static String checkVersion(final String shortToolVersion, final int majorNeeded,
 			final int minorNeeded, final int patchNeeded) {
+		
+		if ("nightlyBuild".equals(shortToolVersion)) {
+			// special case for nightly build version
+			return null;
+		}
+		
 		final Matcher m = TOOL_VERSION_PATTERN.matcher(shortToolVersion);
 		if (!m.matches()) {
 			return "XML report file version does not match <number>.<number>[,<number>]: '"
