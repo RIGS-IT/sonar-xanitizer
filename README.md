@@ -22,10 +22,10 @@ Xanitizer can be downloaded for free at <a href="http://www.xanitizer.net" >http
 4. Restart SonarQube
 5. Adapt the build system so that on the machine where SonarQube is running, Xanitizer is run on the projects to be analyzed in headless mode, and creates a findings list report as an XML output file. The plugin does not run Xanitizer, it just reads the results of previous Xanitizer runs.
 6. Configure the location of the analysis results file of the project that should be displayed in SonarQube. This can be done in SonarQube's GUI:
-	a) Log in as administrator.
-	b) Select the project for which you want to specify the Xanitizer XML report file.
-	c) Select the “Administration” menu entry in the project's area. Note: Do not use the global “Administration” menu item in the top-bar, but the project-specific one beneath the project name.
-	d) Choose the menu item “General Settings”, and in the page that is shown then, at the left-hand side, click on the category “Xanitizer”.
-	e) Specify the XML report file in the edit field labeled “Xanitizer XML Report File”. This is the findings list report output file that was created by the headless execution as described in the step above.
-	f) Press the button labeled “Save Xanitizer Settings” so that the setting is saved in SonarQube.
+	1. Log in as administrator.
+	2. Select the project for which you want to specify the Xanitizer XML report file.
+	3. Select the “Administration” menu entry in the project's area. Note: Do not use the global “Administration” menu item in the top-bar, but the project-specific one beneath the project name.
+	4. Choose the menu item “General Settings”, and in the page that is shown then, at the left-hand side, click on the category “Xanitizer”.
+	5. Specify the XML report file in the edit field labeled “Xanitizer XML Report File”. This is the findings list report output file that was created by the headless execution as described in the step above.
+	6. Press the button labeled “Save Xanitizer Settings” so that the setting is saved in SonarQube.
 7. Activate Xanitizer's rules in the quality profile that you are using
