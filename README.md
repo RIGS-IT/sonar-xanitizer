@@ -32,11 +32,15 @@ Xanitizer can be downloaded for free at <a href="http://www.xanitizer.net" >http
 	5. Specify the **XML report file** in the edit field labeled “Xanitizer XML Report File”. This is the findings list report output file that was created by the headless execution as described in the step above.
 	6. Press the button labeled **“Save Xanitizer Settings”** so that the setting is saved in SonarQube.
 	
+![alt tag](https://cloud.githubusercontent.com/assets/20301605/16995214/6d9b0010-4eab-11e6-967a-ba6ff0e5d530.png)
+
 3. Activate Xanitizer's rules in the quality profile that you are using:
 	1. Select the **“Rules”** menu item in the top-level bar.
 	2. Enter **tag “xanitizer”** in the edit text at left-hand side beneath “Tag”. Then, only the Xanitizer rules are displayed in the right-hand area.
 	3. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
 	4. In the dialog that opens, select the quality profile that you use for your project.
+
+![alt tag] (https://cloud.githubusercontent.com/assets/20301605/16995219/732b891e-4eab-11e6-9f38-a2d54b4e3a17.png)
 	
 ## Adding the widget
 
@@ -45,6 +49,8 @@ In order to display the Xanitizer issues, a special widget is provided. It is ac
 2. Click on the **“Dashboards”** menu item (in the third bar, below the project name), and select the dashboard that you are using (“Custom” by default). This will show your dashboard.
 3. Click on **“Configure widgets”** in the upper right corner.
 4. In the yellow area, type “xanitizer” into the search field. Now only the Xanitizer widget can be selected. Click on **“Add widget”**, and then on **“Back to dashboard”** in the upper right corner to display the Xanitizer widget.
+
+![alt tag] (https://cloud.githubusercontent.com/assets/20301605/16995223/766968d0-4eab-11e6-88ec-8b1eb23d5d06.png)
 
 ## Mapping of Xanitizer Findings to SonarQube Issues
 
