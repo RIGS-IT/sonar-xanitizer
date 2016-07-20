@@ -94,6 +94,12 @@ public class XanitizerSensor implements Sensor {
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
 		assert reportFile != null;
+		
+		if (activeXanRuleNames.isEmpty()) {
+			LOG.warn(
+					"No Xanitizer rule is set active in the used quality profile. No issues will be created.");
+			return;
+		}
 
 		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '"
 				+ project.name() + "'");
