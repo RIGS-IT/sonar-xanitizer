@@ -126,11 +126,12 @@ public class PluginTest {
 	public void testMetrics() {
 		assertNotNull(XanitizerMetrics.getMetricForAllXanFindings());
 		assertNotNull(XanitizerMetrics.getMetricForNewXanFindings());
-		
+
 		for (Severity severity : Severity.values()) {
-			assertNotNull("No metric for severity " + severity, XanitizerMetrics.getMetricForSeverity(severity));
+			assertNotNull("No metric for severity " + severity,
+					XanitizerMetrics.getMetricForSeverity(severity));
 		}
-		
+
 		final XanitizerMetrics metrics = new XanitizerMetrics();
 
 		final int allMetrics = metrics.getMetrics().size();
@@ -138,6 +139,13 @@ public class PluginTest {
 		assertEquals(allMetrics, GeneratedBugTypeIds.getPredefinedBugTypeIdMap().size()
 				+ Severity.values().length + 2 /* all and new findings */);
 
+	}
+
+	@Test
+	public void testUndefinedProblemType() {
+		final String unknown = "unknown";
+		final String presentationName = GeneratedBugTypeIds.mkPresentationNameForBugTypeId(unknown);
+		assertEquals(unknown, presentationName);
 	}
 
 }
