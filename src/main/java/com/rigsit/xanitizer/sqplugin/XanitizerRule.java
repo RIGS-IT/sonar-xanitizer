@@ -127,7 +127,13 @@ public enum XanitizerRule {
 		return shortDescription;
 	}
 
-	public static XanitizerRule mkForFindingOrNull(final XMLReportFinding finding) {
+	/**
+	 * Returns the rule corresponding to the kind of the given finding
+	 * 
+	 * @param finding
+	 * @return the corresponding rule or null
+	 */
+	public static XanitizerRule mkRuleForFindingOrNull(final XMLReportFinding finding) {
 		switch (finding.getFindingKind()) {
 		case USER:
 			return USER_FINDING;

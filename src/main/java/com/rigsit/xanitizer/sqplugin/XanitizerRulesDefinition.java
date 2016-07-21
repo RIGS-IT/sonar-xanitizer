@@ -22,6 +22,13 @@ package com.rigsit.xanitizer.sqplugin;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.plugins.java.Java;
 
+/**
+ * 
+ * Defines the rules set of the Xanitizer plugin
+ * 
+ * @author nwe
+ *
+ */
 public final class XanitizerRulesDefinition implements RulesDefinition {
 
 	@Override

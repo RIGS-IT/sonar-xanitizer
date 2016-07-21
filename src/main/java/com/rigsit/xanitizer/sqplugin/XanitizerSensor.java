@@ -52,7 +52,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
-import com.rigsit.xanitizer.sqplugin.metrics.Util;
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedBugTypeIds;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
@@ -94,7 +94,7 @@ public class XanitizerSensor implements Sensor {
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
 		assert reportFile != null;
-		
+
 		if (activeXanRuleNames.isEmpty()) {
 			LOG.warn(
 					"No Xanitizer rule is set active in the used quality profile. No issues will be created.");
@@ -219,7 +219,7 @@ public class XanitizerSensor implements Sensor {
 			// No line number.
 			final int lineNumber = -1;
 			generateIssueOnInputFileOrProject(null, project, lineNumber,
-					XanitizerRule.mkForFindingOrNull(finding),
+					XanitizerRule.mkRuleForFindingOrNull(finding),
 					mkOWASPDepCheckFindingDescription(finding), finding, analysisDatePresentation,
 					metricValuesAccu, sensorContext);
 		} else {
@@ -228,8 +228,9 @@ public class XanitizerSensor implements Sensor {
 
 			generateIssueOnInputFileOrProject(inputFileOrNull, project,
 					normalizeLineNo(finding.getLineNoOrMinus1()),
-					XanitizerRule.mkForFindingOrNull(finding), mkGenericFindingDescription(finding),
-					finding, analysisDatePresentation, metricValuesAccu, sensorContext);
+					XanitizerRule.mkRuleForFindingOrNull(finding),
+					mkGenericFindingDescription(finding), finding, analysisDatePresentation,
+					metricValuesAccu, sensorContext);
 		}
 	}
 
@@ -242,10 +243,11 @@ public class XanitizerSensor implements Sensor {
 				sensorContext);
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
 				normalizeLineNo(finding.getLineNoOrMinus1()),
-				XanitizerRule.mkForFindingOrNull(finding),
+				XanitizerRule.mkRuleForFindingOrNull(finding),
 				"User-defined finding for problem type '"
-						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
-						+ finding.getDescription()
+						+ GeneratedBugTypeIds
+								.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
+						+ "'" + finding.getDescription()
 						+ mkDescriptionSuffixForLocation(inputFileOrNull,
 								mkLocationForUserFindingString(finding)),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
@@ -267,9 +269,11 @@ public class XanitizerSensor implements Sensor {
 
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
 				normalizeLineNo(finding.getLineNoOrMinus1()),
-				XanitizerRule.mkForFindingOrNull(finding),
+				XanitizerRule.mkRuleForFindingOrNull(finding),
 				"Special code location for problem type '"
-						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId()) + "'"
+						+ GeneratedBugTypeIds
+								.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
+						+ "'"
 						+ mkDescriptionSuffixForLocation(inputFileOrNull,
 								mkLocationString(node, sensorContext)),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
@@ -292,9 +296,10 @@ public class XanitizerSensor implements Sensor {
 		final InputFile inputFileOrNull = mkInputFileOrNull(endNode, sensorContext);
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
 				normalizeLineNo(endNode.getLineNoOrMinus1()),
-				XanitizerRule.mkForFindingOrNull(finding),
+				XanitizerRule.mkRuleForFindingOrNull(finding),
 				"Taint path for problem type '"
-						+ Util.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
+						+ GeneratedBugTypeIds
+								.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
 						+ "', path starting at " + mkLocationString(startNode, sensorContext)
 						+ " and ending at " + mkLocationString(endNode, sensorContext),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);

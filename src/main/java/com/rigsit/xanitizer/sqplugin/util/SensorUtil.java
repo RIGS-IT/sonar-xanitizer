@@ -40,24 +40,35 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
  *
  */
 public class SensorUtil {
-	
+
 	private static final Logger LOG = Loggers.get(SensorUtil.class);
-	
-	
+
 	private static final Pattern TOOL_VERSION_PATTERN = Pattern
 			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
-	
+
 	private static final DateFormat DATE_WITH_TIME_FORMATTER = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
-	
+
 	private SensorUtil() {
 		// hide constructor
 	}
-	
+
+	/**
+	 * Formats a date
+	 * 
+	 * @param date
+	 * @return
+	 */
 	public static String convertToDateWithTimeString(Date date) {
 		return DATE_WITH_TIME_FORMATTER.format(date);
 	}
-	
+
+	/**
+	 * Extracts the XML report file from the SonarQube settings.
+	 * 
+	 * @param settings
+	 * @return
+	 */
 	public static File geReportFile(final Settings settings) {
 		final String reportFileString = settings
 				.getString(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
@@ -79,14 +90,24 @@ public class SensorUtil {
 		return reportFile;
 	}
 
+	/**
+	 * Checks if the given version string represents a version that matches or
+	 * is higher than the given major.minor.patch values
+	 * 
+	 * @param shortToolVersion
+	 * @param majorNeeded
+	 * @param minorNeeded
+	 * @param patchNeeded
+	 * @return An error message or null if the version string is okay
+	 */
 	public static String checkVersion(final String shortToolVersion, final int majorNeeded,
 			final int minorNeeded, final int patchNeeded) {
-		
+
 		if ("nightlyBuild".equals(shortToolVersion)) {
 			// special case for nightly build version
 			return null;
 		}
-		
+
 		final Matcher m = TOOL_VERSION_PATTERN.matcher(shortToolVersion);
 		if (!m.matches()) {
 			return "XML report file version does not match <number>.<number>[,<number>]: '"
@@ -126,7 +147,12 @@ public class SensorUtil {
 		// Fine.
 		return null;
 	}
-	
+
+	/**
+	 * Returns the severity of a SonarQube issue for the given Xanitizer finding
+	 * @param xanFinding
+	 * @return
+	 */
 	public static Severity mkSeverity(final XMLReportFinding xanFinding) {
 		final String findingClassification = xanFinding.getFindingClassificationOrNull();
 		if (findingClassification == null) {

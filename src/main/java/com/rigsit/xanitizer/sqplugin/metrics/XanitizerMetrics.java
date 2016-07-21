@@ -49,140 +49,140 @@ public final class XanitizerMetrics implements Metrics {
 	static {
 		ALL_XAN_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "All", "All Xanitizer Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "All", "All Xanitizer Findings", Metric.ValueType.INT)
 
-				.setDescription("All Xanitizer Findings")
+						.setDescription("All Xanitizer Findings")
 
-				.setQualitative(true)
+						.setQualitative(true)
 
-				.setBestValue(0.0)
+						.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+						.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+						.setDomain(DOMAIN)
 
-				.create();
+						.create();
 
 		NEW_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "New", "New Xanitizer Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "New", "New Xanitizer Findings", Metric.ValueType.INT)
 
-				.setDescription("New Xanitizer Findings")
+						.setDescription("New Xanitizer Findings")
 
-				.setQualitative(true)
+						.setQualitative(true)
 
-				.setBestValue(0.0)
+						.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+						.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+						.setDomain(DOMAIN)
 
-				.create();
+						.create();
 
 		BLOCKER_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "Blocker", "Xanitizer Blocker Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "Blocker", "Xanitizer Blocker Findings",
+						Metric.ValueType.INT)
 
-				.setDescription("Xanitizer Blocker Findings")
+								.setDescription("Xanitizer Blocker Findings")
 
-				.setQualitative(true)
+								.setQualitative(true)
 
-				.setBestValue(0.0)
+								.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+								.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+								.setDomain(DOMAIN)
 
-				.create();
+								.create();
 
 		CRITICAL_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "Critical", "Xanitizer Critical Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "Critical", "Xanitizer Critical Findings",
+						Metric.ValueType.INT)
 
-				.setDescription("Xanitizer Critical Findings")
+								.setDescription("Xanitizer Critical Findings")
 
-				.setQualitative(true)
+								.setQualitative(true)
 
-				.setBestValue(0.0)
+								.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+								.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+								.setDomain(DOMAIN)
 
-				.create();
+								.create();
 
 		MAJOR_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "Major", "Xanitizer Major Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "Major", "Xanitizer Major Findings", Metric.ValueType.INT)
 
-				.setDescription("Xanitizer Major Findings")
+						.setDescription("Xanitizer Major Findings")
 
-				.setQualitative(true)
+						.setQualitative(true)
 
-				.setBestValue(0.0)
+						.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+						.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+						.setDomain(DOMAIN)
 
-				.create();
+						.create();
 
 		MINOR_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "Minor", "Xanitizer Minor Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "Minor", "Xanitizer Minor Findings", Metric.ValueType.INT)
 
-				.setDescription("Xanitizer Minor Findings")
+						.setDescription("Xanitizer Minor Findings")
 
-				.setQualitative(true)
+						.setQualitative(true)
 
-				.setBestValue(0.0)
+						.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+						.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+						.setDomain(DOMAIN)
 
-				.create();
+						.create();
 
 		INFO_FINDINGS_METRIC =
 
-		new Metric.Builder(PFIX + "Info", "Xanitizer Info Findings", Metric.ValueType.INT)
+				new Metric.Builder(PFIX + "Info", "Xanitizer Info Findings", Metric.ValueType.INT)
 
-				.setDescription("Xanitizer Info Findings")
+						.setDescription("Xanitizer Info Findings")
 
-				.setQualitative(true)
+						.setQualitative(true)
 
-				.setBestValue(0.0)
+						.setBestValue(0.0)
 
-				.setDirection(Metric.DIRECTION_WORST)
+						.setDirection(Metric.DIRECTION_WORST)
 
-				.setDomain(DOMAIN)
+						.setDomain(DOMAIN)
 
-				.create();
+						.create();
 	}
 
 	private final List<Metric> metrics;
 
 	public XanitizerMetrics() {
-		final List<Metric> resultAccu = new ArrayList<>();
-		resultAccu.add(ALL_XAN_FINDINGS_METRIC);
-		resultAccu.add(NEW_FINDINGS_METRIC);
-		resultAccu.add(BLOCKER_FINDINGS_METRIC);
-		resultAccu.add(CRITICAL_FINDINGS_METRIC);
-		resultAccu.add(MAJOR_FINDINGS_METRIC);
-		resultAccu.add(MINOR_FINDINGS_METRIC);
-		resultAccu.add(INFO_FINDINGS_METRIC);
+		metrics = new ArrayList<>();
+		metrics.add(ALL_XAN_FINDINGS_METRIC);
+		metrics.add(NEW_FINDINGS_METRIC);
+		metrics.add(BLOCKER_FINDINGS_METRIC);
+		metrics.add(CRITICAL_FINDINGS_METRIC);
+		metrics.add(MAJOR_FINDINGS_METRIC);
+		metrics.add(MINOR_FINDINGS_METRIC);
+		metrics.add(INFO_FINDINGS_METRIC);
 
-		final Map<String, Integer> predefinedBugTypeIds = mkPredefinedBugTypeIdMap();
+		final Map<String, Integer> predefinedBugTypeIds = GeneratedBugTypeIds
+				.getPredefinedBugTypeIdMap();
 
 		for (final String bugTypeId : predefinedBugTypeIds.keySet()) {
 			final Metric metricOrNull = mkMetricForBugTypeIdOrNull(bugTypeId);
 			if (metricOrNull != null) {
-				resultAccu.add(metricOrNull);
+				metrics.add(metricOrNull);
 			}
 		}
-
-		// Result is ready.
-		metrics = resultAccu;
 	}
 
 	@Override
@@ -190,8 +190,14 @@ public final class XanitizerMetrics implements Metrics {
 		return metrics;
 	}
 
+	/**
+	 * Creates a metric object for a given Xanitizer problem type identifier
+	 * @param bugTypeId
+	 * @return
+	 */
 	public static Metric mkMetricForBugTypeIdOrNull(final String bugTypeId) {
-		final Map<String, Integer> predefinedBugTypeIds = mkPredefinedBugTypeIdMap();
+		final Map<String, Integer> predefinedBugTypeIds = GeneratedBugTypeIds
+				.getPredefinedBugTypeIdMap();
 		final Integer num = predefinedBugTypeIds.get(bugTypeId);
 		if (num != null) {
 
@@ -230,25 +236,34 @@ public final class XanitizerMetrics implements Metrics {
 		 */
 		final int limit = 60;
 		String candidate = "Xanitizer Findings for "
-				+ Util.mkPresentationNameForBugTypeId(bugTypeId);
+				+ GeneratedBugTypeIds.mkPresentationNameForBugTypeId(bugTypeId);
 		if (candidate.length() > limit) {
 			candidate = candidate.substring(0, limit - 3) + "...";
 		}
 		return candidate;
 	}
 
-	private static Map<String, Integer> mkPredefinedBugTypeIdMap() {
-		return GeneratedBugTypeIds.GENERATED_BUG_TYPE_IDS;
-	}
-
+	/**
+	 * Returns the metric object counting all Xanitizer findings
+	 * @return
+	 */
 	public static Metric getMetricForAllXanFindings() {
 		return ALL_XAN_FINDINGS_METRIC;
 	}
 
+	/**
+	 * Returns the metric object counting all new Xanitizer findings
+	 * @return
+	 */
 	public static Metric getMetricForNewXanFindings() {
 		return NEW_FINDINGS_METRIC;
 	}
 
+	/**
+	 * Returns the metric object counting the Xanitizer findings of the given severity
+	 * @param severity
+	 * @return
+	 */
 	public static Metric getMetricForSeverity(final Severity severity) {
 
 		switch (severity) {

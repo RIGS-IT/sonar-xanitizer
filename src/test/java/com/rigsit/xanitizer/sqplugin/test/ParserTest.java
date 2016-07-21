@@ -90,7 +90,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.INFO, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.GENERIC_FINDING, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -117,7 +117,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.BLOCKER, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.GENERIC_FINDING, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -144,7 +144,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.BLOCKER, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.GENERIC_FINDING, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -171,7 +171,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.MINOR, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.FINDBUGS_FINDING, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -198,7 +198,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.MAJOR, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.OWASP_DEPENDENCY_CHECK_FINDING, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -225,7 +225,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.CRITICAL, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.SPECIAL_CODE_LOCATION, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -252,7 +252,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.MAJOR, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.TAINT_PATH, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
@@ -279,7 +279,7 @@ public class ParserTest {
 			final Severity severity = SensorUtil.mkSeverity(finding);
 			assertEquals(Severity.CRITICAL, severity);
 			
-			final XanitizerRule rule = XanitizerRule.mkForFindingOrNull(finding);
+			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
 			assertEquals(XanitizerRule.USER_FINDING, rule);
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
