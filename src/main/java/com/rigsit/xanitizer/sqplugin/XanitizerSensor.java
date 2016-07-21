@@ -72,6 +72,12 @@ public class XanitizerSensor implements Sensor {
 
 	private final Set<String> activeXanRuleNames = new HashSet<>();
 
+	/**
+	 * The Xanitizer sensor
+	 * @param javaResourceLocator
+	 * @param settings
+	 * @param activeRules
+	 */
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator, final Settings settings,
 			final ActiveRules activeRules) {
 		this.javaResourceLocator = javaResourceLocator;
