@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import com.rigsit.xanitizer.sqplugin.XanitizerRule;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
@@ -310,4 +311,11 @@ public class ParserTest {
 		}
 	}
 
+	@Test
+	public void testReportNode() {
+		final XMLReportNode node = new XMLReportNode("", -1, "");
+		assertNull(node.getClassFQNOrNull());
+		assertEquals(-1, node.getLineNoOrMinus1());
+		assertNull(node.getXFilePersistenceOrNull());
+	}
 }
