@@ -8,6 +8,5 @@ jdk:
 cache:
   directories:
   - $HOME/.m2
-  – $HOME/.sonar/cache
 
 script: mvn clean install org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=ced3d872d85444b0755597e10e612e4b429374fa
