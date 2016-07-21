@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/RIGS-IT/sonar-xanitizer.svg?branch=master)](https://travis-ci.org/RIGS-IT/sonar-xanitizer)
-
 # sonar-xanitizer
 Integrates Xanitizer results into SonarQube
+
+[![Build Status](https://travis-ci.org/RIGS-IT/sonar-xanitizer.svg?branch=master)](https://travis-ci.org/RIGS-IT/sonar-xanitizer)
 
 - License: Apache License 2
 - Author: [RIGS IT](https://www.rigs-it.net)
