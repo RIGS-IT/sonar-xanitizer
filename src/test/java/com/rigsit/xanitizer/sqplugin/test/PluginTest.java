@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sonar.api.SonarPlugin;
+import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.rules.ActiveRule;
@@ -42,6 +43,7 @@ import com.rigsit.xanitizer.sqplugin.XanitizerRule;
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedBugTypeIds;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
@@ -118,6 +120,24 @@ public class PluginTest {
 		assertNotNull(reportFile);
 		assertTrue(reportFile.isFile());
 		assertEquals(new File(reportFileString), reportFile);
+	}
+
+	@Test
+	public void testMetrics() {
+		assertNotNull(XanitizerMetrics.getMetricForAllXanFindings());
+		assertNotNull(XanitizerMetrics.getMetricForNewXanFindings());
+		
+		for (Severity severity : Severity.values()) {
+			assertNotNull("No metric for severity " + severity, XanitizerMetrics.getMetricForSeverity(severity));
+		}
+		
+		final XanitizerMetrics metrics = new XanitizerMetrics();
+
+		final int allMetrics = metrics.getMetrics().size();
+
+		assertEquals(allMetrics, GeneratedBugTypeIds.getPredefinedBugTypeIdMap().size()
+				+ Severity.values().length + 2 /* all and new findings */);
+
 	}
 
 }
