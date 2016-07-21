@@ -31,8 +31,11 @@ import java.util.List;
 import org.junit.Test;
 import org.sonar.api.SonarPlugin;
 import org.sonar.api.config.Settings;
+import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Repository;
+import org.sonar.api.utils.ValidationMessages;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerQualityProfile;
 import com.rigsit.xanitizer.sqplugin.XanitizerRule;
@@ -77,6 +80,24 @@ public class PluginTest {
 		for (XanitizerRule rule : XanitizerRule.values()) {
 			assertNotNull(repository.rule(rule.toString()));
 		}
+	}
+
+	@Test
+	public void testQualityProfile() {
+
+		final RulesProfile profile = new XanitizerQualityProfile()
+				.createProfile(ValidationMessages.create());
+
+		for (XanitizerRule rule : XanitizerRule.values()) {
+			boolean isRuleActive = false;
+			for (ActiveRule activeRule : profile.getActiveRules()) {
+				if (activeRule.getRuleKey().equals(rule.name())) {
+					isRuleActive = true;
+				}
+			}
+			assertTrue("Rule " + rule.getPresentationName() + " is not active!", isRuleActive);
+		}
+
 	}
 
 	@Test
