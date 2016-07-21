@@ -124,56 +124,43 @@ public class XMLReportHandler extends DefaultHandler {
 	public void endElement(final String uri, final String localName, final String qName)
 			throws SAXException {
 		switch (qName) {
-
 		case "problemTypeId":
 			problemTypeId = collectedCharacters.toString();
 			break;
-
 		case "class":
 			clazz = collectedCharacters.toString();
 			break;
-
 		case "package":
 			pckgPath = collectedCharacters.toString();
 			break;
-
 		case "classification":
 			classificationOrNull = collectedCharacters.toString();
 			break;
-
 		case "producer":
 			producer = collectedCharacters.toString();
 			break;
-
 		case "line":
 			// The line number might contain separator commas.
 			lineNo = Integer.parseInt(collectedCharacters.toString().replace(",", ""));
 			break;
-
 		case "rating":
 			rating = Double.parseDouble(collectedCharacters.toString());
 			break;
-
 		case "description":
 			descriptionOrNull = collectedCharacters.toString();
 			break;
-
 		case "extraDescription":
 			extraDescriptionOrNull = collectedCharacters.toString();
 			break;
-
 		case "originalAbsFile":
-			extraDescriptionOrNull = collectedCharacters.toString();
+			originalAbsFileOrNull = collectedCharacters.toString();
 			break;
-
 		case "matchCode":
 			matchCode = collectedCharacters.toString();
 			break;
-
 		case "xFilePersistence":
 			persistenceOrNull = collectedCharacters.toString();
 			break;
-
 		case "finding":
 			// Finishing a finding.
 			endFinding();
