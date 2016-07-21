@@ -43,6 +43,7 @@ public class SensorUtil {
 	
 	private static final Logger LOG = Loggers.get(SensorUtil.class);
 	
+	
 	private static final Pattern TOOL_VERSION_PATTERN = Pattern
 			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
 	
