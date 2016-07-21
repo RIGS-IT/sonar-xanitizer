@@ -27,6 +27,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * Event handler for parsing the XML report file
+ * 
  * @author nwe
  *
  */
@@ -58,6 +60,10 @@ public class XMLReportHandler extends DefaultHandler {
 	private XMLReportNode startNodeOrNull;
 	private XMLReportNode endNodeOrNull;
 
+	/**
+	 * 
+	 * @param xmlReportContent
+	 */
 	public XMLReportHandler(final XMLReportContent xmlReportContent) {
 		this.xmlReportContent = xmlReportContent;
 	}
@@ -187,7 +193,7 @@ public class XMLReportHandler extends DefaultHandler {
 						classificationOrNull, rating, matchCode, persistenceOrNull, nodeOrNull,
 						startNodeOrNull, endNodeOrNull);
 
-				xmlReportContent.add(f);
+				xmlReportContent.addFinding(f);
 			}
 		} else {
 			LOG.error("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);

@@ -51,7 +51,11 @@ public class XMLReportContent {
 		return toolVersionShortOrNull;
 	}
 
-	public void add(final XMLReportFinding f) {
+	/**
+	 * Adds a finding to the content
+	 * @param f
+	 */
+	public void addFinding(final XMLReportFinding f) {
 		xmlReportFindings.add(f);
 	}
 

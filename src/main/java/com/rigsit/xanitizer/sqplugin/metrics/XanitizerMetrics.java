@@ -28,6 +28,8 @@ import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.Metrics;
 
 /**
+ * Implementation of the Metrics interface
+ * 
  * @author rust
  * 
  */
@@ -164,6 +166,9 @@ public final class XanitizerMetrics implements Metrics {
 
 	private final List<Metric> metrics;
 
+	/**
+	 * Create all metrics
+	 */
 	public XanitizerMetrics() {
 		metrics = new ArrayList<>();
 		metrics.add(ALL_XAN_FINDINGS_METRIC);
@@ -192,6 +197,7 @@ public final class XanitizerMetrics implements Metrics {
 
 	/**
 	 * Creates a metric object for a given Xanitizer problem type identifier
+	 * 
 	 * @param bugTypeId
 	 * @return
 	 */
@@ -245,6 +251,7 @@ public final class XanitizerMetrics implements Metrics {
 
 	/**
 	 * Returns the metric object counting all Xanitizer findings
+	 * 
 	 * @return
 	 */
 	public static Metric getMetricForAllXanFindings() {
@@ -253,6 +260,7 @@ public final class XanitizerMetrics implements Metrics {
 
 	/**
 	 * Returns the metric object counting all new Xanitizer findings
+	 * 
 	 * @return
 	 */
 	public static Metric getMetricForNewXanFindings() {
@@ -260,7 +268,9 @@ public final class XanitizerMetrics implements Metrics {
 	}
 
 	/**
-	 * Returns the metric object counting the Xanitizer findings of the given severity
+	 * Returns the metric object counting the Xanitizer findings of the given
+	 * severity
+	 * 
 	 * @param severity
 	 * @return
 	 */

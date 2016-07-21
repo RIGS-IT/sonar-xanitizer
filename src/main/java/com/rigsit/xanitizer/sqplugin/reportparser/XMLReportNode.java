@@ -29,6 +29,13 @@ public class XMLReportNode {
 	private final int lineNoOrMinus1;
 	private final String xFilePersistenceOrNull;
 
+	/**
+	 * The representation of a single node of a taint path
+	 * 
+	 * @param classFQNOrEmpty
+	 * @param lineNoOrMinus1
+	 * @param urlOrEmpty
+	 */
 	public XMLReportNode(final String classFQNOrEmpty, final int lineNoOrMinus1,
 			final String urlOrEmpty) {
 		this.classFQNOrNull = classFQNOrEmpty.isEmpty() ? null : classFQNOrEmpty;

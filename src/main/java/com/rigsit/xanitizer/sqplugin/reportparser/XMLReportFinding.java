@@ -20,6 +20,9 @@
 package com.rigsit.xanitizer.sqplugin.reportparser;
 
 /**
+ * 
+ * The representation of a Xanitizer finding
+ * 
  * @author rust
  *
  */
@@ -45,6 +48,25 @@ public class XMLReportFinding {
 	private final XMLReportNode startNodeOfPathOrNull;
 	private final XMLReportNode endNodeOfPathOrNull;
 
+	/**
+	 * 
+	 * @param findingID
+	 * @param problemTypeId
+	 * @param findingKind
+	 * @param findingProducer
+	 * @param lineNoOrMinus1
+	 * @param descriptionOrNull
+	 * @param extraDescriptionOrNull
+	 * @param classFQNOrNull
+	 * @param originalAbsFileOrNull
+	 * @param classificationOrNull
+	 * @param rating
+	 * @param matchCode
+	 * @param persistenceStringOrNull
+	 * @param nodeOrNull
+	 * @param startNodeOfPathOrNull
+	 * @param endNodeOfPathOrNull
+	 */
 	public XMLReportFinding(final int findingID, final String problemTypeId,
 			final FindingKind findingKind, final String findingProducer, final int lineNoOrMinus1,
 

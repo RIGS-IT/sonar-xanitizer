@@ -35,7 +35,15 @@ import org.xml.sax.SAXException;
  */
 public class XMLReportParser {
 
-	public XMLReportContent parse(final File f)
+	/**
+	 * Parses the given XML report file and stores the extracted information in the returned report content
+	 * @param reportFile
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	public XMLReportContent parse(final File reportFile)
 			throws SAXException, IOException, ParserConfigurationException {
 
 		final XMLReportContent xmlReportContent = new XMLReportContent();
@@ -50,7 +58,7 @@ public class XMLReportParser {
 		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
 		final SAXParser saxParser = factory.newSAXParser();
 
-		saxParser.parse(f, handler);
+		saxParser.parse(reportFile, handler);
 
 		return xmlReportContent;
 	}
