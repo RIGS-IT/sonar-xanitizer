@@ -44,7 +44,7 @@ public class GeneratedBugTypeIds {
           PRESENTATION_NAMES.put("RegexSearch:PasswordInConfigFile", "Password in config file");
 
           GENERATED_BUG_TYPE_IDS.put("RegexSearch:CredentialsInJavaSourceFile", 10);
-          PRESENTATION_NAMES.put("RegexSearch:CredentialsInJavaSourceFile", " in Java source file");
+          PRESENTATION_NAMES.put("RegexSearch:CredentialsInJavaSourceFile", "in Java source file");
 
           GENERATED_BUG_TYPE_IDS.put("GWT:FRAMEWORK_SIMULATION:UnusedRPCMethods", 11);
           PRESENTATION_NAMES.put("GWT:FRAMEWORK_SIMULATION:UnusedRPCMethods", "GWT Unused RPC Methods");
@@ -166,6 +166,12 @@ public class GeneratedBugTypeIds {
         // hide constructor
     }
 
+    /**
+     *
+     * Returns the presentation name for the given problem type id if it is registered.
+     * Otherwise returns the id again.
+     *
+     */
     public static String mkPresentationNameForBugTypeId(final String bugTypeId) {
         String candidate = PRESENTATION_NAMES.get(bugTypeId);
         if (candidate == null) {
@@ -174,6 +180,11 @@ public class GeneratedBugTypeIds {
         return candidate;
     }
 
+    /**
+     *
+     * Returns the map of registered bug types.
+     *
+     */
     public static Map<String, Integer> getPredefinedBugTypeIdMap() {
         return GENERATED_BUG_TYPE_IDS;
     }
