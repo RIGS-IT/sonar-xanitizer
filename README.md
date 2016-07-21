@@ -2,6 +2,7 @@
 Integrates Xanitizer results into SonarQube
 
 [![Build Status](https://travis-ci.org/RIGS-IT/sonar-xanitizer.svg?branch=master)](https://travis-ci.org/RIGS-IT/sonar-xanitizer)
+ [![Quality Gate](https://sonarqube.com/api/badges/gate?key=com.rigsit:sonar-xanitizer-plugin)](https://sonarqube.com/dashboard/index/com.rigsit:sonar-xanitizer-plugin)
 
 - License: Apache License 2
 - Author: [RIGS IT](https://www.rigs-it.net)
