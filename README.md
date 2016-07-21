@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/RIGS-IT/sonar-xanitizer.svg?branch=master)](https://travis-ci.org/RIGS-IT/sonar-xanitizer)
+
 # sonar-xanitizer
 Integrates Xanitizer results into SonarQube
 
