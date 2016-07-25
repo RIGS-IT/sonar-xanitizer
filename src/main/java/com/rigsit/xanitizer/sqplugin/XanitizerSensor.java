@@ -74,6 +74,7 @@ public class XanitizerSensor implements Sensor {
 
 	/**
 	 * The Xanitizer sensor
+	 * 
 	 * @param javaResourceLocator
 	 * @param settings
 	 * @param activeRules
@@ -90,22 +91,21 @@ public class XanitizerSensor implements Sensor {
 				activeXanRuleNames.add(ruleAsString);
 			}
 		}
+		if (activeXanRuleNames.isEmpty()) {
+			LOG.error(
+					"No Xanitizer rule is set active in the used quality profile. Skipping analysis.");
+		}
 	}
 
 	@Override
 	public boolean shouldExecuteOnProject(final Project project) {
-		return reportFile != null;
+		return reportFile != null && !activeXanRuleNames.isEmpty();
 	}
 
 	@Override
 	public void analyse(final Project project, final SensorContext sensorContext) {
 		assert reportFile != null;
-
-		if (activeXanRuleNames.isEmpty()) {
-			LOG.warn(
-					"No Xanitizer rule is set active in the used quality profile. No issues will be created.");
-			return;
-		}
+		assert !activeXanRuleNames.isEmpty();
 
 		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '"
 				+ project.name() + "'");
@@ -520,7 +520,9 @@ public class XanitizerSensor implements Sensor {
 			final Severity severity, final RuleKey ruleKey) {
 		final NewIssue newIssue = sensorContext.newIssue();
 
-		newIssue.forRule(ruleKey).overrideSeverity(severity);
+		newIssue.forRule(ruleKey);
+
+		newIssue.overrideSeverity(severity);
 
 		final NewIssueLocation newIssueLocation = newIssue.newLocation();
 
