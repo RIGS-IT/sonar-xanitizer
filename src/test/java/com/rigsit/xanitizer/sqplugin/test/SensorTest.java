@@ -111,7 +111,7 @@ public class SensorTest {
 		final Project rootProject = mock(Project.class);
 		when(rootProject.isRoot()).thenReturn(true);
 		sensor.analyse(rootProject, context);
-		assertEquals(912, createdIssues[0]);
+		assertEquals(913, createdIssues[0]);
 
 		// reset counted issues
 		createdIssues[0] = 0;
@@ -121,6 +121,29 @@ public class SensorTest {
 		when(nonRootProject.isRoot()).thenReturn(false);
 
 		sensor.analyse(nonRootProject, context);
+		assertEquals(0, createdIssues[0]);
+	}
+	
+	@Test
+	public void testAnalyzeOldReportFile() {
+		final Settings settings = new Settings();
+		final String reportFileString = getClass().getResource("/webgoat-Findings-List-oldversion.xml")
+				.getFile();
+		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
+
+		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
+		for (XanitizerRule rule : XanitizerRule.values()) {
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
+					rule.name());
+			final NewActiveRule activeRule = builder.create(ruleKey);
+			activeRule.activate();
+		}
+
+		final int[] createdIssues = { 0 };
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				settings, builder.build());
+		sensor.analyse(mock(Project.class), mock(SensorContext.class));
 		assertEquals(0, createdIssues[0]);
 	}
 }
