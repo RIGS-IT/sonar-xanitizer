@@ -83,6 +83,9 @@ public class XanitizerSensor implements Sensor {
 			final ActiveRules activeRules) {
 		this.javaResourceLocator = javaResourceLocator;
 		this.reportFile = SensorUtil.geReportFile(settings);
+		if (this.reportFile == null) {
+			return;
+		}
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
 			if (activeRule.ruleKey().repository()
@@ -92,7 +95,7 @@ public class XanitizerSensor implements Sensor {
 			}
 		}
 		if (activeXanRuleNames.isEmpty()) {
-			LOG.error(
+			LOG.warn(
 					"No Xanitizer rule is set active in the used quality profile. Skipping analysis.");
 		}
 	}
