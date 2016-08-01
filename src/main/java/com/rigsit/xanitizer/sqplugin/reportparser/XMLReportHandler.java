@@ -185,7 +185,7 @@ public class XMLReportHandler extends DefaultHandler {
 
 			// Skip informational findings.
 			if (shouldSkipFinding()) {
-				LOG.info("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
+				LOG.debug("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
 			} else {
 				final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId,
 						findingKind, producer, lineNo, descriptionOrNull, extraDescriptionOrNull,
