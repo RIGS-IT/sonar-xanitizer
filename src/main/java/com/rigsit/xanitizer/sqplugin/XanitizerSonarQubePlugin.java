@@ -53,7 +53,7 @@ import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 
 public class XanitizerSonarQubePlugin extends SonarPlugin {
 
-	public static final String XAN_XML_REPORT_FILE = "xanitizer.xmlReportFile";
+	public static final String XAN_XML_REPORT_FILE = "sonar.xanitizer.xmlReportFile";
 
 	@Override
 	public List<Class<?>> getExtensions() {
