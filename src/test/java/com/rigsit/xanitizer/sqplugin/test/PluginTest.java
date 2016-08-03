@@ -43,7 +43,7 @@ import com.rigsit.xanitizer.sqplugin.XanitizerRule;
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
-import com.rigsit.xanitizer.sqplugin.metrics.GeneratedBugTypeIds;
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
@@ -136,16 +136,8 @@ public class PluginTest {
 
 		final int allMetrics = metrics.getMetrics().size();
 
-		assertEquals(allMetrics, GeneratedBugTypeIds.getPredefinedBugTypeIdMap().size()
-				+ Severity.values().length + 2 /* all and new findings */);
+		assertEquals(allMetrics, GeneratedProblemType.values().length + Severity.values().length
+				+ 2 /* all and new findings */);
 
 	}
-
-	@Test
-	public void testUndefinedProblemType() {
-		final String unknown = "unknown";
-		final String presentationName = GeneratedBugTypeIds.mkPresentationNameForBugTypeId(unknown);
-		assertEquals(unknown, presentationName);
-	}
-
 }

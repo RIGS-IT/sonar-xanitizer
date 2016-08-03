@@ -51,24 +51,10 @@ public enum XanitizerRule {
 			RuleStatus.READY, Severity.MAJOR,
 
 			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG),
-
-	FINDBUGS_FINDING("Xanitizer Findbugs Finding",
-			"Findbugs findings that are determined via Xanitizer", RuleStatus.READY, Severity.MAJOR,
-
-			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG, XanitizerRule.FINDBUGS_TAG),
-
-	OWASP_DEPENDENCY_CHECK_FINDING("Xanitizer OWASP Dependency Check Findings",
-			"OWASP dependency check findings that are determined via Xanitizer", RuleStatus.READY,
-			Severity.MAJOR,
-
-			XanitizerRule.XANITIZER_TAG, XanitizerRule.SECURITY_TAG, XanitizerRule.OWASP_TAG),
-
 	;
 
 	private static final String XANITIZER_TAG = "xanitizer";
 	private static final String SECURITY_TAG = "security";
-	private static final String FINDBUGS_TAG = "findbugs";
-	private static final String OWASP_TAG = "owasp-dependency-check";
 
 	private final String presentationName;
 	private final String shortDescription;
@@ -76,10 +62,6 @@ public enum XanitizerRule {
 	private final String severity;
 	private final String[] tags;
 
-	/**
-	 * @author rust
-	 * 
-	 */
 	private XanitizerRule(final String presentationName, final String shortDescription,
 			final RuleStatus status, final String severity, final String... tags) {
 		this.presentationName = presentationName;
@@ -140,7 +122,7 @@ public enum XanitizerRule {
 		case GENERIC:
 		case NON_TAINTED:
 		case SANITIZER:
-			return mkGenericRule(finding);
+			return GENERIC_FINDING;
 		case SPECIAL:
 			return SPECIAL_CODE_LOCATION;
 		case PATH:
@@ -149,15 +131,4 @@ public enum XanitizerRule {
 			return null;
 		}
 	}
-
-	private static XanitizerRule mkGenericRule(final XMLReportFinding finding) {
-		if ("PlugIn:Findbugs".equals(finding.getFindingProducer())) {
-			return FINDBUGS_FINDING;
-		}
-		if ("PlugIn:OWASPDependencyCheck".equals(finding.getFindingProducer())) {
-			return OWASP_DEPENDENCY_CHECK_FINDING;
-		}
-		return GENERIC_FINDING;
-	}
-
 }

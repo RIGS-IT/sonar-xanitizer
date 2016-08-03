@@ -111,7 +111,7 @@ public class SensorTest {
 		final Project rootProject = mock(Project.class);
 		when(rootProject.isRoot()).thenReturn(true);
 		sensor.analyse(rootProject, context);
-		assertEquals(913, createdIssues[0]);
+		assertEquals(734, createdIssues[0]);
 
 		// reset counted issues
 		createdIssues[0] = 0;

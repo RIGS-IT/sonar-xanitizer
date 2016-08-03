@@ -21,7 +21,6 @@ package com.rigsit.xanitizer.sqplugin.metrics;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.measures.Metric;
@@ -179,11 +178,8 @@ public final class XanitizerMetrics implements Metrics {
 		metrics.add(MINOR_FINDINGS_METRIC);
 		metrics.add(INFO_FINDINGS_METRIC);
 
-		final Map<String, Integer> predefinedBugTypeIds = GeneratedBugTypeIds
-				.getPredefinedBugTypeIdMap();
-
-		for (final String bugTypeId : predefinedBugTypeIds.keySet()) {
-			final Metric metricOrNull = mkMetricForBugTypeIdOrNull(bugTypeId);
+		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
+			final Metric metricOrNull = mkMetricForProblemType(problemType);
 			if (metricOrNull != null) {
 				metrics.add(metricOrNull);
 			}
@@ -201,37 +197,30 @@ public final class XanitizerMetrics implements Metrics {
 	 * @param bugTypeId
 	 * @return
 	 */
-	public static Metric mkMetricForBugTypeIdOrNull(final String bugTypeId) {
-		final Map<String, Integer> predefinedBugTypeIds = GeneratedBugTypeIds
-				.getPredefinedBugTypeIdMap();
-		final Integer num = predefinedBugTypeIds.get(bugTypeId);
-		if (num != null) {
+	public static Metric mkMetricForProblemType(final GeneratedProblemType problemType) {
 
-			/*
-			 * We use mainly numeric ids in order to avoid long ids - SonarQube
-			 * just dies when an overly long id is used...
-			 */
-			final String metricId = PFIX + num;
+		/*
+		 * We use mainly numeric ids in order to avoid long ids - SonarQube just
+		 * dies when an overly long id is used...
+		 */
+		final String metricId = PFIX + problemType.name();
 
-			return new Metric.Builder(metricId, mkMetricName(bugTypeId), Metric.ValueType.INT)
+		return new Metric.Builder(metricId, mkMetricName(problemType), Metric.ValueType.INT)
 
-					.setDescription("Xanitizer Findings for '" + bugTypeId + "'")
+				.setDescription("Xanitizer Findings for '" + problemType.getName() + "'")
 
-					.setQualitative(false)
+				.setQualitative(false)
 
-					.setBestValue(0.0)
+				.setBestValue(0.0)
 
-					.setDirection(Metric.DIRECTION_WORST)
+				.setDirection(Metric.DIRECTION_WORST)
 
-					.setDomain(DOMAIN)
+				.setDomain(DOMAIN)
 
-					.create();
-		}
-
-		return null;
+				.create();
 	}
 
-	private static String mkMetricName(final String bugTypeId) {
+	private static String mkMetricName(final GeneratedProblemType problemType) {
 		/*
 		 * There is a limit for metric names in SonarQube.
 		 * 
@@ -241,8 +230,7 @@ public final class XanitizerMetrics implements Metrics {
 		 * We use 60 to be on the safe side...
 		 */
 		final int limit = 60;
-		String candidate = "Xanitizer Findings for "
-				+ GeneratedBugTypeIds.mkPresentationNameForBugTypeId(bugTypeId);
+		String candidate = "Xanitizer Findings for " + problemType.getName();
 		if (candidate.length() > limit) {
 			candidate = candidate.substring(0, limit - 3) + "...";
 		}

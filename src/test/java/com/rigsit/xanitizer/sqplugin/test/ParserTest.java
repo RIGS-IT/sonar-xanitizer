@@ -63,9 +63,7 @@ public class ParserTest {
 			assertEquals("2.3.0", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			// the report contains 3,636 findings, but informational findings
-			// are not transferd to SonarQube
-			assertEquals(912, findings.size());
+			assertEquals(733, findings.size());
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -165,16 +163,9 @@ public class ParserTest {
 			assertEquals("version 2.3.0, build no. 84 of 01.07.16", content.getToolVersionOrNull());
 			assertEquals("2.3.0", content.getToolVersionShortOrNull());
 
+			// FindBugs findings are not created
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(1, findings.size());
-			final XMLReportFinding finding = findings.get(0);
-			assertEquals("Should Fix", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
-			assertEquals(Severity.MINOR, severity);
-			
-			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
-			assertEquals(XanitizerRule.FINDBUGS_FINDING, rule);
-
+			assertEquals(0, findings.size());
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
 			fail(e.getMessage());
@@ -193,15 +184,8 @@ public class ParserTest {
 			assertEquals("2.3.0", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(1, findings.size());
-			final XMLReportFinding finding = findings.get(0);
-			assertEquals("Could Fix", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
-			assertEquals(Severity.MAJOR, severity);
-			
-			final XanitizerRule rule = XanitizerRule.mkRuleForFindingOrNull(finding);
-			assertEquals(XanitizerRule.OWASP_DEPENDENCY_CHECK_FINDING, rule);
-
+			// OWASP Findings are not created
+			assertEquals(0, findings.size());
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
 			fail(e.getMessage());

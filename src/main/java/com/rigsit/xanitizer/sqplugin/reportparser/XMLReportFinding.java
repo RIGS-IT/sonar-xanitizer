@@ -19,6 +19,8 @@
  */
 package com.rigsit.xanitizer.sqplugin.reportparser;
 
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
+
 /**
  * 
  * The representation of a Xanitizer finding
@@ -29,7 +31,7 @@ package com.rigsit.xanitizer.sqplugin.reportparser;
 public class XMLReportFinding {
 
 	private final int findingID;
-	private final String problemTypeId;
+	private final GeneratedProblemType problemType;
 	private final FindingKind findingKind;
 	private final String findingProducer;
 	private final int lineNoOrMinus1;
@@ -51,7 +53,7 @@ public class XMLReportFinding {
 	/**
 	 * 
 	 * @param findingID
-	 * @param problemTypeId
+	 * @param problemType
 	 * @param findingKind
 	 * @param findingProducer
 	 * @param lineNoOrMinus1
@@ -67,7 +69,7 @@ public class XMLReportFinding {
 	 * @param startNodeOfPathOrNull
 	 * @param endNodeOfPathOrNull
 	 */
-	public XMLReportFinding(final int findingID, final String problemTypeId,
+	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
 			final FindingKind findingKind, final String findingProducer, final int lineNoOrMinus1,
 
 			final String descriptionOrNull, final String extraDescriptionOrNull,
@@ -77,7 +79,7 @@ public class XMLReportFinding {
 			final String persistenceStringOrNull, final XMLReportNode nodeOrNull,
 			final XMLReportNode startNodeOfPathOrNull, final XMLReportNode endNodeOfPathOrNull) {
 		this.findingID = findingID;
-		this.problemTypeId = problemTypeId;
+		this.problemType = problemType;
 		this.findingKind = findingKind;
 		this.findingProducer = findingProducer;
 		this.lineNoOrMinus1 = lineNoOrMinus1;
@@ -101,8 +103,8 @@ public class XMLReportFinding {
 		return findingID;
 	}
 
-	public String getProblemTypeId() {
-		return problemTypeId;
+	public GeneratedProblemType getProblemType() {
+		return problemType;
 	}
 
 	public FindingKind getFindingKind() {

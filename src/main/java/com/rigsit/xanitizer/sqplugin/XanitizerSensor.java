@@ -52,7 +52,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
-import com.rigsit.xanitizer.sqplugin.metrics.GeneratedBugTypeIds;
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
@@ -253,10 +253,8 @@ public class XanitizerSensor implements Sensor {
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
 				normalizeLineNo(finding.getLineNoOrMinus1()),
 				XanitizerRule.mkRuleForFindingOrNull(finding),
-				"User-defined finding for problem type '"
-						+ GeneratedBugTypeIds
-								.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
-						+ "'" + finding.getDescription()
+				"User-defined finding for problem type '" + finding.getProblemType().getName() + "'"
+						+ finding.getDescription()
 						+ mkDescriptionSuffixForLocation(inputFileOrNull,
 								mkLocationForUserFindingString(finding)),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
@@ -279,11 +277,8 @@ public class XanitizerSensor implements Sensor {
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
 				normalizeLineNo(finding.getLineNoOrMinus1()),
 				XanitizerRule.mkRuleForFindingOrNull(finding),
-				"Special code location for problem type '"
-						+ GeneratedBugTypeIds
-								.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
-						+ "'"
-						+ mkDescriptionSuffixForLocation(inputFileOrNull,
+				"Special code location for problem type '" + finding.getProblemType().getName()
+						+ "'" + mkDescriptionSuffixForLocation(inputFileOrNull,
 								mkLocationString(node, sensorContext)),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
 	}
@@ -306,9 +301,7 @@ public class XanitizerSensor implements Sensor {
 		generateIssueOnInputFileOrProject(inputFileOrNull, project,
 				normalizeLineNo(endNode.getLineNoOrMinus1()),
 				XanitizerRule.mkRuleForFindingOrNull(finding),
-				"Taint path for problem type '"
-						+ GeneratedBugTypeIds
-								.mkPresentationNameForBugTypeId(finding.getProblemTypeId())
+				"Taint path for problem type '" + finding.getProblemType().getName()
 						+ "', path starting at " + mkLocationString(startNode, sensorContext)
 						+ " and ending at " + mkLocationString(endNode, sensorContext),
 				finding, analysisDatePresentation, metricValuesAccu, sensorContext);
@@ -492,9 +485,7 @@ public class XanitizerSensor implements Sensor {
 		createNewIssue(inputFileOrNull, project, lineNo, rule, descriptionOrNull, xanFinding,
 				analysisDatePresentation, sensorContext, resourceToBeUsed, severity, ruleKey);
 
-		final String problemTypeId = xanFinding.getProblemTypeId();
-
-		final List<Metric> metrics = mkMetrics(problemTypeId);
+		final List<Metric> metrics = mkMetrics(xanFinding.getProblemType());
 		for (final Metric metric : metrics) {
 			incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project,
 					metricValuesAccu);
@@ -565,11 +556,11 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private List<Metric> mkMetrics(final String bugTypeId) {
+	private List<Metric> mkMetrics(final GeneratedProblemType problemType) {
 		final List<Metric> result = new ArrayList<>();
 		result.add(XanitizerMetrics.getMetricForAllXanFindings());
 
-		final Metric metricOrNull = XanitizerMetrics.mkMetricForBugTypeIdOrNull(bugTypeId);
+		final Metric metricOrNull = XanitizerMetrics.mkMetricForProblemType(problemType);
 		if (metricOrNull != null) {
 			result.add(metricOrNull);
 		}

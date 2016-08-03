@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
 
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.reportparser.FindingKind;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
@@ -37,46 +38,44 @@ public class SeverityTest {
 
 	@Test
 	public void testSeverity() {
-		
+
 		// always blockers
 		XMLReportFinding finding = mkFinding("Must Fix", 1);
 		Severity severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.BLOCKER);
-		
+
 		finding = mkFinding("Urgent Fix", 1);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.BLOCKER);
-		
+
 		// severity from rating
 		finding = mkFinding("Warning", 7.1);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.CRITICAL);
-		
+
 		finding = mkFinding("Warning", 7.0);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.MAJOR);
-		
+
 		finding = mkFinding("Warning", 4.1);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.MAJOR);
-		
+
 		finding = mkFinding("Warning", 4.0);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.MINOR);
-		
+
 		finding = mkFinding("Warning", 1.1);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.MINOR);
-		
+
 		finding = mkFinding("Warning", 0.9);
 		severity = SensorUtil.mkSeverity(finding);
 		assertEquals(severity, Severity.INFO);
 	}
-	
+
 	private XMLReportFinding mkFinding(final String classification, final double rating) {
-		return new XMLReportFinding(-1, "", FindingKind.OTHER,
-				"test", -1, null, null,
-				null, null, classification, rating, null,
-				null, null, null, null);
+		return new XMLReportFinding(-1, GeneratedProblemType.values()[0], FindingKind.OTHER, "test",
+				-1, null, null, null, null, classification, rating, null, null, null, null, null);
 	}
 }

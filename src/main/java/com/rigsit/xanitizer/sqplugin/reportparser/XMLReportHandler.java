@@ -26,6 +26,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
+
 /**
  * Event handler for parsing the XML report file
  * 
@@ -180,26 +182,42 @@ public class XMLReportHandler extends DefaultHandler {
 
 		collectedCharacters.setLength(0);
 
+		createFinding();
+		resetData();
+	}
+
+	private void createFinding() {
 		// Defensiveness: This condition should always be true.
-		if (hasCollectedAllRelevantData()) {
-
-			// Skip informational findings.
-			if (shouldSkipFinding()) {
-				LOG.debug("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
-			} else {
-				final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId,
-						findingKind, producer, lineNo, descriptionOrNull, extraDescriptionOrNull,
-						mkClassFQNOrNull(pckgPath, clazz), originalAbsFileOrNull,
-						classificationOrNull, rating, matchCode, persistenceOrNull, nodeOrNull,
-						startNodeOrNull, endNodeOrNull);
-
-				xmlReportContent.addFinding(f);
-			}
-		} else {
-			LOG.error("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
+		if (!hasCollectedAllRelevantData()) {
+			LOG.warn(
+					"Xanitizer: Could not parse all necessary data. Skipping finding " + findingId);
+			return;
 		}
 
-		resetData();
+		//skip FindBugs and OWASP Dependency Check Findings
+		if ("PlugIn:Findbugs".equals(producer) || "PlugIn:OWASPDependencyCheck".equals(producer)) {
+			return;
+		}
+
+		final GeneratedProblemType problemType = GeneratedProblemType.getForId(problemTypeId);
+		if (problemType == null) {
+			LOG.warn("Xanitizer: Unknown problem type '" + problemTypeId + "'. Skipping finding "
+					+ findingId);
+			return;
+		}
+
+		// Skip informational findings.
+		if (shouldSkipFinding()) {
+			LOG.debug("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
+			return;
+		}
+
+		final XMLReportFinding f = new XMLReportFinding(findingId, problemType, findingKind,
+				producer, lineNo, descriptionOrNull, extraDescriptionOrNull,
+				mkClassFQNOrNull(pckgPath, clazz), originalAbsFileOrNull, classificationOrNull,
+				rating, matchCode, persistenceOrNull, nodeOrNull, startNodeOrNull, endNodeOrNull);
+
+		xmlReportContent.addFinding(f);
 	}
 
 	private boolean shouldSkipFinding() {
