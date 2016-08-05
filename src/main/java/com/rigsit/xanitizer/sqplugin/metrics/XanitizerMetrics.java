@@ -192,9 +192,9 @@ public final class XanitizerMetrics implements Metrics {
 	}
 
 	/**
-	 * Creates a metric object for a given Xanitizer problem type identifier
+	 * Creates a metric object for a given Xanitizer problem type
 	 * 
-	 * @param bugTypeId
+	 * @param problemType
 	 * @return
 	 */
 	public static Metric mkMetricForProblemType(final GeneratedProblemType problemType) {

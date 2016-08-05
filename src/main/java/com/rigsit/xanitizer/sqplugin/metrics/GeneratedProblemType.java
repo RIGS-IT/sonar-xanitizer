@@ -110,13 +110,13 @@ XANITIZER_PROBLEM_TYPE_49("XPathSearch:exceptionTypeJavaLangThrowableMissing", "
 
     ;
 
-    private final String m_Id;
-    private final String m_PresentationName;
-    private final String m_Description;
+    private final String id;
+    private final String presentationName;
+    private final String description;
     private GeneratedProblemType(final String id, final String presentationName, final String description) {
-         m_Id = id;
-         m_PresentationName = presentationName;
-         m_Description = description;
+         this.id = id;
+         this.presentationName = presentationName;
+         this.description = description;
     }
 
     /**
@@ -138,14 +138,14 @@ XANITIZER_PROBLEM_TYPE_49("XPathSearch:exceptionTypeJavaLangThrowableMissing", "
     }
 
      public String getId() {
-     	return m_Id;
+     	return id;
      }
 
      public String getPresentationName() {
-     	return m_PresentationName;
+     	return presentationName;
      }
 
      public String getDescription() {
-     	return m_Description;
+     	return description;
      }
 }
