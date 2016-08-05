@@ -80,9 +80,9 @@ public class XanitizerSensor implements Sensor {
 	 * @param activeRules
 	 */
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator, final Settings settings,
-			final ActiveRules activeRules) {
+			final ActiveRules activeRules, final SensorContext sensorContext) {
 		this.javaResourceLocator = javaResourceLocator;
-		this.reportFile = SensorUtil.geReportFile(settings);
+		this.reportFile = SensorUtil.geReportFile(sensorContext, settings);
 		if (this.reportFile == null) {
 			return;
 		}
@@ -124,21 +124,21 @@ public class XanitizerSensor implements Sensor {
 
 		final String toolVersionShortOrNull = content.getToolVersionShortOrNull();
 		if (toolVersionShortOrNull == null) {
-			LOG.error("No attribute 'xanitizerVersionShort' found in XML report file '" + reportFile
+			LOG.warn("No attribute 'xanitizerVersionShort' found in XML report file '" + reportFile
 					+ "'. Skipping analysis.");
 			return;
 		}
 
 		final String errMsgOrNull = SensorUtil.checkVersion(toolVersionShortOrNull, 2, 3, -1);
 		if (errMsgOrNull != null) {
-			LOG.error("Could not parse attribute 'xanitizerVersionShort' in XML report file '"
+			LOG.warn("Could not parse attribute 'xanitizerVersionShort' in XML report file '"
 					+ reportFile + "': " + errMsgOrNull + ". Skipping analysis.");
 			return;
 		}
 
 		final long analysisEndDate = content.getAnalysisEndDate();
 		if (analysisEndDate == 0) {
-			LOG.error(
+			LOG.warn(
 					"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed!");
 			return;
 		}

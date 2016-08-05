@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Settings;
 import org.sonar.api.utils.log.Logger;
@@ -69,20 +70,23 @@ public class SensorUtil {
 	 * @param settings
 	 * @return
 	 */
-	public static File geReportFile(final Settings settings) {
+	public static File geReportFile(final SensorContext sensorContext, final Settings settings) {
 		final String reportFileString = settings
 				.getString(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
 
 		if (reportFileString == null || reportFileString.isEmpty()) {
-			LOG.error("Xanitizer parameter '" + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
+			LOG.warn("Xanitizer parameter '" + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
 					+ "' not specified in project settings. Skipping analysis.");
 			return null;
 		}
 
-		final File reportFile = new File(reportFileString);
+		File reportFile = new File(reportFileString);
+		if (!reportFile.isAbsolute()) {
+			reportFile = new File(sensorContext.fileSystem().baseDir(), reportFileString);
+		}
 
 		if (!reportFile.isFile()) {
-			LOG.error(
+			LOG.warn(
 					"Xanitizer XML report file '" + reportFile + "' not found. Skipping analysis.");
 			return null;
 		}

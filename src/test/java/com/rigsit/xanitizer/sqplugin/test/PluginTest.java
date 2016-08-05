@@ -24,12 +24,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
 import org.sonar.api.SonarPlugin;
+import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
@@ -103,19 +107,21 @@ public class PluginTest {
 
 	@Test
 	public void testSettings() {
+		final SensorContext sensorContext = mock(SensorContext.class);
+		when(sensorContext.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
 		final Settings settings = new Settings();
-		assertNull(SensorUtil.geReportFile(settings));
+		assertNull(SensorUtil.geReportFile(sensorContext, settings));
 
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "");
-		assertNull(SensorUtil.geReportFile(settings));
+		assertNull(SensorUtil.geReportFile(sensorContext, settings));
 
-		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "doesNotExist.xml");
-		assertNull(SensorUtil.geReportFile(settings));
+		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "/doesNotExist.xml");
+		assertNull(SensorUtil.geReportFile(sensorContext, settings));
 
 		final String reportFileString = getClass().getResource("/webgoat-Findings-List.xml")
 				.getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
-		final File reportFile = SensorUtil.geReportFile(settings);
+		final File reportFile = SensorUtil.geReportFile(sensorContext, settings);
 		assertNotNull(reportFile);
 		assertTrue(reportFile.isFile());
 		assertEquals(new File(reportFileString), reportFile);

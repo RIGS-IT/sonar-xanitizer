@@ -57,17 +57,17 @@ public class SensorTest {
 		final Settings settings = new Settings();
 
 		XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
-				mock(ActiveRules.class));
+				mock(ActiveRules.class), mock(SensorContext.class));
 		assertEquals(false, sensor.shouldExecuteOnProject(mock(Project.class)));
 
 		final String reportFileString = getClass().getResource("/webgoat-Findings-List.xml")
 				.getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
 		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
-				mock(ActiveRules.class));
+				mock(ActiveRules.class), mock(SensorContext.class));
 		assertEquals(false, sensor.shouldExecuteOnProject(mock(Project.class)));
 
-		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings, getActiveRules());
+		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings, getActiveRules(), mock(SensorContext.class));
 		assertEquals(true, sensor.shouldExecuteOnProject(mock(Project.class)));
 
 	}
@@ -94,7 +94,7 @@ public class SensorTest {
 		when(context.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				settings, getActiveRules());
+				settings, getActiveRules(), context);
 
 		// If the project is a root project, all issues should be created at
 		// project level (because we have no source file information)
@@ -122,10 +122,12 @@ public class SensorTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
 
 		final int[] createdIssues = { 0 };
+		
+		final SensorContext sensorContext = mock(SensorContext.class);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				settings, getActiveRules());
-		sensor.analyse(mock(Project.class), mock(SensorContext.class));
+				settings, getActiveRules(), sensorContext);
+		sensor.analyse(mock(Project.class), sensorContext);
 		assertEquals(0, createdIssues[0]);
 	}
 
