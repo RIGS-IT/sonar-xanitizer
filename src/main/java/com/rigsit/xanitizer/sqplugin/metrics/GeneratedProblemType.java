@@ -111,11 +111,11 @@ XanitizerProblemType_49("XPathSearch:exceptionTypeJavaLangThrowableMissing", "Ap
     ;
 
     private final String m_Id;
-    private final String m_Name;
+    private final String m_PresentationName;
     private final String m_Description;
-    private GeneratedProblemType(final String id, final String name, final String description) {
+    private GeneratedProblemType(final String id, final String presentationName, final String description) {
          m_Id = id;
-         m_Name = name;
+         m_PresentationName = presentationName;
          m_Description = description;
     }
 
@@ -141,8 +141,8 @@ XanitizerProblemType_49("XPathSearch:exceptionTypeJavaLangThrowableMissing", "Ap
      	return m_Id;
      }
 
-     public String getName() {
-     	return m_Name;
+     public String getPresentationName() {
+     	return m_PresentationName;
      }
 
      public String getDescription() {

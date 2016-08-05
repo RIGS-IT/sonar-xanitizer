@@ -116,6 +116,9 @@ public class XMLReportFinding {
 	}
 
 	public int getLineNoOrMinus1() {
+		if (findingKind == FindingKind.PATH) {
+			return endNodeOfPathOrNull.getLineNoOrMinus1();
+		}
 		return lineNoOrMinus1;
 	}
 
@@ -134,6 +137,9 @@ public class XMLReportFinding {
 	}
 
 	public String getClassFQNOrNull() {
+		if (findingKind == FindingKind.PATH) {
+			return endNodeOfPathOrNull.getClassFQNOrNull();
+		}
 		return classFQNOrNull;
 	}
 
@@ -154,10 +160,16 @@ public class XMLReportFinding {
 	}
 
 	public String getPersistenceStringOrNull() {
+		if (findingKind == FindingKind.PATH) {
+			return endNodeOfPathOrNull.getXFilePersistenceOrNull();
+		}
 		return persistenceStringOrNull;
 	}
 
 	public XMLReportNode getNodeOrNull() {
+		if (findingKind == FindingKind.PATH) {
+			return endNodeOfPathOrNull;
+		}
 		return nodeOrNull;
 	}
 

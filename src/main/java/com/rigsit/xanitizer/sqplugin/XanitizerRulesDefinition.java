@@ -19,8 +19,12 @@
  */
 package com.rigsit.xanitizer.sqplugin;
 
+import org.sonar.api.rule.RuleStatus;
+import org.sonar.api.rule.Severity;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.plugins.java.Java;
+
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 
 /**
  * 
@@ -30,23 +34,26 @@ import org.sonar.plugins.java.Java;
  *
  */
 public final class XanitizerRulesDefinition implements RulesDefinition {
+	
+	private static final String XANITIZER_TAG = "xanitizer";
+	private static final String SECURITY_TAG = "security";
 
 	@Override
 	public void define(final Context context) {
 		final String languageKey = getLanguageKey();
 		final String repositoryKey = getRepositoryKey();
-		final String repositoryName = languageKey.toUpperCase() + " Xanitizer";
+		final String repositoryName = "Xanitizer";
 
 		final NewRepository repository = context.createRepository(repositoryKey, languageKey)
 				.setName(repositoryName);
 
-		for (final XanitizerRule xanitizerRule : XanitizerRule.values()) {
-			final NewRule newRule = repository.createRule(xanitizerRule.name());
-			newRule.setName(xanitizerRule.getPresentationName());
-			newRule.setHtmlDescription(xanitizerRule.getShortHTMLDescription());
-			newRule.setSeverity(xanitizerRule.getSeverity());
-			newRule.setStatus(xanitizerRule.getRuleStatus());
-			newRule.setTags(xanitizerRule.getTags());
+		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
+			final NewRule newRule = repository.createRule(problemType.name());
+			newRule.setName(problemType.getPresentationName());
+			newRule.setHtmlDescription(problemType.getDescription());
+			newRule.setSeverity(Severity.MAJOR);
+			newRule.setStatus(RuleStatus.READY);
+			newRule.setTags(XANITIZER_TAG, SECURITY_TAG);
 		}
 
 		repository.done();
@@ -57,6 +64,6 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 	}
 
 	public static String getRepositoryKey() {
-		return getLanguageKey() + "-Xanitizer";
+		return "Xanitizer";
 	}
 }

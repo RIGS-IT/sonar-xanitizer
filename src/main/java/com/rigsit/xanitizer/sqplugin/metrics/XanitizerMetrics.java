@@ -207,7 +207,8 @@ public final class XanitizerMetrics implements Metrics {
 
 		return new Metric.Builder(metricId, mkMetricName(problemType), Metric.ValueType.INT)
 
-				.setDescription("Xanitizer Findings for '" + problemType.getName() + "'")
+				.setDescription(
+						"Xanitizer Findings for '" + problemType.getPresentationName() + "'")
 
 				.setQualitative(false)
 
@@ -230,7 +231,7 @@ public final class XanitizerMetrics implements Metrics {
 		 * We use 60 to be on the safe side...
 		 */
 		final int limit = 60;
-		String candidate = "Xanitizer Findings for " + problemType.getName();
+		String candidate = "Xanitizer Findings for " + problemType.getPresentationName();
 		if (candidate.length() > limit) {
 			candidate = candidate.substring(0, limit - 3) + "...";
 		}

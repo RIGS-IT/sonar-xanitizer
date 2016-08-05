@@ -24,10 +24,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
@@ -38,10 +41,10 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
-import com.rigsit.xanitizer.sqplugin.XanitizerRule;
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 
 /**
  * @author nwe
@@ -64,12 +67,7 @@ public class SensorTest {
 				mock(ActiveRules.class));
 		assertEquals(false, sensor.shouldExecuteOnProject(mock(Project.class)));
 
-		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
-		final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
-				XanitizerRule.TAINT_PATH.name());
-		final NewActiveRule activeRule = builder.create(ruleKey);
-		activeRule.activate();
-		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings, builder.build());
+		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings, getActiveRules());
 		assertEquals(true, sensor.shouldExecuteOnProject(mock(Project.class)));
 
 	}
@@ -81,14 +79,6 @@ public class SensorTest {
 				.getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
 
-		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
-		for (XanitizerRule rule : XanitizerRule.values()) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
-					rule.name());
-			final NewActiveRule activeRule = builder.create(ruleKey);
-			activeRule.activate();
-		}
-
 		final int[] createdIssues = { 0 };
 		final SensorContext context = mock(SensorContext.class);
 		when(context.newIssue()).thenAnswer(new Answer<NewIssue>() {
@@ -97,14 +87,15 @@ public class SensorTest {
 				createdIssues[0]++;
 
 				final NewIssue newIssue = mock(NewIssue.class);
-				;
 				when(newIssue.newLocation()).thenReturn(new DefaultIssueLocation());
 				return newIssue;
 			}
 		});
+		when (context.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
+		
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				settings, builder.build());
+				settings, getActiveRules());
 
 		// If the project is a root project, all issues should be created at
 		// project level (because we have no source file information)
@@ -123,27 +114,30 @@ public class SensorTest {
 		sensor.analyse(nonRootProject, context);
 		assertEquals(0, createdIssues[0]);
 	}
-	
+
 	@Test
 	public void testAnalyzeOldReportFile() {
 		final Settings settings = new Settings();
-		final String reportFileString = getClass().getResource("/webgoat-Findings-List-oldversion.xml")
-				.getFile();
+		final String reportFileString = getClass()
+				.getResource("/webgoat-Findings-List-oldversion.xml").getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
-
-		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
-		for (XanitizerRule rule : XanitizerRule.values()) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
-					rule.name());
-			final NewActiveRule activeRule = builder.create(ruleKey);
-			activeRule.activate();
-		}
 
 		final int[] createdIssues = { 0 };
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				settings, builder.build());
+				settings, getActiveRules());
 		sensor.analyse(mock(Project.class), mock(SensorContext.class));
 		assertEquals(0, createdIssues[0]);
+	}
+
+	private ActiveRules getActiveRules() {
+		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
+		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
+					problemType.name());
+			final NewActiveRule activeRule = builder.create(ruleKey);
+			activeRule.activate();
+		}
+		return builder.build();
 	}
 }

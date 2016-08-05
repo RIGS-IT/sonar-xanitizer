@@ -39,7 +39,6 @@ import org.sonar.api.server.rule.RulesDefinition.Repository;
 import org.sonar.api.utils.ValidationMessages;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerQualityProfile;
-import com.rigsit.xanitizer.sqplugin.XanitizerRule;
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
@@ -79,8 +78,8 @@ public class PluginTest {
 		assertNotNull(XanitizerRulesDefinition.getRepositoryKey(), repository);
 		assertEquals(XanitizerRulesDefinition.getLanguageKey(), repository.language());
 
-		for (XanitizerRule rule : XanitizerRule.values()) {
-			assertNotNull(repository.rule(rule.toString()));
+		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
+			assertNotNull(repository.rule(problemType.name()));
 		}
 	}
 
@@ -90,14 +89,14 @@ public class PluginTest {
 		final RulesProfile profile = new XanitizerQualityProfile()
 				.createProfile(ValidationMessages.create());
 
-		for (XanitizerRule rule : XanitizerRule.values()) {
+		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			boolean isRuleActive = false;
 			for (ActiveRule activeRule : profile.getActiveRules()) {
-				if (activeRule.getRuleKey().equals(rule.name())) {
+				if (activeRule.getRuleKey().equals(problemType.name())) {
 					isRuleActive = true;
 				}
 			}
-			assertTrue("Rule " + rule.getPresentationName() + " is not active!", isRuleActive);
+			assertTrue("Rule " + problemType.getPresentationName() + " is not active!", isRuleActive);
 		}
 
 	}

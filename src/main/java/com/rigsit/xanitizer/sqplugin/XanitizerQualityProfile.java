@@ -25,6 +25,8 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.utils.ValidationMessages;
 import org.sonar.plugins.java.Java;
 
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
+
 /**
  * A profile for the Xanitizer rules.
  * 
@@ -38,8 +40,8 @@ public class XanitizerQualityProfile extends ProfileDefinition {
 		final RulesProfile rulesProfile = RulesProfile.create("Xanitizer", Java.KEY);
 
 		// Add Xanitizer rules.
-		for (final XanitizerRule xanRule : XanitizerRule.values()) {
-			final Rule rule = Rule.create(XanitizerRulesDefinition.getRepositoryKey(), xanRule.name());
+		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
+			final Rule rule = Rule.create(XanitizerRulesDefinition.getRepositoryKey(), problemType.name());
 			rulesProfile.activateRule(rule, null /* optionalSeverity */);
 		}
 

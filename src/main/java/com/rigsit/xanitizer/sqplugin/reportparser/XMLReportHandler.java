@@ -194,7 +194,7 @@ public class XMLReportHandler extends DefaultHandler {
 			return;
 		}
 
-		//skip FindBugs and OWASP Dependency Check Findings
+		// skip FindBugs and OWASP Dependency Check Findings
 		if ("PlugIn:Findbugs".equals(producer) || "PlugIn:OWASPDependencyCheck".equals(producer)) {
 			return;
 		}
@@ -237,8 +237,14 @@ public class XMLReportHandler extends DefaultHandler {
 	}
 
 	private boolean hasCollectedAllRelevantData() {
-		return problemTypeId != null && findingId >= 0 && findingKind != null && producer != null
-				&& matchCode != null;
+		if (problemTypeId == null || findingId < 0 || findingKind == null || producer == null
+				|| matchCode == null) {
+			return false;
+		}
+		if (findingKind == FindingKind.PATH && (startNodeOrNull == null || endNodeOrNull == null)) {
+			return false;
+		}
+		return true;
 	}
 
 	private void resetData() {
