@@ -67,6 +67,7 @@ public class SensorUtil {
 	/**
 	 * Extracts the XML report file from the SonarQube settings.
 	 * 
+	 * @param sensorContext
 	 * @param settings
 	 * @return
 	 */

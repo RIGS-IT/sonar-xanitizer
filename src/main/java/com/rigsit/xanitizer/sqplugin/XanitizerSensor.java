@@ -78,6 +78,7 @@ public class XanitizerSensor implements Sensor {
 	 * @param javaResourceLocator
 	 * @param settings
 	 * @param activeRules
+	 * @param sensorContext
 	 */
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator, final Settings settings,
 			final ActiveRules activeRules, final SensorContext sensorContext) {
