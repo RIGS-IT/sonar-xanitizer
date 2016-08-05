@@ -91,10 +91,7 @@ public class XMLReportHandler extends DefaultHandler {
 			break;
 		case "finding":
 			findingId = Integer.parseInt(attributes.getValue("id"));
-			final String kind = attributes.getValue("kind");
-			if (kind != null) {
-				findingKind = FindingKind.mk(kind);
-			}
+			findingKind = FindingKind.mk(attributes.getValue("kind"));
 			break;
 		default:
 			// do nothing

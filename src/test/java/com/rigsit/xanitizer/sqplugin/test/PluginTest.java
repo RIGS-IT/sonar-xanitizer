@@ -73,10 +73,9 @@ public class PluginTest {
 		final RulesDefinition.Context context = new RulesDefinition.Context();
 		rulesDefinition.define(context);
 
-		final Repository repository = context
-				.repository(XanitizerRulesDefinition.getRepositoryKey());
-		assertNotNull(XanitizerRulesDefinition.getRepositoryKey(), repository);
-		assertEquals(XanitizerRulesDefinition.getLanguageKey(), repository.language());
+		final Repository repository = context.repository(XanitizerRulesDefinition.REPOSITORY_KEY);
+		assertNotNull(XanitizerRulesDefinition.REPOSITORY_KEY, repository);
+		assertEquals(XanitizerRulesDefinition.LANGUAGE_KEY, repository.language());
 
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			assertNotNull(repository.rule(problemType.name()));
@@ -96,7 +95,8 @@ public class PluginTest {
 					isRuleActive = true;
 				}
 			}
-			assertTrue("Rule " + problemType.getPresentationName() + " is not active!", isRuleActive);
+			assertTrue("Rule " + problemType.getPresentationName() + " is not active!",
+					isRuleActive);
 		}
 
 	}

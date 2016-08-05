@@ -41,7 +41,7 @@ public class XanitizerQualityProfile extends ProfileDefinition {
 
 		// Add Xanitizer rules.
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final Rule rule = Rule.create(XanitizerRulesDefinition.getRepositoryKey(), problemType.name());
+			final Rule rule = Rule.create(XanitizerRulesDefinition.REPOSITORY_KEY, problemType.name());
 			rulesProfile.activateRule(rule, null /* optionalSeverity */);
 		}
 

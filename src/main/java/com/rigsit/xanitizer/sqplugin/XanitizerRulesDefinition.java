@@ -34,17 +34,18 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
  *
  */
 public final class XanitizerRulesDefinition implements RulesDefinition {
-	
+
+	public static final String REPOSITORY_KEY = "Xanitizer";
+	public static final String LANGUAGE_KEY = Java.KEY;
+
 	private static final String XANITIZER_TAG = "xanitizer";
 	private static final String SECURITY_TAG = "security";
 
 	@Override
 	public void define(final Context context) {
-		final String languageKey = getLanguageKey();
-		final String repositoryKey = getRepositoryKey();
 		final String repositoryName = "Xanitizer";
 
-		final NewRepository repository = context.createRepository(repositoryKey, languageKey)
+		final NewRepository repository = context.createRepository(REPOSITORY_KEY, LANGUAGE_KEY)
 				.setName(repositoryName);
 
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
@@ -57,13 +58,5 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 		}
 
 		repository.done();
-	}
-
-	public static String getLanguageKey() {
-		return Java.KEY;
-	}
-
-	public static String getRepositoryKey() {
-		return "Xanitizer";
 	}
 }

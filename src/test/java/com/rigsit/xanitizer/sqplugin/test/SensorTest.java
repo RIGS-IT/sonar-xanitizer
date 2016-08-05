@@ -91,8 +91,7 @@ public class SensorTest {
 				return newIssue;
 			}
 		});
-		when (context.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
-		
+		when(context.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				settings, getActiveRules());
@@ -133,7 +132,7 @@ public class SensorTest {
 	private ActiveRules getActiveRules() {
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.getRepositoryKey(),
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
 					problemType.name());
 			final NewActiveRule activeRule = builder.create(ruleKey);
 			activeRule.activate();
