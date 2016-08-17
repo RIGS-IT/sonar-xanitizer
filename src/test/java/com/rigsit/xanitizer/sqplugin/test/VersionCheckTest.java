@@ -63,7 +63,7 @@ public class VersionCheckTest {
 		assertNull(result);
 		
 		// patch higher
-		result = SensorUtil.checkVersion("2.3.5", 2, 3, 3);
+		result = SensorUtil.checkVersion("2.3.1", 2, 3, 0);
 		assertNull(result);
 		
 		// minor higher

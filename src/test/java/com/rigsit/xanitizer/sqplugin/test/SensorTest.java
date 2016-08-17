@@ -25,12 +25,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
+import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
@@ -39,6 +48,8 @@ import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.scan.filesystem.PathResolver;
+import org.sonar.api.utils.PathUtils;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
@@ -60,14 +71,15 @@ public class SensorTest {
 				mock(ActiveRules.class), mock(SensorContext.class));
 		assertEquals(false, sensor.shouldExecuteOnProject(mock(Project.class)));
 
-		final String reportFileString = getClass().getResource("/webgoat-Findings-List.xml")
-				.getFile();
+		final String reportFileString = getClass()
+				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
 		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
 				mock(ActiveRules.class), mock(SensorContext.class));
 		assertEquals(false, sensor.shouldExecuteOnProject(mock(Project.class)));
 
-		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings, getActiveRules(), mock(SensorContext.class));
+		sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings, getActiveRules(),
+				mock(SensorContext.class));
 		assertEquals(true, sensor.shouldExecuteOnProject(mock(Project.class)));
 
 	}
@@ -75,9 +87,12 @@ public class SensorTest {
 	@Test
 	public void testAnalyze() {
 		final Settings settings = new Settings();
-		final String reportFileString = getClass().getResource("/webgoat-Findings-List.xml")
-				.getFile();
+		final String reportFileString = getClass()
+				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
+		final File webgoatDir = new File(reportFileString).getParentFile();
+
+		final FileSystem fileSystem = prepareFileSystem(webgoatDir);
 
 		final int[] createdIssues = { 0 };
 		final SensorContext context = mock(SensorContext.class);
@@ -91,38 +106,67 @@ public class SensorTest {
 				return newIssue;
 			}
 		});
-		when(context.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
+		when(context.fileSystem()).thenReturn(fileSystem);
+
+		final Project project = mock(Project.class);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				settings, getActiveRules(), context);
 
-		// If the project is a root project, all issues should be created at
-		// project level (because we have no source file information)
-		final Project rootProject = mock(Project.class);
-		when(rootProject.isRoot()).thenReturn(true);
-		sensor.analyse(rootProject, context);
-		assertEquals(734, createdIssues[0]);
+		sensor.analyse(project, context);
+		assertEquals(180, createdIssues[0]);
+	}
+	
+	private FileSystem prepareFileSystem(final File rootDir) {
+		final DefaultFileSystem fileSystem = new DefaultFileSystem(rootDir);
 
-		// reset counted issues
-		createdIssues[0] = 0;
+		try {
+			Files.walkFileTree(Paths.get(rootDir.getAbsolutePath()), new FileVisitor<Path>() {
 
-		// If the project is not a root project, no issues should be created
-		final Project nonRootProject = mock(Project.class);
-		when(nonRootProject.isRoot()).thenReturn(false);
+				@Override
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+						throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
 
-		sensor.analyse(nonRootProject, context);
-		assertEquals(0, createdIssues[0]);
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+						throws IOException {
+					final String relative = PathUtils
+							.sanitize(new PathResolver().relativePath(rootDir, file.toFile()));
+					fileSystem.add(new DefaultInputFile("test", relative));
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFileFailed(Path file, IOException exc)
+						throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+						throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return fileSystem;
 	}
 
 	@Test
 	public void testAnalyzeOldReportFile() {
 		final Settings settings = new Settings();
 		final String reportFileString = getClass()
-				.getResource("/webgoat-Findings-List-oldversion.xml").getFile();
+				.getResource("/webgoat/webgoat-Findings-List-oldversion.xml").getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
 
 		final int[] createdIssues = { 0 };
-		
+
 		final SensorContext sensorContext = mock(SensorContext.class);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),

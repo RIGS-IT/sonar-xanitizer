@@ -118,8 +118,8 @@ public class PluginTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "/doesNotExist.xml");
 		assertNull(SensorUtil.geReportFile(sensorContext, settings));
 
-		final String reportFileString = getClass().getResource("/webgoat-Findings-List.xml")
-				.getFile();
+		final String reportFileString = getClass()
+				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
 		final File reportFile = SensorUtil.geReportFile(sensorContext, settings);
 		assertNotNull(reportFile);

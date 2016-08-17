@@ -22,6 +22,7 @@ package com.rigsit.xanitizer.sqplugin.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -37,6 +38,7 @@ import org.sonar.api.utils.log.Loggers;
 import org.xml.sax.SAXException;
 
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportException;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
@@ -54,7 +56,7 @@ public class ParserTest {
 	public void testValidFile() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-all.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-all.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -62,7 +64,7 @@ public class ParserTest {
 			assertEquals("2.3.0", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(733, findings.size());
+			assertEquals(727, findings.size());
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -74,7 +76,7 @@ public class ParserTest {
 	public void testSanitizers() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-sanitizers.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-sanitizers.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -92,12 +94,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testSinks() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-sinks.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-sinks.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -115,12 +117,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testSources() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-sources.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-sources.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -138,12 +140,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testFindbugs() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-findbugs.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-findbugs.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -158,12 +160,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testOWASP() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-owasp.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-owasp.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -178,12 +180,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testSpecialCode() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-specialcode.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-specialcode.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -201,12 +203,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testTaintPaths() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-taintpaths.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-taintpaths.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -224,12 +226,12 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testUser() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-user.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-user.xml").getFile());
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
@@ -252,29 +254,21 @@ public class ParserTest {
 	public void testUnsupportedVersion() {
 		final XMLReportParser parser = new XMLReportParser();
 		final File reportFile = new File(
-				getClass().getResource("/webgoat-Findings-List-oldversion.xml").getFile());
+				getClass().getResource("/webgoat/webgoat-Findings-List-oldversion.xml").getFile());
 		try {
-			final XMLReportContent content = parser.parse(reportFile);
-
-			assertEquals("version 2.2.0, build no. 81 of 04.05.16", content.getToolVersionOrNull());
-			assertNull(content.getToolVersionShortOrNull());
-
-			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			// all findings are skipped because finding kind is not exported in
-			// this report version
-			assertEquals(0, findings.size());
-
+			parser.parse(reportFile);
+			fail("Should fail with an exception");
 		} catch (SAXException | IOException | ParserConfigurationException e) {
-			LOG.error("Error parsing report file", e);
-			fail(e.getMessage());
+			assertTrue(e instanceof XMLReportException);
 		}
 	}
 
 	@Test
 	public void testReportNodeEmpty() {
-		final XMLReportNode node = new XMLReportNode("", -1, "");
+		final XMLReportNode node = new XMLReportNode("", -1, "", "");
 		assertNull(node.getClassFQNOrNull());
 		assertEquals(-1, node.getLineNoOrMinus1());
-		assertNull(node.getXFilePersistenceOrNull());
+		assertNull(node.getRelativePathOrNull());
+		assertNull(node.getAbsolutePathOrNull());
 	}
 }

@@ -75,7 +75,7 @@ public class SeverityTest {
 	}
 
 	private XMLReportFinding mkFinding(final String classification, final double rating) {
-		return new XMLReportFinding(-1, GeneratedProblemType.values()[0], FindingKind.OTHER, "test",
-				-1, null, null, null, null, classification, rating, null, null, null, null, null);
+		return new XMLReportFinding(-1, GeneratedProblemType.values()[0], FindingKind.OTHER,
+				classification, rating, null, null);
 	}
 }
