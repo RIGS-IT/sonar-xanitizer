@@ -33,18 +33,10 @@ public class XMLReportFinding {
 	private final int findingID;
 	private final GeneratedProblemType problemType;
 	private final FindingKind findingKind;
-	private final String findingProducer;
-	private final int lineNoOrMinus1;
 
-	private final String descriptionOrNull;
-	private final String extraDescriptionOrNull;
-
-	private final String classFQNOrNull;
-	private final String originalAbsFileOrNull;
 	private final String classificationOrNull;
 	private final double rating;
 	private final String matchCode;
-	private final String persistenceStringOrNull;
 
 	private final XMLReportNode nodeOrNull;
 	private final XMLReportNode startNodeOfPathOrNull;
@@ -55,48 +47,44 @@ public class XMLReportFinding {
 	 * @param findingID
 	 * @param problemType
 	 * @param findingKind
-	 * @param findingProducer
-	 * @param lineNoOrMinus1
-	 * @param descriptionOrNull
-	 * @param extraDescriptionOrNull
-	 * @param classFQNOrNull
-	 * @param originalAbsFileOrNull
 	 * @param classificationOrNull
 	 * @param rating
 	 * @param matchCode
-	 * @param persistenceStringOrNull
-	 * @param nodeOrNull
+	 * @param node
 	 * @param startNodeOfPathOrNull
 	 * @param endNodeOfPathOrNull
 	 */
 	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
-			final FindingKind findingKind, final String findingProducer, final int lineNoOrMinus1,
-
-			final String descriptionOrNull, final String extraDescriptionOrNull,
-
-			final String classFQNOrNull, final String originalAbsFileOrNull,
-			final String classificationOrNull, final double rating, final String matchCode,
-			final String persistenceStringOrNull, final XMLReportNode nodeOrNull,
-			final XMLReportNode startNodeOfPathOrNull, final XMLReportNode endNodeOfPathOrNull) {
+			final FindingKind findingKind, final String classificationOrNull, final double rating,
+			final String matchCode, final XMLReportNode node) {
 		this.findingID = findingID;
 		this.problemType = problemType;
 		this.findingKind = findingKind;
-		this.findingProducer = findingProducer;
-		this.lineNoOrMinus1 = lineNoOrMinus1;
 
-		this.descriptionOrNull = descriptionOrNull;
-		this.extraDescriptionOrNull = extraDescriptionOrNull;
-
-		this.classFQNOrNull = classFQNOrNull;
-		this.originalAbsFileOrNull = originalAbsFileOrNull;
 		this.classificationOrNull = classificationOrNull;
 		this.rating = rating;
 		this.matchCode = matchCode;
-		this.persistenceStringOrNull = persistenceStringOrNull;
 
-		this.nodeOrNull = nodeOrNull;
-		this.startNodeOfPathOrNull = startNodeOfPathOrNull;
-		this.endNodeOfPathOrNull = endNodeOfPathOrNull;
+		this.nodeOrNull = node;
+		this.startNodeOfPathOrNull = null;
+		this.endNodeOfPathOrNull = null;
+	}
+	
+	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
+			final FindingKind findingKind, final String classificationOrNull, final double rating,
+			final String matchCode,
+			final XMLReportNode startNodeOfPath, final XMLReportNode endNodeOfPath) {
+		this.findingID = findingID;
+		this.problemType = problemType;
+		this.findingKind = findingKind;
+
+		this.classificationOrNull = classificationOrNull;
+		this.rating = rating;
+		this.matchCode = matchCode;
+
+		this.nodeOrNull = null;
+		this.startNodeOfPathOrNull = startNodeOfPath;
+		this.endNodeOfPathOrNull = endNodeOfPath;
 	}
 
 	public int getFindingID() {
@@ -111,40 +99,16 @@ public class XMLReportFinding {
 		return findingKind;
 	}
 
-	public String getFindingProducer() {
-		return findingProducer;
-	}
-
 	public int getLineNoOrMinus1() {
-		if (findingKind == FindingKind.PATH) {
-			return endNodeOfPathOrNull.getLineNoOrMinus1();
-		}
-		return lineNoOrMinus1;
-	}
-
-	public String getDescription() {
-		if (descriptionOrNull == null) {
-			return "";
-		}
-		return descriptionOrNull;
-	}
-
-	public String getExtraDescription() {
-		if (extraDescriptionOrNull == null) {
-			return "";
-		}
-		return extraDescriptionOrNull;
+		return getNodeOrNull().getLineNoOrMinus1();
 	}
 
 	public String getClassFQNOrNull() {
-		if (findingKind == FindingKind.PATH) {
-			return endNodeOfPathOrNull.getClassFQNOrNull();
-		}
-		return classFQNOrNull;
+		return getNodeOrNull().getClassFQNOrNull();
 	}
 
 	public String getOriginalAbsFileOrNull() {
-		return originalAbsFileOrNull;
+		return getNodeOrNull().getAbsolutePathOrNull();
 	}
 
 	public String getFindingClassificationOrNull() {
@@ -159,26 +123,17 @@ public class XMLReportFinding {
 		return matchCode;
 	}
 
-	public String getPersistenceStringOrNull() {
-		if (findingKind == FindingKind.PATH) {
-			return endNodeOfPathOrNull.getXFilePersistenceOrNull();
-		}
-		return persistenceStringOrNull;
+	public String getRelativePathOrNull() {
+		return getNodeOrNull().getRelativePathOrNull();
 	}
 
-	public XMLReportNode getNodeOrNull() {
+	private XMLReportNode getNodeOrNull() {
 		if (findingKind == FindingKind.PATH) {
+			if (problemType.getPresentationName().contains("Resource Leak")) {
+				return startNodeOfPathOrNull;
+			}
 			return endNodeOfPathOrNull;
 		}
 		return nodeOrNull;
 	}
-
-	public XMLReportNode getStartNodeOfPathOrNull() {
-		return startNodeOfPathOrNull;
-	}
-
-	public XMLReportNode getEndNodeOfPathOrNull() {
-		return endNodeOfPathOrNull;
-	}
-
 }

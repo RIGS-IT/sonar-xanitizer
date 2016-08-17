@@ -27,7 +27,8 @@ public class XMLReportNode {
 
 	private final String classFQNOrNull;
 	private final int lineNoOrMinus1;
-	private final String xFilePersistenceOrNull;
+	private final String relativePathOrNull;
+	private final String absolutePathOrNull;
 
 	/**
 	 * The representation of a single node of a taint path
@@ -36,11 +37,13 @@ public class XMLReportNode {
 	 * @param lineNoOrMinus1
 	 * @param urlOrEmpty
 	 */
-	public XMLReportNode(final String classFQNOrEmpty, final int lineNoOrMinus1,
-			final String urlOrEmpty) {
-		this.classFQNOrNull = classFQNOrEmpty.isEmpty() ? null : classFQNOrEmpty;
+	public XMLReportNode(final String classFQNOrNull, final int lineNoOrMinus1,
+			final String relativePathOrNull, final String absolutePathOrNull) {
+		this.classFQNOrNull = classFQNOrNull != null && classFQNOrNull.isEmpty() ? null
+				: classFQNOrNull;
 		this.lineNoOrMinus1 = lineNoOrMinus1;
-		this.xFilePersistenceOrNull = urlOrEmpty.isEmpty() ? null : urlOrEmpty;
+		this.relativePathOrNull = relativePathOrNull != null && relativePathOrNull.isEmpty() ? null : relativePathOrNull;
+		this.absolutePathOrNull = absolutePathOrNull != null && absolutePathOrNull.isEmpty() ? null : absolutePathOrNull;
 	}
 
 	public String getClassFQNOrNull() {
@@ -51,8 +54,12 @@ public class XMLReportNode {
 		return lineNoOrMinus1;
 	}
 
-	public String getXFilePersistenceOrNull() {
-		return xFilePersistenceOrNull;
+	public String getRelativePathOrNull() {
+		return relativePathOrNull;
+	}
+	
+	public String getAbsolutePathOrNull() {
+		return absolutePathOrNull;
 	}
 
 }

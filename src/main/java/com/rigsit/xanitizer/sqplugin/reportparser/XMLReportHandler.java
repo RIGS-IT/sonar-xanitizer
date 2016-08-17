@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
+import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
 /**
  * Event handler for parsing the XML report file
@@ -42,21 +43,13 @@ public class XMLReportHandler extends DefaultHandler {
 	private final StringBuilder collectedCharacters = new StringBuilder();
 
 	private String problemTypeId;
-	private String clazz;
-	private String pckgPath;
 	private int findingId = -1;
 	private FindingKind findingKind;
 	private String producer;
-	private int lineNo = -1;
 	private double rating;
 
-	private String descriptionOrNull;
-	private String extraDescriptionOrNull;
-
-	private String originalAbsFileOrNull;
 	private String classificationOrNull;
 	private String matchCode;
-	private String persistenceOrNull;
 
 	private XMLReportNode nodeOrNull;
 	private XMLReportNode startNodeOrNull;
@@ -98,9 +91,23 @@ public class XMLReportHandler extends DefaultHandler {
 		}
 	}
 
-	private void startFindingsList(final Attributes attributes) {
+	private void startFindingsList(final Attributes attributes) throws SAXException {
+		final String toolVersionShortOrNull = attributes.getValue("xanitizerVersionShort");
+
+		if (toolVersionShortOrNull == null) {
+			throw new XMLReportException(
+					"No attribute 'xanitizerVersionShort' found in XML report file.");
+		}
+
+		final String errMsgOrNull = SensorUtil.checkVersion(toolVersionShortOrNull, 2, 3, -1);
+		if (errMsgOrNull != null) {
+			throw new XMLReportException(
+					"Error parsing attribute 'xanitizerVersionShort' in XML report file: "
+							+ errMsgOrNull + ".");
+		}
+
 		xmlReportContent.setToolVersion(attributes.getValue("xanitizerVersion"));
-		xmlReportContent.setToolVersionShort(attributes.getValue("xanitizerVersionShort"));
+		xmlReportContent.setToolVersionShort(toolVersionShortOrNull);
 
 		final String timestamp = attributes.getValue("timeStampLong");
 		if (timestamp != null) {
@@ -110,10 +117,11 @@ public class XMLReportHandler extends DefaultHandler {
 
 	private XMLReportNode mkNodeFromAttributes(final Attributes attributes) {
 		final int lineNoOrMinus1 = parseInt(attributes.getValue("lineNo"), -1);
-		final String classFQNOrEmpty = attributes.getValue("classFQN");
-		final String xFilePersistence = attributes.getValue("xFilePersistence");
+		final String classFQNOrNull = attributes.getValue("classFQN");
+		final String relativePath = attributes.getValue("relativePath");
+		final String absolutePath = attributes.getValue("absolutePath");
 
-		return new XMLReportNode(classFQNOrEmpty, lineNoOrMinus1, xFilePersistence);
+		return new XMLReportNode(classFQNOrNull, lineNoOrMinus1, relativePath, absolutePath);
 	}
 
 	private int parseInt(final String s, final int dflt) {
@@ -132,39 +140,17 @@ public class XMLReportHandler extends DefaultHandler {
 		case "problemTypeId":
 			problemTypeId = collectedCharacters.toString();
 			break;
-		case "class":
-			clazz = collectedCharacters.toString();
-			break;
-		case "package":
-			pckgPath = collectedCharacters.toString();
-			break;
 		case "classification":
 			classificationOrNull = collectedCharacters.toString();
 			break;
 		case "producer":
 			producer = collectedCharacters.toString();
 			break;
-		case "line":
-			// The line number might contain separator commas.
-			lineNo = Integer.parseInt(collectedCharacters.toString().replace(",", ""));
-			break;
 		case "rating":
 			rating = Double.parseDouble(collectedCharacters.toString());
 			break;
-		case "description":
-			descriptionOrNull = collectedCharacters.toString();
-			break;
-		case "extraDescription":
-			extraDescriptionOrNull = collectedCharacters.toString();
-			break;
-		case "originalAbsFile":
-			originalAbsFileOrNull = collectedCharacters.toString();
-			break;
 		case "matchCode":
 			matchCode = collectedCharacters.toString();
-			break;
-		case "xFilePersistence":
-			persistenceOrNull = collectedCharacters.toString();
 			break;
 		case "finding":
 			// Finishing a finding.
@@ -191,11 +177,11 @@ public class XMLReportHandler extends DefaultHandler {
 			return;
 		}
 
-		// skip FindBugs and OWASP Dependency Check Findings
-		if ("PlugIn:Findbugs".equals(producer) || "PlugIn:OWASPDependencyCheck".equals(producer)) {
+		if (shouldSkipFinding()) {
+			LOG.debug("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
 			return;
 		}
-
+		
 		final GeneratedProblemType problemType = GeneratedProblemType.getForId(problemTypeId);
 		if (problemType == null) {
 			LOG.warn("Xanitizer: Unknown problem type '" + problemTypeId + "'. Skipping finding "
@@ -203,21 +189,28 @@ public class XMLReportHandler extends DefaultHandler {
 			return;
 		}
 
-		// Skip informational findings.
-		if (shouldSkipFinding()) {
-			LOG.debug("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
-			return;
+		final XMLReportFinding f;
+		if (findingKind == FindingKind.PATH) {
+			f = new XMLReportFinding(findingId, problemType, findingKind, classificationOrNull,
+					rating, matchCode, startNodeOrNull, endNodeOrNull);
+		} else {
+			f = new XMLReportFinding(findingId, problemType, findingKind, classificationOrNull,
+					rating, matchCode, nodeOrNull);
 		}
-
-		final XMLReportFinding f = new XMLReportFinding(findingId, problemType, findingKind,
-				producer, lineNo, descriptionOrNull, extraDescriptionOrNull,
-				mkClassFQNOrNull(pckgPath, clazz), originalAbsFileOrNull, classificationOrNull,
-				rating, matchCode, persistenceOrNull, nodeOrNull, startNodeOrNull, endNodeOrNull);
 
 		xmlReportContent.addFinding(f);
 	}
 
+	/**
+	 * Skip informational findings and FindBugs and OWASP Dependency Check Findings.
+	 * 
+	 * @return
+	 */
 	private boolean shouldSkipFinding() {
+		if ("PlugIn:Findbugs".equals(producer) || "PlugIn:OWASPDependencyCheck".equals(producer)) {
+			return true;
+		}
+		
 		switch (classificationOrNull) {
 		case "Information":
 		case "Duplicate":
@@ -238,44 +231,25 @@ public class XMLReportHandler extends DefaultHandler {
 				|| matchCode == null) {
 			return false;
 		}
-		if (findingKind == FindingKind.PATH && (startNodeOrNull == null || endNodeOrNull == null)) {
-			return false;
+		if (findingKind == FindingKind.PATH) {
+			return startNodeOrNull != null && endNodeOrNull != null;
 		}
-		return true;
+		return nodeOrNull != null;
 	}
 
 	private void resetData() {
 		problemTypeId = null;
-		clazz = null;
-		pckgPath = null;
 		classificationOrNull = null;
 		findingId = -1;
 		findingKind = null;
 		problemTypeId = null;
-		lineNo = -1;
 		rating = 0;
 
-		descriptionOrNull = null;
-		extraDescriptionOrNull = null;
-
-		originalAbsFileOrNull = null;
 		matchCode = null;
-		persistenceOrNull = null;
 
 		nodeOrNull = null;
 		startNodeOrNull = null;
 		endNodeOrNull = null;
-	}
-
-	private String mkClassFQNOrNull(final String pckgPathOrNull, final String clazzName) {
-		if (clazzName == null) {
-			return null;
-		}
-
-		if (pckgPathOrNull == null || pckgPathOrNull.isEmpty()) {
-			return clazzName;
-		}
-		return pckgPathOrNull + "." + clazzName;
 	}
 
 	@Override

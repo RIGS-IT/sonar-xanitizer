@@ -32,11 +32,8 @@ import java.util.Set;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.fs.TextRange;
-import org.sonar.api.batch.fs.internal.DefaultInputModule;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.Severity;
@@ -72,6 +69,8 @@ public class XanitizerSensor implements Sensor {
 
 	private final Set<String> activeXanRuleNames = new HashSet<>();
 
+	private final Set<String> alreadyCreatedIssues = new HashSet<>();
+
 	/**
 	 * The Xanitizer sensor
 	 * 
@@ -83,10 +82,6 @@ public class XanitizerSensor implements Sensor {
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator, final Settings settings,
 			final ActiveRules activeRules, final SensorContext sensorContext) {
 		this.javaResourceLocator = javaResourceLocator;
-		this.reportFile = SensorUtil.geReportFile(sensorContext, settings);
-		if (this.reportFile == null) {
-			return;
-		}
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
 			if (activeRule.ruleKey().repository().equals(XanitizerRulesDefinition.REPOSITORY_KEY)) {
@@ -95,8 +90,12 @@ public class XanitizerSensor implements Sensor {
 			}
 		}
 		if (activeXanRuleNames.isEmpty()) {
-			LOG.warn(
-					"No Xanitizer rule is set active in the used quality profile. Skipping analysis.");
+			/*
+			 * If no rule is active, we do not need to read the report file
+			 */
+			this.reportFile = null;
+		} else {
+			this.reportFile = SensorUtil.geReportFile(sensorContext, settings);
 		}
 	}
 
@@ -123,20 +122,6 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		final String toolVersionShortOrNull = content.getToolVersionShortOrNull();
-		if (toolVersionShortOrNull == null) {
-			LOG.warn("No attribute 'xanitizerVersionShort' found in XML report file '" + reportFile
-					+ "'. Skipping analysis.");
-			return;
-		}
-
-		final String errMsgOrNull = SensorUtil.checkVersion(toolVersionShortOrNull, 2, 3, -1);
-		if (errMsgOrNull != null) {
-			LOG.warn("Could not parse attribute 'xanitizerVersionShort' in XML report file '"
-					+ reportFile + "': " + errMsgOrNull + ". Skipping analysis.");
-			return;
-		}
-
 		final long analysisEndDate = content.getAnalysisEndDate();
 		if (analysisEndDate == 0) {
 			LOG.warn(
@@ -144,24 +129,22 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		createMeasures(project, sensorContext, analysisEndDate, content);
+		final String analysisDatePresentation = SensorUtil
+				.convertToDateWithTimeString(new Date(analysisEndDate));
+		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation);
+
+		createIssuesAndMeasures(project, sensorContext, content);
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void createMeasures(final Project project, final SensorContext sensorContext,
-			final long analysisEndDate, final XMLReportContent content) {
-
-		final String analysisDatePresentation = SensorUtil
-				.convertToDateWithTimeString(new Date(analysisEndDate));
+	private void createIssuesAndMeasures(final Project project, final SensorContext sensorContext,
+			final XMLReportContent content) {
 
 		final Map<Metric, Map<Resource, Integer>> metricValues = new LinkedHashMap<>();
 
-		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation
-				+ "; findings: " + content.getXMLReportFindings().size());
-
 		// Generate issues for findings.
 		for (final XMLReportFinding f : content.getXMLReportFindings()) {
-			generateIssuesForFinding(f, metricValues, project, sensorContext);
+			generateIssueForFinding(f, metricValues, project, sensorContext);
 		}
 
 		// Metrics: Counts of different findings.
@@ -182,56 +165,58 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void generateIssuesForFinding(final XMLReportFinding finding,
+	private void generateIssueForFinding(final XMLReportFinding xanFinding,
 			final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Project project,
 			final SensorContext sensorContext) {
 
-		final InputFile inputFileOrNull = mkInputFileOrNull(finding, sensorContext);
-
-		generateIssueOnInputFileOrProject(inputFileOrNull, project,
-				finding.getProblemType().getPresentationName() + mkKindString(finding)
-						+ mkDescriptionSuffixForLocation(inputFileOrNull, finding),
-				finding, metricValuesAccu, sensorContext);
-	}
-
-	private String mkKindString(final XMLReportFinding finding) {
-		final StringBuilder sb = new StringBuilder(" (");
-		switch (finding.getFindingKind()) {
-		case NON_TAINTED:
-			sb.append("non-tainted; ");
-			break;
-		case SANITIZER:
-			sb.append("applied Sanitizer; ");
-			break;
-		case PATH:
-			sb.append("taint sink; ");
-			break;
-		case USER:
-			sb.append("user generated; ");
-			break;
-		default:
-			// do nothing
+		if (!activeXanRuleNames.contains(xanFinding.getProblemType().name())) {
+			return;
 		}
 
-		final String findingId = Integer.toString(finding.getFindingID());
-		sb.append("Xanitizer finding ID ");
-		sb.append(findingId);
-		sb.append(")");
-		return sb.toString();
-	}
-
-	private String mkDescriptionSuffixForLocation(final InputComponent inputComponentOrNull,
-			final XMLReportFinding finding) {
-		if (inputComponentOrNull != null) {
+		final InputFile inputFile = mkInputFileOrNull(xanFinding, sensorContext);
+		if (inputFile == null) {
 			/*
-			 * No need to generate an extra description for the location - the
-			 * issue will be registered with the given resource.
+			 * Do not generate issues without code location
 			 */
-			return "";
+			LOG.debug("Xanitizer: Skipping finding " + xanFinding.getFindingID()
+					+ ": Corresponding file could not be found in project: "
+					+ xanFinding.getRelativePathOrNull());
+			
+			return;
 		}
 
-		return " - " + mkResourcePresentation(finding) + ":" + finding.getLineNoOrMinus1();
+		final boolean issueCreated = createNewIssue(inputFile, xanFinding, sensorContext);
 
+		if (issueCreated) {
+			incrementMetrics(xanFinding, metricValuesAccu, project, sensorContext, inputFile);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void incrementMetrics(final XMLReportFinding xanFinding,
+			final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Project project,
+			final SensorContext sensorContext, final InputFile inputFile) {
+		final Severity severity = SensorUtil.mkSeverity(xanFinding);
+		final Resource resourceToBeUsed = sensorContext.getResource(inputFile);
+
+		final List<Metric> metrics = mkMetrics(xanFinding.getProblemType());
+		for (final Metric metric : metrics) {
+			incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project,
+					metricValuesAccu);
+		}
+
+		final String matchCode = xanFinding.getMatchCode();
+		if ("NOT".equals(matchCode)) {
+			incrementValueForResourceAndContainingResources(
+					XanitizerMetrics.getMetricForNewXanFindings(), resourceToBeUsed, project,
+					metricValuesAccu);
+		}
+
+		final Metric metricForSeverity = XanitizerMetrics.getMetricForSeverity(severity);
+		if (metricForSeverity != null) {
+			incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed,
+					project, metricValuesAccu);
+		}
 	}
 
 	/*
@@ -244,48 +229,24 @@ public class XanitizerSensor implements Sensor {
 		return lineNo;
 	}
 
-	private String mkResourcePresentation(final XMLReportFinding finding) {
-		if (finding.getClassFQNOrNull() != null) {
-			return finding.getClassFQNOrNull();
-		}
-
-		final String relativePath = getRelativePathOrNull(finding);
-		if (relativePath != null) {
-			return relativePath;
-		}
-
-		return "<no resource found>";
-	}
-
-	private String getRelativePathOrNull(final XMLReportFinding finding) {
-		if (finding.getPersistenceStringOrNull() != null) {
-			// TODO at the moment a bug in the report file results in a
-			// reference to the project directory
-			final String persistence = finding.getPersistenceStringOrNull()
-					.replace("XanitizerPath:${PROJECT_DIR}Resources/", "/");
-
-			// No resource
-			if (persistence.contains("XanitizerNonResource")) {
-				return null;
-			}
-
-			return persistence.replace("XanitizerPath:", "/");
-		}
-		return null;
-	}
-
 	private InputFile mkInputFileOrNull(final XMLReportFinding finding,
+			final SensorContext sensorContext) {
+
+		final InputFile result = mkInputFileOrNullFromClass(finding, sensorContext);
+		if (result == null) {
+			return mkInputFileOrNullFromPath(finding, sensorContext);
+		}
+
+		return result;
+	}
+
+	private InputFile mkInputFileOrNullFromClass(final XMLReportFinding finding,
 			final SensorContext sensorContext) {
 
 		final String classFQNOrNull = finding.getClassFQNOrNull();
 		if (classFQNOrNull == null) {
-			final String relativePath = getRelativePathOrNull(finding);
-			if (relativePath != null) {
-				return mkInputFileOrNullFromPath(relativePath, sensorContext);
-			}
 			return null;
 		}
-
 		/*
 		 * The API of the Java plugin has changed and returns InputFile directly
 		 * since 4.0. To support previous versions, use reflection here and do
@@ -294,43 +255,60 @@ public class XanitizerSensor implements Sensor {
 		try {
 			final Method findResource = javaResourceLocator.getClass()
 					.getDeclaredMethod("findResourceByClassName", String.class);
-			final Object resourceOrNull = findResource.invoke(javaResourceLocator, classFQNOrNull);
+			final Object resource = findResource.invoke(javaResourceLocator, classFQNOrNull);
 
-			if (resourceOrNull instanceof InputFile) {
-				return (InputFile) resourceOrNull;
+			if (resource instanceof InputFile) {
+				return (InputFile) resource;
 			}
 
-			if (resourceOrNull instanceof Resource) {
-				return mkInputFileOrNullFromResource((Resource) resourceOrNull, sensorContext);
+			if (resource instanceof Resource) {
+				return mkInputFileOrNullFromResource((Resource) resource, sensorContext);
 			}
 		} catch (Exception e) {
 			LOG.error("Could not call method 'findResourceByClassName' on Java resource locator!",
 					e);
 		}
-
 		return null;
 	}
 
-	private InputFile mkInputFileOrNullFromPath(final String relativePath,
+	private InputFile mkInputFileOrNullFromPath(final XMLReportFinding finding,
 			final SensorContext sensorContext) {
 
 		final FileSystem fs = sensorContext.fileSystem();
 
-		final File absoluteFile = new File(fs.baseDir(), relativePath);
-		final String absoluteFilePath = absoluteFile.getAbsolutePath();
-
 		/*
-		 * SonarQube 5.4 seems to sometimes enter an endless loop here, if a
-		 * non-trivial predicate is given.
+		 * First check, if the absolute file exists on the machine and then try
+		 * to detect it in the project context
 		 */
-		final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
-				.inputFiles(fs.predicates().hasAbsolutePath(absoluteFilePath));
+		final String originalAbsoluteFile = finding.getOriginalAbsFileOrNull();
+		if (originalAbsoluteFile != null && new File(originalAbsoluteFile).isFile()) {
+			final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
+					.inputFiles(fs.predicates().hasAbsolutePath(originalAbsoluteFile));
 
-		// Use first matching input file, or none.
-		for (final InputFile inputFile : inputFilesIterable) {
-			return inputFile;
+			// Use first matching input file
+			for (final InputFile inputFile : inputFilesIterable) {
+				return inputFile;
+			}
 		}
 
+		/*
+		 * If the absolute path does not exist, create the relative path from
+		 * the persistence string
+		 */
+		final String relativePath = finding.getRelativePathOrNull();
+		if (relativePath != null) {
+			final File absoluteFile = new File(fs.baseDir(), relativePath);
+			final String absoluteFilePath = absoluteFile.getAbsolutePath();
+
+			final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
+					.inputFiles(fs.predicates().hasAbsolutePath(absoluteFilePath));
+
+			// Use first matching input file
+			for (final InputFile inputFile : inputFilesIterable) {
+				return inputFile;
+			}
+
+		}
 		return null;
 	}
 
@@ -358,88 +336,47 @@ public class XanitizerSensor implements Sensor {
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private boolean generateIssueOnInputFileOrProject(final InputFile inputFileOrNull,
-			final Project project, final String description, final XMLReportFinding xanFinding,
-			final Map<Metric, Map<Resource, Integer>> metricValuesAccu,
+	private boolean createNewIssue(final InputFile inputFile, final XMLReportFinding xanFinding,
 			final SensorContext sensorContext) {
 
-		/*
-		 * At first try to find the resource in another module. Only if the root
-		 * project is analyzed, all remaining findings have to be added.
-		 */
-		if (inputFileOrNull == null && !project.isRoot()) {
-			return false;
-		}
-
-		if (!activeXanRuleNames.contains(xanFinding.getProblemType().name())) {
-			return false;
-		}
-
-		final Resource resourceToBeUsed = inputFileOrNull == null ? project
-				: sensorContext.getResource(inputFileOrNull);
-
+		final GeneratedProblemType pt = xanFinding.getProblemType();
+		final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY, pt.name());
+		final int lineNo = normalizeLineNo(xanFinding.getLineNoOrMinus1());
 		final Severity severity = SensorUtil.mkSeverity(xanFinding);
 
-		final int lineNo = normalizeLineNo(xanFinding.getLineNoOrMinus1());
-		createNewIssue(inputFileOrNull, project, lineNo, description, xanFinding, sensorContext,
-				severity);
-		LOG.debug("Issue saved: " + resourceToBeUsed + ":" + lineNo + " - " + description);
-
-		final List<Metric> metrics = mkMetrics(xanFinding.getProblemType());
-		for (final Metric metric : metrics) {
-			incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project,
-					metricValuesAccu);
+		final String issueKey = mkIssueKey(ruleKey, inputFile, lineNo);
+		if (alreadyCreatedIssues.contains(issueKey)) {
+			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
+					+ pt.getPresentationName());
+			return false;
 		}
 
-		final String matchCode = xanFinding.getMatchCode();
-		if ("NOT".equals(matchCode)) {
-			incrementValueForResourceAndContainingResources(
-					XanitizerMetrics.getMetricForNewXanFindings(), resourceToBeUsed, project,
-					metricValuesAccu);
-		}
-
-		final Metric metricForSeverity = XanitizerMetrics.getMetricForSeverity(severity);
-		if (metricForSeverity != null) {
-			incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed,
-					project, metricValuesAccu);
-		}
-
-		return true;
-	}
-
-	private void createNewIssue(final InputFile inputFileOrNull, final Project project,
-			final int lineNo, final String description, final XMLReportFinding xanFinding,
-			final SensorContext sensorContext, final Severity severity) {
 		final NewIssue newIssue = sensorContext.newIssue();
-
-		final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
-				xanFinding.getProblemType().name());
 		newIssue.forRule(ruleKey);
-
 		newIssue.overrideSeverity(severity);
 
 		final NewIssueLocation newIssueLocation = newIssue.newLocation();
+		newIssueLocation.on(inputFile);
 
-		if (inputFileOrNull != null) {
-			newIssueLocation.on(inputFileOrNull);
-
-			// If line number exceeds the current length of the file,
-			// SonarQube will crash. So check length for robustness.
-			if (lineNo > 0 && lineNo <= inputFileOrNull.lines()) {
-				final TextRange textRange = inputFileOrNull.selectLine(lineNo);
-				newIssueLocation.at(textRange);
-			}
-		} else {
-			final InputModule inputModule = new DefaultInputModule(project.getKey());
-			newIssueLocation.on(inputModule);
+		// If line number exceeds the current length of the file,
+		// SonarQube will crash. So check length for robustness.
+		if (lineNo > 0 && lineNo <= inputFile.lines()) {
+			final TextRange textRange = inputFile.selectLine(lineNo);
+			newIssueLocation.at(textRange);
 		}
 
-		newIssueLocation.message(description);
-
+		newIssueLocation.message(pt.getMessage());
 		newIssue.at(newIssueLocation);
-
 		newIssue.save();
+
+		alreadyCreatedIssues.add(issueKey);
+		
+		LOG.debug("Issue saved: " + inputFile + ":" + lineNo + " - " + pt.getPresentationName());
+		return true;
+	}
+
+	private String mkIssueKey(final RuleKey ruleKey, final InputFile file, final int lineNo) {
+		return ruleKey.toString() + ":" + file.toString() + ":" + lineNo;
 	}
 
 	@SuppressWarnings("rawtypes")
