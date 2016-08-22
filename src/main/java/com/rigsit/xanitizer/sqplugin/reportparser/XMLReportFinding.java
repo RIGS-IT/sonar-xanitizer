@@ -51,8 +51,6 @@ public class XMLReportFinding {
 	 * @param rating
 	 * @param matchCode
 	 * @param node
-	 * @param startNodeOfPathOrNull
-	 * @param endNodeOfPathOrNull
 	 */
 	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
 			final FindingKind findingKind, final String classificationOrNull, final double rating,
@@ -69,11 +67,22 @@ public class XMLReportFinding {
 		this.startNodeOfPathOrNull = null;
 		this.endNodeOfPathOrNull = null;
 	}
-	
+
+	/**
+	 * 
+	 * @param findingID
+	 * @param problemType
+	 * @param findingKind
+	 * @param classificationOrNull
+	 * @param rating
+	 * @param matchCode
+	 * @param startNodeOfPathOrNull
+	 * @param endNodeOfPathOrNull
+	 */
 	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
 			final FindingKind findingKind, final String classificationOrNull, final double rating,
-			final String matchCode,
-			final XMLReportNode startNodeOfPath, final XMLReportNode endNodeOfPath) {
+			final String matchCode, final XMLReportNode startNodeOfPath,
+			final XMLReportNode endNodeOfPath) {
 		this.findingID = findingID;
 		this.problemType = problemType;
 		this.findingKind = findingKind;
@@ -99,18 +108,6 @@ public class XMLReportFinding {
 		return findingKind;
 	}
 
-	public int getLineNoOrMinus1() {
-		return getNodeOrNull().getLineNoOrMinus1();
-	}
-
-	public String getClassFQNOrNull() {
-		return getNodeOrNull().getClassFQNOrNull();
-	}
-
-	public String getOriginalAbsFileOrNull() {
-		return getNodeOrNull().getAbsolutePathOrNull();
-	}
-
 	public String getFindingClassificationOrNull() {
 		return classificationOrNull;
 	}
@@ -123,11 +120,7 @@ public class XMLReportFinding {
 		return matchCode;
 	}
 
-	public String getRelativePathOrNull() {
-		return getNodeOrNull().getRelativePathOrNull();
-	}
-
-	private XMLReportNode getNodeOrNull() {
+	public XMLReportNode getLocation() {
 		if (findingKind == FindingKind.PATH) {
 			if (problemType.getPresentationName().contains("Resource Leak")) {
 				return startNodeOfPathOrNull;
@@ -136,4 +129,25 @@ public class XMLReportFinding {
 		}
 		return nodeOrNull;
 	}
+
+	public XMLReportNode getSecondaryLocationOrNull() {
+		if (findingKind == FindingKind.PATH) {
+			if (problemType.getPresentationName().contains("Resource Leak")) {
+				return endNodeOfPathOrNull;
+			}
+			return startNodeOfPathOrNull;
+		}
+		return null;
+	}
+	
+	public String getSecondaryLocationMessage() {
+		if (findingKind == FindingKind.PATH) {
+			if (problemType.getPresentationName().contains("Resource Leak")) {
+				return "Last usage position w/o being closed";
+			}
+			return "Corresponding Taint Source";
+		}
+		return null;
+	}
+
 }

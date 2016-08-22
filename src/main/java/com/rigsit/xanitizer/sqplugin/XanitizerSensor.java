@@ -23,6 +23,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
@@ -69,7 +71,7 @@ public class XanitizerSensor implements Sensor {
 
 	private final Set<String> activeXanRuleNames = new HashSet<>();
 
-	private final Set<String> alreadyCreatedIssues = new HashSet<>();
+	private final Map<String, NewIssue> alreadyCreatedIssues = new HashMap<>();
 
 	/**
 	 * The Xanitizer sensor
@@ -146,6 +148,10 @@ public class XanitizerSensor implements Sensor {
 		for (final XMLReportFinding f : content.getXMLReportFindings()) {
 			generateIssueForFinding(f, metricValues, project, sensorContext);
 		}
+		
+		for (final NewIssue issue : alreadyCreatedIssues.values()) {
+			issue.save();
+		}
 
 		// Metrics: Counts of different findings.
 		for (final Map.Entry<Metric, Map<Resource, Integer>> e : metricValues.entrySet()) {
@@ -173,15 +179,14 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		final InputFile inputFile = mkInputFileOrNull(xanFinding, sensorContext);
+		final InputFile inputFile = mkInputFileOrNull(xanFinding.getLocation(), sensorContext);
 		if (inputFile == null) {
 			/*
 			 * Do not generate issues without code location
 			 */
 			LOG.debug("Xanitizer: Skipping finding " + xanFinding.getFindingID()
-					+ ": Corresponding file could not be found in project: "
-					+ xanFinding.getRelativePathOrNull());
-			
+					+ ": Corresponding file could not be found in project.");
+
 			return;
 		}
 
@@ -229,21 +234,25 @@ public class XanitizerSensor implements Sensor {
 		return lineNo;
 	}
 
-	private InputFile mkInputFileOrNull(final XMLReportFinding finding,
+	private InputFile mkInputFileOrNull(final XMLReportNode node,
 			final SensorContext sensorContext) {
 
-		final InputFile result = mkInputFileOrNullFromClass(finding, sensorContext);
+		if (node == null) {
+			return null;
+		}
+
+		final InputFile result = mkInputFileOrNullFromClass(node, sensorContext);
 		if (result == null) {
-			return mkInputFileOrNullFromPath(finding, sensorContext);
+			return mkInputFileOrNullFromPath(node, sensorContext);
 		}
 
 		return result;
 	}
 
-	private InputFile mkInputFileOrNullFromClass(final XMLReportFinding finding,
+	private InputFile mkInputFileOrNullFromClass(final XMLReportNode node,
 			final SensorContext sensorContext) {
 
-		final String classFQNOrNull = finding.getClassFQNOrNull();
+		final String classFQNOrNull = node.getClassFQNOrNull();
 		if (classFQNOrNull == null) {
 			return null;
 		}
@@ -271,7 +280,7 @@ public class XanitizerSensor implements Sensor {
 		return null;
 	}
 
-	private InputFile mkInputFileOrNullFromPath(final XMLReportFinding finding,
+	private InputFile mkInputFileOrNullFromPath(final XMLReportNode node,
 			final SensorContext sensorContext) {
 
 		final FileSystem fs = sensorContext.fileSystem();
@@ -280,7 +289,7 @@ public class XanitizerSensor implements Sensor {
 		 * First check, if the absolute file exists on the machine and then try
 		 * to detect it in the project context
 		 */
-		final String originalAbsoluteFile = finding.getOriginalAbsFileOrNull();
+		final String originalAbsoluteFile = node.getAbsolutePathOrNull();
 		if (originalAbsoluteFile != null && new File(originalAbsoluteFile).isFile()) {
 			final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
 					.inputFiles(fs.predicates().hasAbsolutePath(originalAbsoluteFile));
@@ -295,7 +304,7 @@ public class XanitizerSensor implements Sensor {
 		 * If the absolute path does not exist, create the relative path from
 		 * the persistence string
 		 */
-		final String relativePath = finding.getRelativePathOrNull();
+		final String relativePath = node.getRelativePathOrNull();
 		if (relativePath != null) {
 			final File absoluteFile = new File(fs.baseDir(), relativePath);
 			final String absoluteFilePath = absoluteFile.getAbsolutePath();
@@ -341,11 +350,15 @@ public class XanitizerSensor implements Sensor {
 
 		final GeneratedProblemType pt = xanFinding.getProblemType();
 		final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY, pt.name());
-		final int lineNo = normalizeLineNo(xanFinding.getLineNoOrMinus1());
+		final int lineNo = normalizeLineNo(xanFinding.getLocation().getLineNoOrMinus1());
 		final Severity severity = SensorUtil.mkSeverity(xanFinding);
 
 		final String issueKey = mkIssueKey(ruleKey, inputFile, lineNo);
-		if (alreadyCreatedIssues.contains(issueKey)) {
+		final NewIssue alreadyCreatedIssue = alreadyCreatedIssues.get(issueKey);
+		if (alreadyCreatedIssue != null) {
+
+			addSecondaryLocation(alreadyCreatedIssue, xanFinding, sensorContext);
+
 			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
 					+ pt.getPresentationName());
 			return false;
@@ -360,19 +373,39 @@ public class XanitizerSensor implements Sensor {
 
 		// If line number exceeds the current length of the file,
 		// SonarQube will crash. So check length for robustness.
-		if (lineNo > 0 && lineNo <= inputFile.lines()) {
+		if (lineNo <= inputFile.lines()) {
 			final TextRange textRange = inputFile.selectLine(lineNo);
 			newIssueLocation.at(textRange);
 		}
 
 		newIssueLocation.message(pt.getMessage());
 		newIssue.at(newIssueLocation);
-		newIssue.save();
+		addSecondaryLocation(newIssue, xanFinding, sensorContext);
 
-		alreadyCreatedIssues.add(issueKey);
-		
+		alreadyCreatedIssues.put(issueKey, newIssue);
+
 		LOG.debug("Issue saved: " + inputFile + ":" + lineNo + " - " + pt.getPresentationName());
 		return true;
+	}
+
+	private void addSecondaryLocation(final NewIssue issue, final XMLReportFinding xanFinding,
+			final SensorContext sensorContext) {
+		final InputFile secondaryFile = mkInputFileOrNull(xanFinding.getSecondaryLocationOrNull(),
+				sensorContext);
+		if (secondaryFile != null) {
+			final NewIssueLocation secondaryLocation = issue.newLocation();
+			secondaryLocation.on(secondaryFile);
+			secondaryLocation.message(xanFinding.getSecondaryLocationMessage());
+			final int secondaryLine = normalizeLineNo(
+					xanFinding.getSecondaryLocationOrNull().getLineNoOrMinus1());
+			if (secondaryLine <= secondaryFile.lines()) {
+				final TextRange textRange = secondaryFile.selectLine(secondaryLine);
+				secondaryLocation.at(textRange);
+			}
+			issue.addLocation(secondaryLocation);
+			
+			LOG.debug("Added secondary location for finding " + xanFinding.getFindingID());
+		}
 	}
 
 	private String mkIssueKey(final RuleKey ruleKey, final InputFile file, final int lineNo) {

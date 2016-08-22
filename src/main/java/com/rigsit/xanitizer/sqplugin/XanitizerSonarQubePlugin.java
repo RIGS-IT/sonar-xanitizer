@@ -65,8 +65,6 @@ public class XanitizerSonarQubePlugin extends SonarPlugin {
 
 				XanitizerMetrics.class,
 
-				XanitizerQualityProfile.class,
-
 				XanitizerWidget.class
 
 		);

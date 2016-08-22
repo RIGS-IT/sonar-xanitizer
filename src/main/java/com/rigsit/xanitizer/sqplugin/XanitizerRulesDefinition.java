@@ -39,6 +39,7 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 	public static final String LANGUAGE_KEY = Java.KEY;
 
 	private static final String XANITIZER_TAG = "xanitizer";
+	private static final String SERVER_CONFIG_TAG = "server-configuration";
 	private static final String SECURITY_TAG = "security";
 
 	@Override
@@ -55,6 +56,10 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 			newRule.setSeverity(Severity.MAJOR);
 			newRule.setStatus(RuleStatus.READY);
 			newRule.setTags(XANITIZER_TAG, SECURITY_TAG);
+
+			if (problemType.getPresentationName().startsWith("Application Server:")) {
+				newRule.addTags(SERVER_CONFIG_TAG);
+			}
 		}
 
 		repository.done();

@@ -44,6 +44,7 @@ import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.issue.NewIssue;
+import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
@@ -102,7 +103,14 @@ public class SensorTest {
 				createdIssues[0]++;
 
 				final NewIssue newIssue = mock(NewIssue.class);
-				when(newIssue.newLocation()).thenReturn(new DefaultIssueLocation());
+				when(newIssue.newLocation()).then(new Answer<NewIssueLocation>() {
+
+					@Override
+					public NewIssueLocation answer(InvocationOnMock invocation) throws Throwable {
+						return new DefaultIssueLocation();
+					}
+					
+				});
 				return newIssue;
 			}
 		});
@@ -116,7 +124,7 @@ public class SensorTest {
 		sensor.analyse(project, context);
 		assertEquals(180, createdIssues[0]);
 	}
-	
+
 	private FileSystem prepareFileSystem(final File rootDir) {
 		final DefaultFileSystem fileSystem = new DefaultFileSystem(rootDir);
 
