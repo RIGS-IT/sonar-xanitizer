@@ -35,7 +35,7 @@ Xanitizer can be downloaded for free at <a href="http://www.xanitizer.net" >http
 	5. Specify the **XML report file** in the edit field labeled “Xanitizer XML Report File”. This is the findings list report output file that was created by the headless execution as described in the step above.
 	6. Press the button labeled **“Save Xanitizer Settings”** so that the setting is saved in SonarQube.
 	
-![alt tag](https://cloud.githubusercontent.com/assets/20301605/16995214/6d9b0010-4eab-11e6-967a-ba6ff0e5d530.png)
+![alt tag](https://cloud.githubusercontent.com/assets/20301605/17862408/61b13bbc-6895-11e6-8e58-54ed7711a381.png)
 
 3. Activate Xanitizer's rules in the quality profile that you are using:
 	1. Select the **“Rules”** menu item in the top-level bar.
@@ -58,8 +58,11 @@ In order to display the Xanitizer issues, a special widget is provided. It is ac
 ## Mapping of Xanitizer Findings to SonarQube Issues
 
 SonarQube issues are computed in the following way from Xanitizer findings:
-- For findings that are not associated with a Java class, issues are generated on the project level.
+- Only if a corresponding file could be found a SonarQube issue will be created for Xanitizer finding.
 - Only for findings with problem classifications (e. g. “Warning”, “Must fix” etc.), issues are generated.
+- Issues for FindBugs and OWASP Dependency Check findings are not created, because separate SonarQube plugins are available for these tools.
+- For taint path findings, the location of the issue is the the taint sink. The taint source is registered as secondary location.
+- For a single location, only one issue per problem type is created. So even if there are several taint paths with the same taint sink they result in one SonarQube issue (but with several taint sources as secondary locations).
 - Issues for Xanitizer findings with classifications “must fix” and “urgent fix” get SonarQube severity “blocker”.
 - For all other Xanitizer findings, the rating is used instead of the classification for determining the SonarQube severity:
 	* Ratings larger than 7 are mapped to severity “critical”.
