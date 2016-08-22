@@ -39,11 +39,11 @@ Xanitizer can be downloaded for free at <a href="http://www.xanitizer.net" >http
 
 3. Activate Xanitizer's rules in the quality profile that you are using:
 	1. Select the **“Rules”** menu item in the top-level bar.
-	2. Enter **tag “xanitizer”** in the edit text at left-hand side beneath “Tag”. Then, only the Xanitizer rules are displayed in the right-hand area.
+	2. Enter **“xanitizer”** in the edit text at left-hand side. Then, only the Xanitizer rules are displayed in the right-hand area.
 	3. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
 	4. In the dialog that opens, select the quality profile that you use for your project.
 
-![alt tag] (https://cloud.githubusercontent.com/assets/20301605/16995219/732b891e-4eab-11e6-9f38-a2d54b4e3a17.png)
+![alt tag] (https://cloud.githubusercontent.com/assets/20301605/17862219/97f4b98e-6894-11e6-9a63-2a0eaa9e3f0c.png)
 	
 ## Adding the widget
 
