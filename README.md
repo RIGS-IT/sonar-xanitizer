@@ -72,4 +72,8 @@ SonarQube issues are computed in the following way from Xanitizer findings:
 
 This means that for Xanitizer findings that are not classified as “must fix” or “urgent fix”, a rating larger than 7 must be assigned if the SonarQube issue corresponding to that finding should be considered to be “critical” in SonarQube.
 
+## Issues for Non-Java Files
+
+Some of the Special Code problem types analyze non-Java files (e.g. to check the server configuration in the web.xml). To raise issues on these files, they have to be scanned by SonarQube. This can be reached by turning on the import of unknown files by setting the property "sonar.import_unknown_files" to "true" or <a href="http://docs.sonarqube.org/display/SONAR/Analyzing+Source+Code#AnalyzingSourceCode-Unrecognizedfiles">enable it via GUI</a>. 
+
 
