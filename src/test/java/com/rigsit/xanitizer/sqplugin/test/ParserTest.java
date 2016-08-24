@@ -60,11 +60,11 @@ public class ParserTest {
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
-			assertEquals("version 2.3.0, build no. 84 of 01.07.16", content.getToolVersionOrNull());
-			assertEquals("2.3.0", content.getToolVersionShortOrNull());
+			assertEquals("version 2.3.1, build no. 86 of 23.08.16", content.getToolVersionOrNull());
+			assertEquals("2.3.1", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(727, findings.size());
+			assertEquals(729, findings.size());
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
