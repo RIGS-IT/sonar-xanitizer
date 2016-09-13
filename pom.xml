@@ -8,7 +8,33 @@
   <packaging>sonar-plugin</packaging>
 
   <name>Xanitizer SonarQube Plugin</name>
-  <description>Integrates Xanitizer results into SonarQube</description>
+  <description>Imports Xanitizer security reports</description>
+  <url>https://github.com/RIGS-IT/sonar-xanitizer</url>
+  <inceptionYear>2016</inceptionYear>
+  
+  <organization>
+    <name>RIGS IT</name>
+    <url>http://www.rigs-it.net</url>
+  </organization>
+  
+  <licenses>
+    <license>
+      <name>Apache License 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <id>normanwenzel</id>
+      <name>Norman Wenzel</name>
+    </developer>
+  </developers>
+  
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/RIGS-IT/sonar-xanitizer/issues</url>
+  </issueManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
