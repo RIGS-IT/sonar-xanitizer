@@ -91,7 +91,7 @@
           <pluginClass>com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin</pluginClass>
           <pluginKey>xanitizer</pluginKey>
           <pluginName>Xanitizer</pluginName>
-          <pluginDescription>A plugin displaying the results of the Xanitizer analyis.</pluginDescription>
+          <pluginDescription>Imports Xanitizer security reports.</pluginDescription>
         </configuration>
       </plugin>
       <plugin>
