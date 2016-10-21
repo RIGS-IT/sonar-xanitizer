@@ -161,7 +161,8 @@ public class XanitizerSensor implements Sensor {
 				final Resource resource = e1.getKey();
 				final Integer value = e1.getValue();
 
-				if (value != 0) {
+				// Only create metrics with 0 values on project level
+				if (value != 0 || resource == project) {
 					final Measure measure = new Measure(metric, value.doubleValue());
 					LOG.debug("Creating measure for metric " + measure.getMetricKey()
 							+ ": adding value = " + value + " to resource " + resource.getName());
