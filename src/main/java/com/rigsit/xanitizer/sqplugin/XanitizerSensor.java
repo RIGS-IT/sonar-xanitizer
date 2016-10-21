@@ -134,7 +134,7 @@ public class XanitizerSensor implements Sensor {
 		final String analysisDatePresentation = SensorUtil
 				.convertToDateWithTimeString(new Date(analysisEndDate));
 		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation);
-
+		LOG.debug("Create issues for " + content.getXMLReportFindings().size() + " Xanitizer findings.");
 		createIssuesAndMeasures(project, sensorContext, content);
 	}
 
@@ -143,6 +143,7 @@ public class XanitizerSensor implements Sensor {
 			final XMLReportContent content) {
 
 		final Map<Metric, Map<Resource, Integer>> metricValues = new LinkedHashMap<>();
+		initializeMetrics(metricValues, project);
 
 		// Generate issues for findings.
 		for (final XMLReportFinding f : content.getXMLReportFindings()) {
@@ -176,6 +177,8 @@ public class XanitizerSensor implements Sensor {
 			final SensorContext sensorContext) {
 
 		if (!activeXanRuleNames.contains(xanFinding.getProblemType().name())) {
+			LOG.debug("Xanitizer: Skipping finding " + xanFinding.getFindingID()
+			+ ": Rule for corresponding problem type is disabled.");
 			return;
 		}
 
@@ -195,6 +198,21 @@ public class XanitizerSensor implements Sensor {
 		if (issueCreated) {
 			incrementMetrics(xanFinding, metricValuesAccu, project, sensorContext, inputFile);
 		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private void initializeMetrics(final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Project project) {
+		
+		for (Metric metric : new XanitizerMetrics().getMetrics()) {
+			initializeMetric(metricValuesAccu, project, metric);
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private void initializeMetric(final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Resource resource, final Metric metric) {
+		Map<Resource, Integer> innerMap = new LinkedHashMap<>();
+		innerMap.put(resource, 0);
+		metricValuesAccu.put(metric, innerMap);
 	}
 
 	@SuppressWarnings("rawtypes")

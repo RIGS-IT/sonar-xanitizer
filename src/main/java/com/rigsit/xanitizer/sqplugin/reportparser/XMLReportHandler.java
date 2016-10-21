@@ -178,10 +178,9 @@ public class XMLReportHandler extends DefaultHandler {
 		}
 
 		if (shouldSkipFinding()) {
-			LOG.debug("Xanitizer: Skipping finding " + findingId + ": " + problemTypeId);
 			return;
 		}
-		
+
 		final GeneratedProblemType problemType = GeneratedProblemType.getForId(problemTypeId);
 		if (problemType == null) {
 			LOG.warn("Xanitizer: Unknown problem type '" + problemTypeId + "'. Skipping finding "
@@ -202,15 +201,23 @@ public class XMLReportHandler extends DefaultHandler {
 	}
 
 	/**
-	 * Skip informational findings and FindBugs and OWASP Dependency Check Findings.
+	 * Skip informational findings and FindBugs and OWASP Dependency Check
+	 * Findings.
 	 * 
 	 * @return
 	 */
 	private boolean shouldSkipFinding() {
-		if ("PlugIn:Findbugs".equals(producer) || "PlugIn:OWASPDependencyCheck".equals(producer)) {
+		if ("PlugIn:Findbugs".equals(producer)) {
+			LOG.debug("Xanitizer: Skipping finding " + findingId + ": Ignoring Findbugs finding.");
 			return true;
 		}
-		
+
+		if ("PlugIn:OWASPDependencyCheck".equals(producer)) {
+			LOG.debug("Xanitizer: Skipping finding " + findingId
+					+ ": Ignoring OWASP Dependency check finding.");
+			return true;
+		}
+
 		switch (classificationOrNull) {
 		case "Information":
 		case "Duplicate":
@@ -220,6 +227,7 @@ public class XMLReportHandler extends DefaultHandler {
 		case "Intended":
 		case "Obsolete":
 		case "Code Quality":
+			LOG.debug("Xanitizer: Skipping finding " + findingId + ": Ignoring harmless finding.");
 			return true;
 		default:
 			return false;
