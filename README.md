@@ -26,7 +26,7 @@ This plugin integrates the results of the Xanitizer security analysis into Sonar
 
 1. Adapt the build system so that on the machine where SonarQube is running, Xanitizer is run on the projects to be analyzed in headless mode, and creates a findings list report as an XML output file. The plugin does not run Xanitizer, it just reads the results of previous Xanitizer runs.
 2. Configure the location of the analysis results file of the project that should be displayed in SonarQube. This can be done in SonarQube's GUI:
-	1. Log in as administrator.
+	1. **Log in as administrator**.
 	2. Select the project for which you want to specify the Xanitizer XML report file.
 	3. Select the **“Administration”** menu entry in the project's area. **Note:** Do not use the global “Administration” menu item in the top-bar, but the project-specific one beneath the project name.
 	4. Choose the **menu item “General Settings”**, and in the page that is shown then, at the left-hand side, click on the **category “Xanitizer”**.
@@ -43,7 +43,7 @@ This plugin integrates the results of the Xanitizer security analysis into Sonar
 
 ![alt tag] (https://cloud.githubusercontent.com/assets/20301605/17862219/97f4b98e-6894-11e6-9a63-2a0eaa9e3f0c.png)
 	
-## Adding the widget
+## Adding the widget (Widget support has been removed since SonarQube 6.2 - this description is only valid for older versions)
 
 In order to display the Xanitizer issues, a special widget is provided. It is activated in the following way:
 1. Select the project for which you want to activate the widget.
