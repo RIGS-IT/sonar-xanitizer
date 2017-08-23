@@ -27,6 +27,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.xml.sax.SAXException;
 
 /**
@@ -34,9 +36,13 @@ import org.xml.sax.SAXException;
  *
  */
 public class XMLReportParser {
+	
+	private static final Logger LOG = Loggers.get(XMLReportContent.class);
 
 	/**
-	 * Parses the given XML report file and stores the extracted information in the returned report content
+	 * Parses the given XML report file and stores the extracted information in
+	 * the returned report content
+	 * 
 	 * @param reportFile
 	 * @return
 	 * @throws SAXException
@@ -55,7 +61,15 @@ public class XMLReportParser {
 		final XMLReportHandler handler = new XMLReportHandler(xmlReportContent);
 
 		final SAXParserFactory factory = SAXParserFactory.newInstance();
-		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
+		
+		/*
+		 * Could cause a ParserConfigurationException for certain implementations of SAXParserFactory
+		 */
+		try {
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
+		} catch (Exception e) {
+			LOG.info("Could not deactivate secure XML processing.");
+		}
 		final SAXParser saxParser = factory.newSAXParser();
 
 		saxParser.parse(reportFile, handler);
