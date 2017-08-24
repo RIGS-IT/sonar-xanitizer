@@ -65,6 +65,8 @@ import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
  */
 public class XanitizerSensor implements Sensor {
 	private static final Logger LOG = Loggers.get(XanitizerSensor.class);
+	
+	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
 
 	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
@@ -181,7 +183,7 @@ public class XanitizerSensor implements Sensor {
 			final SensorContext sensorContext) {
 
 		if (!activeXanRuleNames.contains(xanFinding.getProblemType().name())) {
-			LOG.debug("Xanitizer: Skipping finding " + xanFinding.getFindingID()
+			LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
 			+ ": Rule for corresponding problem type is disabled.");
 			return;
 		}
@@ -191,7 +193,7 @@ public class XanitizerSensor implements Sensor {
 			/*
 			 * Do not generate issues without code location
 			 */
-			LOG.debug("Xanitizer: Skipping finding " + xanFinding.getFindingID()
+			LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
 					+ ": Corresponding file could not be found in project.");
 
 			return;
