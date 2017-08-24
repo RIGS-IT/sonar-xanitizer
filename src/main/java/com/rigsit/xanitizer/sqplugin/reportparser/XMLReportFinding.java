@@ -30,7 +30,7 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
  */
 public class XMLReportFinding {
 	
-	private static String RESOURCE_LEAK_LABEL = "Resource Leak";
+	private static final String RESOURCE_LEAK_LABEL = "Resource Leak";
 
 	private final int findingID;
 	private final GeneratedProblemType problemType;
