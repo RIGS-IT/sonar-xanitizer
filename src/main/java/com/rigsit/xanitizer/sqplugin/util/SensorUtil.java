@@ -47,9 +47,6 @@ public class SensorUtil {
 	private static final Pattern TOOL_VERSION_PATTERN = Pattern
 			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
 
-	private static final DateFormat DATE_WITH_TIME_FORMATTER = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
-
 	private SensorUtil() {
 		// hide constructor
 	}
@@ -61,7 +58,9 @@ public class SensorUtil {
 	 * @return
 	 */
 	public static String convertToDateWithTimeString(Date date) {
-		return DATE_WITH_TIME_FORMATTER.format(date);
+		final DateFormat formatter = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss");
+		return formatter.format(date);
 	}
 
 	/**

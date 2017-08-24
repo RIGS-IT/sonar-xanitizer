@@ -160,6 +160,9 @@ public class XanitizerSensor implements Sensor {
 			for (final Map.Entry<Resource, Integer> e1 : e.getValue().entrySet()) {
 				final Resource resource = e1.getKey();
 				final Integer value = e1.getValue();
+				if (resource == null) {
+					continue;
+				}
 
 				// Only create metrics with 0 values on project level
 				if (value != 0 || resource == project) {
