@@ -33,7 +33,7 @@ public enum FindingKind {
 
 	private static final Logger LOG = Loggers.get(FindingKind.class);
 
-	static FindingKind mk(final String s) {
+	public static FindingKind mk(final String s) {
 		if (s == null) {
 			return null;
 		}
