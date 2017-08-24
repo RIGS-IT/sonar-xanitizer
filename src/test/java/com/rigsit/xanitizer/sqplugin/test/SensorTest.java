@@ -34,10 +34,12 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.InputPath;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.rule.ActiveRules;
@@ -48,6 +50,7 @@ import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.scan.filesystem.PathResolver;
 import org.sonar.api.utils.PathUtils;
@@ -115,6 +118,14 @@ public class SensorTest {
 			}
 		});
 		when(context.fileSystem()).thenReturn(fileSystem);
+		when(context.getResource(Mockito.any(InputPath.class))).thenAnswer(new Answer<Resource>() {
+
+			@Override
+			public Resource answer(InvocationOnMock invocation) throws Throwable {
+				return new org.sonar.api.resources.File("");
+			}
+			
+		});
 
 		final Project project = mock(Project.class);
 
