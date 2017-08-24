@@ -182,6 +182,23 @@ public class SensorTest {
 		sensor.analyse(mock(Project.class), sensorContext);
 		assertEquals(0, createdIssues[0]);
 	}
+	
+	@Test
+	public void testReportFileWOAnalysis() {
+		final Settings settings = new Settings();
+		final String reportFileString = getClass()
+				.getResource("/webgoat/empty-Findings-List.xml").getFile();
+		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
+
+		final int[] createdIssues = { 0 };
+
+		final SensorContext sensorContext = mock(SensorContext.class);
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				settings, getActiveRules(), sensorContext);
+		sensor.analyse(mock(Project.class), sensorContext);
+		assertEquals(0, createdIssues[0]);
+	}
 
 	private ActiveRules getActiveRules() {
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
