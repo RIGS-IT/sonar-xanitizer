@@ -124,6 +124,56 @@ public class SensorTest {
 		sensor.analyse(project, context);
 		assertEquals(180, createdIssues[0]);
 	}
+	
+	@Test
+	public void testSingleActiveRule() {
+		final Settings settings = new Settings();
+		final String reportFileString = getClass()
+				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
+		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
+		final File webgoatDir = new File(reportFileString).getParentFile();
+
+		final FileSystem fileSystem = prepareFileSystem(webgoatDir);
+
+		final int[] createdIssues = { 0 };
+		final SensorContext context = mock(SensorContext.class);
+		when(context.newIssue()).thenAnswer(new Answer<NewIssue>() {
+			@Override
+			public NewIssue answer(final InvocationOnMock invocation) throws Throwable {
+				createdIssues[0]++;
+
+				final NewIssue newIssue = mock(NewIssue.class);
+				when(newIssue.newLocation()).then(new Answer<NewIssueLocation>() {
+
+					@Override
+					public NewIssueLocation answer(InvocationOnMock invocation) throws Throwable {
+						return new DefaultIssueLocation();
+					}
+					
+				});
+				return newIssue;
+			}
+		});
+		when(context.fileSystem()).thenReturn(fileSystem);
+
+		final Project project = mock(Project.class);
+		
+		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
+		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+					problemType.name());
+			final NewActiveRule activeRule = builder.create(ruleKey);
+			if (problemType.getPresentationName().equals("SQL Injection")) {
+				activeRule.activate();
+			}
+		}
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				settings, builder.build(), context);
+
+		sensor.analyse(project, context);
+		assertEquals(26, createdIssues[0]);
+	}
 
 	private FileSystem prepareFileSystem(final File rootDir) {
 		final DefaultFileSystem fileSystem = new DefaultFileSystem(rootDir);
