@@ -46,6 +46,16 @@ public final class XanitizerMetrics implements Metrics {
 	private static final Metric MAJOR_FINDINGS_METRIC;
 	private static final Metric MINOR_FINDINGS_METRIC;
 	private static final Metric INFO_FINDINGS_METRIC;
+	
+	/*
+	 * There is a limit for metric names in SonarQube.
+	 * 
+	 * I (HRU) determined the limit 64 by trial and error, on 2015-10-12,
+	 * with a test installation of SonarQube 5.1.2.
+	 * 
+	 * We use 60 to be on the safe side...
+	 */
+	private static final int METRIC_NAME_LIMIT = 60;
 
 	static {
 		ALL_XAN_FINDINGS_METRIC =
@@ -222,18 +232,9 @@ public final class XanitizerMetrics implements Metrics {
 	}
 
 	private static String mkMetricName(final GeneratedProblemType problemType) {
-		/*
-		 * There is a limit for metric names in SonarQube.
-		 * 
-		 * I (HRU) determined the limit 64 by trial and error, on 2015-10-12,
-		 * with a test installation of SonarQube 5.1.2.
-		 * 
-		 * We use 60 to be on the safe side...
-		 */
-		final int limit = 60;
 		String candidate = "Xanitizer Findings for " + problemType.getPresentationName();
-		if (candidate.length() > limit) {
-			candidate = candidate.substring(0, limit - 3) + "...";
+		if (candidate.length() > METRIC_NAME_LIMIT) {
+			candidate = candidate.substring(0, METRIC_NAME_LIMIT - 3) + "...";
 		}
 		return candidate;
 	}

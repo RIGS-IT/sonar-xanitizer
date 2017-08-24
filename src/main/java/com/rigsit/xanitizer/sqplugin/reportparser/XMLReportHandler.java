@@ -38,6 +38,8 @@ import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 public class XMLReportHandler extends DefaultHandler {
 
 	private static final Logger LOG = Loggers.get(XMLReportHandler.class);
+	
+	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
 
 	private final XMLReportContent xmlReportContent;
 	private final StringBuilder collectedCharacters = new StringBuilder();
@@ -208,12 +210,12 @@ public class XMLReportHandler extends DefaultHandler {
 	 */
 	private boolean shouldSkipFinding() {
 		if ("PlugIn:Findbugs".equals(producer)) {
-			LOG.debug("Xanitizer: Skipping finding " + findingId + ": Ignoring Findbugs finding.");
+			LOG.debug(SKIP_FINDING_MESSAGE + findingId + ": Ignoring Findbugs finding.");
 			return true;
 		}
 
 		if ("PlugIn:OWASPDependencyCheck".equals(producer)) {
-			LOG.debug("Xanitizer: Skipping finding " + findingId
+			LOG.debug(SKIP_FINDING_MESSAGE + findingId
 					+ ": Ignoring OWASP Dependency check finding.");
 			return true;
 		}
@@ -227,7 +229,7 @@ public class XMLReportHandler extends DefaultHandler {
 		case "Intended":
 		case "Obsolete":
 		case "Code Quality":
-			LOG.debug("Xanitizer: Skipping finding " + findingId + ": Ignoring harmless finding.");
+			LOG.debug(SKIP_FINDING_MESSAGE + findingId + ": Ignoring harmless finding.");
 			return true;
 		default:
 			return false;

@@ -29,6 +29,8 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
  *
  */
 public class XMLReportFinding {
+	
+	private static String RESOURCE_LEAK_LABEL = "Resource Leak";
 
 	private final int findingID;
 	private final GeneratedProblemType problemType;
@@ -122,7 +124,7 @@ public class XMLReportFinding {
 
 	public XMLReportNode getLocation() {
 		if (findingKind == FindingKind.PATH) {
-			if (problemType.getPresentationName().contains("Resource Leak")) {
+			if (problemType.getPresentationName().contains(RESOURCE_LEAK_LABEL)) {
 				return startNodeOfPathOrNull;
 			}
 			return endNodeOfPathOrNull;
@@ -132,7 +134,7 @@ public class XMLReportFinding {
 
 	public XMLReportNode getSecondaryLocationOrNull() {
 		if (findingKind == FindingKind.PATH) {
-			if (problemType.getPresentationName().contains("Resource Leak")) {
+			if (problemType.getPresentationName().contains(RESOURCE_LEAK_LABEL)) {
 				return endNodeOfPathOrNull;
 			}
 			return startNodeOfPathOrNull;
@@ -142,7 +144,7 @@ public class XMLReportFinding {
 	
 	public String getSecondaryLocationMessage() {
 		if (findingKind == FindingKind.PATH) {
-			if (problemType.getPresentationName().contains("Resource Leak")) {
+			if (problemType.getPresentationName().contains(RESOURCE_LEAK_LABEL)) {
 				return "Last usage position w/o being closed";
 			}
 			return "Corresponding Taint Source";

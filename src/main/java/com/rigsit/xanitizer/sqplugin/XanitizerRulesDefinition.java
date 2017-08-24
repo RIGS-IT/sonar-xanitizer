@@ -41,13 +41,15 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 	private static final String XANITIZER_TAG = "xanitizer";
 	private static final String SERVER_CONFIG_TAG = "server-configuration";
 	private static final String SECURITY_TAG = "security";
+	
+	private static final String REPOSITORY_NAME = "Xanitizer";
 
 	@Override
 	public void define(final Context context) {
-		final String repositoryName = "Xanitizer";
+		
 
 		final NewRepository repository = context.createRepository(REPOSITORY_KEY, LANGUAGE_KEY)
-				.setName(repositoryName);
+				.setName(REPOSITORY_NAME);
 
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			final NewRule newRule = repository.createRule(problemType.name());
