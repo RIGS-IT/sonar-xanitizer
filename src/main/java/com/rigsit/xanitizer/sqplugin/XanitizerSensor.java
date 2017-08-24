@@ -125,7 +125,7 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		final long analysisEndDate = content.getAnalysisEndDate();
-		if (analysisEndDate == 0) {
+		if (analysisEndDate == -1) {
 			LOG.warn(
 					"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed!");
 			return;
