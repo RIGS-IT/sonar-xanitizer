@@ -136,7 +136,7 @@ public class SensorTest {
 		 */
 		{
 			final Settings settings = new Settings();
-			final String reportFileName = "WEB-INF/nested-Findings-List.xml";
+			final String reportFileName = "WEB-INF" + File.separator + "nested-Findings-List.xml";
 			settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileName);
 			final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
 					getActiveRules(), context);
@@ -145,31 +145,13 @@ public class SensorTest {
 		
 		{
 			final Settings settings = new Settings();
-			final String reportFileName = "WEB-INF\\nested-Findings-List.xml";
+			final String reportFileName = File.separator + "WEB-INF" + File.separator + "nested-Findings-List.xml";
 			settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileName);
 			final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
 					getActiveRules(), context);
 			assertEquals(true, sensor.shouldExecuteOnProject(mock(Project.class)));
 		}
 		
-		{
-			final Settings settings = new Settings();
-			final String reportFileName = "/WEB-INF/nested-Findings-List.xml";
-			settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileName);
-			final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
-					getActiveRules(), context);
-			assertEquals(true, sensor.shouldExecuteOnProject(mock(Project.class)));
-		}
-		
-		{
-			final Settings settings = new Settings();
-			final String reportFileName = "\\WEB-INF\\nested-Findings-List.xml";
-			settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileName);
-			final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
-					getActiveRules(), context);
-			assertEquals(true, sensor.shouldExecuteOnProject(mock(Project.class)));
-		}
-
 		/*
 		 * Everything correct, nested file
 		 */
