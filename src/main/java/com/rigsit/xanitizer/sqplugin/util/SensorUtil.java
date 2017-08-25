@@ -101,7 +101,7 @@ public class SensorUtil {
 	}
 
 	private static boolean isFileName(final String fileString) {
-		return fileString.contains(".") && !(fileString.contains("\\") || fileString.contains("/"));
+		return fileString.contains(".") && !fileString.contains(File.separator);
 	}
 
 	private static File searchRecursivlyInDir(final File dir, final String filename) {
