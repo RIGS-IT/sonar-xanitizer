@@ -145,7 +145,7 @@ public class SensorTest {
 		
 		{
 			final Settings settings = new Settings();
-			final String reportFileName = File.separator + "WEB-INF" + File.separator + "nested-Findings-List.xml";
+			final String reportFileName = "." + File.separator + "WEB-INF" + File.separator + "nested-Findings-List.xml";
 			settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileName);
 			final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class), settings,
 					getActiveRules(), context);
