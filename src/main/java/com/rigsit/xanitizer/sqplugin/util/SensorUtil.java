@@ -44,8 +44,7 @@ public class SensorUtil {
 
 	private static final Logger LOG = Loggers.get(SensorUtil.class);
 
-	private static final Pattern TOOL_VERSION_PATTERN = Pattern
-			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
+	private static final Pattern TOOL_VERSION_PATTERN = Pattern.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
 
 	private SensorUtil() {
 		// hide constructor
@@ -58,8 +57,7 @@ public class SensorUtil {
 	 * @return
 	 */
 	public static String convertToDateWithTimeString(Date date) {
-		final DateFormat formatter = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return formatter.format(date);
 	}
 
@@ -71,8 +69,7 @@ public class SensorUtil {
 	 * @return
 	 */
 	public static File geReportFile(final SensorContext sensorContext, final Settings settings) {
-		final String reportFileString = settings
-				.getString(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
+		final String reportFileString = settings.getString(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
 
 		if (reportFileString == null || reportFileString.isEmpty()) {
 			LOG.warn("Xanitizer parameter '" + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
@@ -82,16 +79,45 @@ public class SensorUtil {
 
 		File reportFile = new File(reportFileString);
 		if (!reportFile.isAbsolute()) {
+
 			reportFile = new File(sensorContext.fileSystem().baseDir(), reportFileString);
+
+			// recursively check the files below the base dir, if the contain a
+			// file with the same name
+			if (!reportFile.isFile()  && isFileName(reportFileString)) {
+				final File temp = searchRecursivlyInDir(sensorContext.fileSystem().baseDir(), reportFileString);
+				if (temp != null && temp.isFile()) {
+					reportFile = temp;
+				}
+			}
 		}
 
 		if (!reportFile.isFile()) {
-			LOG.warn(
-					"Xanitizer XML report file '" + reportFile + "' not found. Skipping analysis.");
+			LOG.warn("Xanitizer XML report file '" + reportFile + "' not found. Skipping analysis.");
 			return null;
 		}
 
 		return reportFile;
+	}
+
+	private static boolean isFileName(final String fileString) {
+		return fileString.contains(".") && !(fileString.contains("\\") || fileString.contains("/"));
+	}
+
+	private static File searchRecursivlyInDir(final File dir, final String filename) {
+		for (File file : dir.listFiles()) {
+			if (file.isFile()) {
+				if (file.getName().equals(filename)) {
+					return file;
+				}
+			} else {
+				final File result = searchRecursivlyInDir(file, filename);
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -104,8 +130,8 @@ public class SensorUtil {
 	 * @param patchNeeded
 	 * @return An error message or null if the version string is okay
 	 */
-	public static String checkVersion(final String shortToolVersion, final int majorNeeded,
-			final int minorNeeded, final int patchNeeded) {
+	public static String checkVersion(final String shortToolVersion, final int majorNeeded, final int minorNeeded,
+			final int patchNeeded) {
 
 		if ("nightlyBuild".equals(shortToolVersion)) {
 			// special case for nightly build version
@@ -114,8 +140,7 @@ public class SensorUtil {
 
 		final Matcher m = TOOL_VERSION_PATTERN.matcher(shortToolVersion);
 		if (!m.matches()) {
-			return "XML report file version does not match <number>.<number>[,<number>]: '"
-					+ shortToolVersion + "'";
+			return "XML report file version does not match <number>.<number>[,<number>]: '" + shortToolVersion + "'";
 		}
 		final int majorNo = Integer.parseInt(m.group(1));
 		final int minorNo = Integer.parseInt(m.group(2));
@@ -130,21 +155,19 @@ public class SensorUtil {
 		}
 
 		if (majorNo < majorNeeded) {
-			return "XML report file version: major version number must be at least " + majorNeeded
-					+ ": '" + shortToolVersion + "'";
+			return "XML report file version: major version number must be at least " + majorNeeded + ": '"
+					+ shortToolVersion + "'";
 		}
 
 		if (majorNo == majorNeeded) {
 			if (minorNo < minorNeeded) {
 				return "XML report file version: when the major version is " + majorNo
-						+ ", the minor version number must be at least " + minorNeeded + ": '"
-						+ shortToolVersion + "'";
+						+ ", the minor version number must be at least " + minorNeeded + ": '" + shortToolVersion + "'";
 			}
 
 			if (minorNo == minorNeeded && patchNo < patchNeeded) {
-				return "XML report file version: when the major and minor version is " + majorNo
-						+ "." + minorNo + ", the patch number must be at least " + patchNeeded
-						+ ": '" + shortToolVersion + "'";
+				return "XML report file version: when the major and minor version is " + majorNo + "." + minorNo
+						+ ", the patch number must be at least " + patchNeeded + ": '" + shortToolVersion + "'";
 			}
 		}
 
@@ -154,6 +177,7 @@ public class SensorUtil {
 
 	/**
 	 * Returns the severity of a SonarQube issue for the given Xanitizer finding
+	 * 
 	 * @param xanFinding
 	 * @return
 	 */

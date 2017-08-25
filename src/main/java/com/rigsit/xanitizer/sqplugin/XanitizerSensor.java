@@ -65,7 +65,7 @@ import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
  */
 public class XanitizerSensor implements Sensor {
 	private static final Logger LOG = Loggers.get(XanitizerSensor.class);
-	
+
 	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
 
 	private final JavaResourceLocator javaResourceLocator;
@@ -105,7 +105,7 @@ public class XanitizerSensor implements Sensor {
 
 	@Override
 	public boolean shouldExecuteOnProject(final Project project) {
-		return reportFile != null && !activeXanRuleNames.isEmpty();
+		return reportFile != null;
 	}
 
 	@Override
@@ -113,28 +113,24 @@ public class XanitizerSensor implements Sensor {
 		assert reportFile != null;
 		assert !activeXanRuleNames.isEmpty();
 
-		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '"
-				+ project.name() + "'");
+		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '" + project.name() + "'");
 
 		final XMLReportParser parser = new XMLReportParser();
 		final XMLReportContent content;
 		try {
 			content = parser.parse(reportFile);
 		} catch (final Exception ex) {
-			LOG.error("Exception caught while parsing Xanitizer XML report file '" + reportFile
-					+ "'.", ex);
+			LOG.error("Exception caught while parsing Xanitizer XML report file '" + reportFile + "'.", ex);
 			return;
 		}
 
 		final long analysisEndDate = content.getAnalysisEndDate();
 		if (analysisEndDate == -1) {
-			LOG.warn(
-					"No Xanitizer analysis results found - Check if Xanitizer analysis has been executed!");
+			LOG.warn("No Xanitizer analysis results found - Check if Xanitizer analysis has been executed!");
 			return;
 		}
 
-		final String analysisDatePresentation = SensorUtil
-				.convertToDateWithTimeString(new Date(analysisEndDate));
+		final String analysisDatePresentation = SensorUtil.convertToDateWithTimeString(new Date(analysisEndDate));
 		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation);
 		LOG.debug("Create issues for " + content.getXMLReportFindings().size() + " Xanitizer findings.");
 		createIssuesAndMeasures(project, sensorContext, content);
@@ -151,7 +147,7 @@ public class XanitizerSensor implements Sensor {
 		for (final XMLReportFinding f : content.getXMLReportFindings()) {
 			generateIssueForFinding(f, metricValues, project, sensorContext);
 		}
-		
+
 		for (final NewIssue issue : alreadyCreatedIssues.values()) {
 			issue.save();
 		}
@@ -169,8 +165,8 @@ public class XanitizerSensor implements Sensor {
 				// Only create metrics with 0 values on project level
 				if (value != 0 || resource == project) {
 					final Measure measure = new Measure(metric, value.doubleValue());
-					LOG.debug("Creating measure for metric " + measure.getMetricKey()
-							+ ": adding value = " + value + " to resource " + resource.getName());
+					LOG.debug("Creating measure for metric " + measure.getMetricKey() + ": adding value = " + value
+							+ " to resource " + resource.getName());
 					sensorContext.saveMeasure(resource, measure);
 				}
 			}
@@ -184,7 +180,7 @@ public class XanitizerSensor implements Sensor {
 
 		if (!activeXanRuleNames.contains(xanFinding.getProblemType().name())) {
 			LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
-			+ ": Rule for corresponding problem type is disabled.");
+					+ ": Rule for corresponding problem type is disabled.");
 			return;
 		}
 
@@ -205,17 +201,18 @@ public class XanitizerSensor implements Sensor {
 			incrementMetrics(xanFinding, metricValuesAccu, project, sensorContext, inputFile);
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private void initializeMetrics(final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Project project) {
-		
+
 		for (Metric metric : new XanitizerMetrics().getMetrics()) {
 			initializeMetric(metricValuesAccu, project, metric);
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	private void initializeMetric(final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Resource resource, final Metric metric) {
+	private void initializeMetric(final Map<Metric, Map<Resource, Integer>> metricValuesAccu, final Resource resource,
+			final Metric metric) {
 		Map<Resource, Integer> innerMap = new LinkedHashMap<>();
 		innerMap.put(resource, 0);
 		metricValuesAccu.put(metric, innerMap);
@@ -230,21 +227,19 @@ public class XanitizerSensor implements Sensor {
 
 		final List<Metric> metrics = mkMetrics(xanFinding.getProblemType());
 		for (final Metric metric : metrics) {
-			incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project,
-					metricValuesAccu);
+			incrementValueForResourceAndContainingResources(metric, resourceToBeUsed, project, metricValuesAccu);
 		}
 
 		final String matchCode = xanFinding.getMatchCode();
 		if ("NOT".equals(matchCode)) {
-			incrementValueForResourceAndContainingResources(
-					XanitizerMetrics.getMetricForNewXanFindings(), resourceToBeUsed, project,
-					metricValuesAccu);
+			incrementValueForResourceAndContainingResources(XanitizerMetrics.getMetricForNewXanFindings(),
+					resourceToBeUsed, project, metricValuesAccu);
 		}
 
 		final Metric metricForSeverity = XanitizerMetrics.getMetricForSeverity(severity);
 		if (metricForSeverity != null) {
-			incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed,
-					project, metricValuesAccu);
+			incrementValueForResourceAndContainingResources(metricForSeverity, resourceToBeUsed, project,
+					metricValuesAccu);
 		}
 	}
 
@@ -258,8 +253,7 @@ public class XanitizerSensor implements Sensor {
 		return lineNo;
 	}
 
-	private InputFile mkInputFileOrNull(final XMLReportNode node,
-			final SensorContext sensorContext) {
+	private InputFile mkInputFileOrNull(final XMLReportNode node, final SensorContext sensorContext) {
 
 		if (node == null) {
 			return null;
@@ -273,8 +267,7 @@ public class XanitizerSensor implements Sensor {
 		return result;
 	}
 
-	private InputFile mkInputFileOrNullFromClass(final XMLReportNode node,
-			final SensorContext sensorContext) {
+	private InputFile mkInputFileOrNullFromClass(final XMLReportNode node, final SensorContext sensorContext) {
 
 		final String classFQNOrNull = node.getClassFQNOrNull();
 		if (classFQNOrNull == null) {
@@ -286,8 +279,8 @@ public class XanitizerSensor implements Sensor {
 		 * an instance check.
 		 */
 		try {
-			final Method findResource = javaResourceLocator.getClass()
-					.getDeclaredMethod("findResourceByClassName", String.class);
+			final Method findResource = javaResourceLocator.getClass().getDeclaredMethod("findResourceByClassName",
+					String.class);
 			final Object resource = findResource.invoke(javaResourceLocator, classFQNOrNull);
 
 			if (resource instanceof InputFile) {
@@ -298,14 +291,12 @@ public class XanitizerSensor implements Sensor {
 				return mkInputFileOrNullFromResource((Resource) resource, sensorContext);
 			}
 		} catch (Exception e) {
-			LOG.error("Could not call method 'findResourceByClassName' on Java resource locator!",
-					e);
+			LOG.error("Could not call method 'findResourceByClassName' on Java resource locator!", e);
 		}
 		return null;
 	}
 
-	private InputFile mkInputFileOrNullFromPath(final XMLReportNode node,
-			final SensorContext sensorContext) {
+	private InputFile mkInputFileOrNullFromPath(final XMLReportNode node, final SensorContext sensorContext) {
 
 		final FileSystem fs = sensorContext.fileSystem();
 
@@ -345,8 +336,7 @@ public class XanitizerSensor implements Sensor {
 		return null;
 	}
 
-	private InputFile mkInputFileOrNullFromResource(final Resource resource,
-			final SensorContext sensorContext) {
+	private InputFile mkInputFileOrNullFromResource(final Resource resource, final SensorContext sensorContext) {
 		final String relativePath = resource.getPath();
 
 		final FileSystem fs = sensorContext.fileSystem();
@@ -358,8 +348,7 @@ public class XanitizerSensor implements Sensor {
 		 * SonarQube 5.4 seems to sometimes enter an endless loop here, if a
 		 * non-trivial predicate is given.
 		 */
-		final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
-				.inputFiles(fs.predicates().hasAbsolutePath(absoluteFilePath));
+		final Iterable<InputFile> inputFilesIterable = fs.inputFiles(fs.predicates().hasAbsolutePath(absoluteFilePath));
 
 		// Use first matching input file, or none.
 		for (final InputFile inputFile : inputFilesIterable) {
@@ -383,8 +372,7 @@ public class XanitizerSensor implements Sensor {
 
 			addSecondaryLocation(alreadyCreatedIssue, xanFinding, sensorContext);
 
-			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
-					+ pt.getPresentationName());
+			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - " + pt.getPresentationName());
 			return false;
 		}
 
@@ -414,20 +402,18 @@ public class XanitizerSensor implements Sensor {
 
 	private void addSecondaryLocation(final NewIssue issue, final XMLReportFinding xanFinding,
 			final SensorContext sensorContext) {
-		final InputFile secondaryFile = mkInputFileOrNull(xanFinding.getSecondaryLocationOrNull(),
-				sensorContext);
+		final InputFile secondaryFile = mkInputFileOrNull(xanFinding.getSecondaryLocationOrNull(), sensorContext);
 		if (secondaryFile != null) {
 			final NewIssueLocation secondaryLocation = issue.newLocation();
 			secondaryLocation.on(secondaryFile);
 			secondaryLocation.message(xanFinding.getSecondaryLocationMessage());
-			final int secondaryLine = normalizeLineNo(
-					xanFinding.getSecondaryLocationOrNull().getLineNoOrMinus1());
+			final int secondaryLine = normalizeLineNo(xanFinding.getSecondaryLocationOrNull().getLineNoOrMinus1());
 			if (secondaryLine <= secondaryFile.lines()) {
 				final TextRange textRange = secondaryFile.selectLine(secondaryLine);
 				secondaryLocation.at(textRange);
 			}
 			issue.addLocation(secondaryLocation);
-			
+
 			LOG.debug("Added secondary location for finding " + xanFinding.getFindingID());
 		}
 	}
@@ -450,9 +436,8 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static void incrementValueForResourceAndContainingResources(final Metric metric,
-			final Resource resource, final Project project,
-			final Map<Metric, Map<Resource, Integer>> metricValuesAccu) {
+	private static void incrementValueForResourceAndContainingResources(final Metric metric, final Resource resource,
+			final Project project, final Map<Metric, Map<Resource, Integer>> metricValuesAccu) {
 		Resource runner = resource;
 		while (runner != null) {
 			incrementValue(metric, runner, metricValuesAccu);
