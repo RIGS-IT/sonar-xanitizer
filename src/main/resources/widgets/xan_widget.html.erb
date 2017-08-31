@@ -1,3 +1,11 @@
+<%
+begin
+	tooltip = message('widget.as_calculated_on_x', :params => l(@snapshot.created_at))
+rescue
+	tooltip = ""
+end
+%>
+
 <div class="widget-row">
 	<div class="widget-span widget-span-3">
 		<div class="widget-measure-container">
