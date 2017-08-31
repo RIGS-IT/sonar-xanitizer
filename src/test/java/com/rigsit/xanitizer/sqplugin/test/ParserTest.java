@@ -265,10 +265,9 @@ public class ParserTest {
 
 	@Test
 	public void testReportNodeEmpty() {
-		final XMLReportNode node = new XMLReportNode("", -1, "", "");
+		final XMLReportNode node = new XMLReportNode("", -1, "");
 		assertNull(node.getClassFQNOrNull());
 		assertEquals(-1, node.getLineNoOrMinus1());
 		assertNull(node.getRelativePathOrNull());
-		assertNull(node.getAbsolutePathOrNull());
 	}
 }

@@ -134,6 +134,7 @@ public class XanitizerSensor implements Sensor {
 		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation);
 		LOG.debug("Create issues for " + content.getXMLReportFindings().size() + " Xanitizer findings.");
 		createIssuesAndMeasures(project, sensorContext, content);
+		LOG.info("Created " + alreadyCreatedIssues.size() + " issues.");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -145,7 +146,12 @@ public class XanitizerSensor implements Sensor {
 
 		// Generate issues for findings.
 		for (final XMLReportFinding f : content.getXMLReportFindings()) {
-			generateIssueForFinding(f, metricValues, project, sensorContext);
+			try {
+				generateIssueForFinding(f, metricValues, project, sensorContext);
+			} catch (Throwable t) {
+				// if something is wrong for a single finding, continue with the next one
+				LOG.debug("Error generating issue for finding " + f.getFindingID(), t);
+			}
 		}
 
 		for (final NewIssue issue : alreadyCreatedIssues.values()) {
@@ -259,12 +265,17 @@ public class XanitizerSensor implements Sensor {
 			return null;
 		}
 
-		final InputFile result = mkInputFileOrNullFromClass(node, sensorContext);
-		if (result == null) {
-			return mkInputFileOrNullFromPath(node, sensorContext);
-		}
+		try {
+			final InputFile result = mkInputFileOrNullFromClass(node, sensorContext);
+			if (result == null) {
+				return mkInputFileOrNullFromPath(node, sensorContext);
+			}
 
-		return result;
+			return result;
+		} catch (Exception e) {
+			LOG.debug("Error while detecting InputFile for node with " + node, e);
+		}
+		return null;
 	}
 
 	private InputFile mkInputFileOrNullFromClass(final XMLReportNode node, final SensorContext sensorContext) {
@@ -301,37 +312,20 @@ public class XanitizerSensor implements Sensor {
 		final FileSystem fs = sensorContext.fileSystem();
 
 		/*
-		 * First check, if the absolute file exists on the machine and then try
-		 * to detect it in the project context
-		 */
-		final String originalAbsoluteFile = node.getAbsolutePathOrNull();
-		if (originalAbsoluteFile != null && new File(originalAbsoluteFile).isFile()) {
-			final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
-					.inputFiles(fs.predicates().hasAbsolutePath(originalAbsoluteFile));
-
-			// Use first matching input file
-			for (final InputFile inputFile : inputFilesIterable) {
-				return inputFile;
-			}
-		}
-
-		/*
-		 * If the absolute path does not exist, create the relative path from
-		 * the persistence string
+		 * Create the relative path from the persistence string
 		 */
 		final String relativePath = node.getRelativePathOrNull();
+		
 		if (relativePath != null) {
-			final File absoluteFile = new File(fs.baseDir(), relativePath);
-			final String absoluteFilePath = absoluteFile.getAbsolutePath();
-
+			
 			final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
-					.inputFiles(fs.predicates().hasAbsolutePath(absoluteFilePath));
+					.inputFiles(fs.predicates().hasRelativePath(relativePath));
 
 			// Use first matching input file
 			for (final InputFile inputFile : inputFilesIterable) {
 				return inputFile;
 			}
-
+			
 		}
 		return null;
 	}

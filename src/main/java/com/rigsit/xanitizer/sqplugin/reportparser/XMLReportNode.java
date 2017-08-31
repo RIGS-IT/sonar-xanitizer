@@ -28,22 +28,19 @@ public class XMLReportNode {
 	private final String classFQNOrNull;
 	private final int lineNoOrMinus1;
 	private final String relativePathOrNull;
-	private final String absolutePathOrNull;
 
 	/**
 	 * The representation of a single node of a taint path
 	 * 
-	 * @param classFQNOrEmpty
+	 * @param classFQNOrNull
 	 * @param lineNoOrMinus1
-	 * @param urlOrEmpty
+	 * @param relativePathOrNull
 	 */
-	public XMLReportNode(final String classFQNOrNull, final int lineNoOrMinus1,
-			final String relativePathOrNull, final String absolutePathOrNull) {
-		this.classFQNOrNull = classFQNOrNull != null && classFQNOrNull.isEmpty() ? null
-				: classFQNOrNull;
+	public XMLReportNode(final String classFQNOrNull, final int lineNoOrMinus1, final String relativePathOrNull) {
+		this.classFQNOrNull = classFQNOrNull != null && classFQNOrNull.isEmpty() ? null : classFQNOrNull;
 		this.lineNoOrMinus1 = lineNoOrMinus1;
-		this.relativePathOrNull = relativePathOrNull != null && relativePathOrNull.isEmpty() ? null : relativePathOrNull;
-		this.absolutePathOrNull = absolutePathOrNull != null && absolutePathOrNull.isEmpty() ? null : absolutePathOrNull;
+		this.relativePathOrNull = relativePathOrNull != null && relativePathOrNull.isEmpty() ? null
+				: relativePathOrNull;
 	}
 
 	public String getClassFQNOrNull() {
@@ -57,9 +54,9 @@ public class XMLReportNode {
 	public String getRelativePathOrNull() {
 		return relativePathOrNull;
 	}
-	
-	public String getAbsolutePathOrNull() {
-		return absolutePathOrNull;
-	}
 
+	@Override
+	public String toString() {
+		return "Class: " + classFQNOrNull + " Relative Path: " + relativePathOrNull + " Line: " + lineNoOrMinus1;
+	}
 }

@@ -121,9 +121,8 @@ public class XMLReportHandler extends DefaultHandler {
 		final int lineNoOrMinus1 = parseInt(attributes.getValue("lineNo"), -1);
 		final String classFQNOrNull = attributes.getValue("classFQN");
 		final String relativePath = attributes.getValue("relativePath");
-		final String absolutePath = attributes.getValue("absolutePath");
 
-		return new XMLReportNode(classFQNOrNull, lineNoOrMinus1, relativePath, absolutePath);
+		return new XMLReportNode(classFQNOrNull, lineNoOrMinus1, relativePath);
 	}
 
 	private int parseInt(final String s, final int dflt) {
