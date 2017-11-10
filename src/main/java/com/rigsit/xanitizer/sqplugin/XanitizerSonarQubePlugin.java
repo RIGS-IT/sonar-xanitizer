@@ -22,7 +22,6 @@ package com.rigsit.xanitizer.sqplugin;
 import org.sonar.api.Plugin;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
-import org.sonar.plugins.java.Java;
 
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 
@@ -50,10 +49,6 @@ import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 
 public class XanitizerSonarQubePlugin implements Plugin {
 	
-	public static final String SUPPORTED_LANGUAGES[] = {
-            Java.KEY, "scala", "xml"
-    };
-
 	public static final String XAN_XML_REPORT_FILE = "sonar.xanitizer.xmlReportFile";
 
 	@Override
