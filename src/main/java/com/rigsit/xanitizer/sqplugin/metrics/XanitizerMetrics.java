@@ -19,6 +19,7 @@
  */
 package com.rigsit.xanitizer.sqplugin.metrics;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,13 +40,13 @@ public final class XanitizerMetrics implements Metrics {
 
 	private static final String PFIX = "XanFindingMetric_";
 
-	private static final Metric ALL_XAN_FINDINGS_METRIC;
-	private static final Metric NEW_FINDINGS_METRIC;
-	private static final Metric BLOCKER_FINDINGS_METRIC;
-	private static final Metric CRITICAL_FINDINGS_METRIC;
-	private static final Metric MAJOR_FINDINGS_METRIC;
-	private static final Metric MINOR_FINDINGS_METRIC;
-	private static final Metric INFO_FINDINGS_METRIC;
+	private static final Metric<Serializable> ALL_XAN_FINDINGS_METRIC;
+	private static final Metric<Serializable> NEW_FINDINGS_METRIC;
+	private static final Metric<Serializable> BLOCKER_FINDINGS_METRIC;
+	private static final Metric<Serializable> CRITICAL_FINDINGS_METRIC;
+	private static final Metric<Serializable> MAJOR_FINDINGS_METRIC;
+	private static final Metric<Serializable> MINOR_FINDINGS_METRIC;
+	private static final Metric<Serializable> INFO_FINDINGS_METRIC;
 	
 	/*
 	 * There is a limit for metric names in SonarQube.
@@ -207,7 +208,7 @@ public final class XanitizerMetrics implements Metrics {
 	 * @param problemType
 	 * @return
 	 */
-	public static Metric mkMetricForProblemType(final GeneratedProblemType problemType) {
+	public static Metric<Serializable> mkMetricForProblemType(final GeneratedProblemType problemType) {
 
 		/*
 		 * We use mainly numeric ids in order to avoid long ids - SonarQube just
@@ -244,7 +245,7 @@ public final class XanitizerMetrics implements Metrics {
 	 * 
 	 * @return
 	 */
-	public static Metric getMetricForAllXanFindings() {
+	public static Metric<Serializable> getMetricForAllXanFindings() {
 		return ALL_XAN_FINDINGS_METRIC;
 	}
 
@@ -253,7 +254,7 @@ public final class XanitizerMetrics implements Metrics {
 	 * 
 	 * @return
 	 */
-	public static Metric getMetricForNewXanFindings() {
+	public static Metric<Serializable> getMetricForNewXanFindings() {
 		return NEW_FINDINGS_METRIC;
 	}
 
@@ -264,7 +265,7 @@ public final class XanitizerMetrics implements Metrics {
 	 * @param severity
 	 * @return
 	 */
-	public static Metric getMetricForSeverity(final Severity severity) {
+	public static Metric<Serializable> getMetricForSeverity(final Severity severity) {
 
 		switch (severity) {
 		case BLOCKER:

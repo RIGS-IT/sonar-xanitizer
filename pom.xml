@@ -38,8 +38,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.buildVersion>5.2</sonar.buildVersion>
-    <sonar-java.version>2.7</sonar-java.version>
+    <sonar.buildVersion>6.7</sonar.buildVersion>
+    <sonar-java.version>4.0</sonar-java.version>
     <jdk.min.version>1.7</jdk.min.version>
   </properties>
 
@@ -51,14 +51,14 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.codehaus.sonar-plugins.java</groupId>
+
+	<dependency>
+      <groupId>org.sonarsource.java</groupId>
       <artifactId>sonar-java-plugin</artifactId>
-      <type>sonar-plugin</type>
       <version>${sonar-java.version}</version>
       <scope>provided</scope>
     </dependency>
-
+    
     <!-- unit tests -->
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>

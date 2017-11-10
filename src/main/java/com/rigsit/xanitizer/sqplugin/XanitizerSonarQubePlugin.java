@@ -19,15 +19,12 @@
  */
 package com.rigsit.xanitizer.sqplugin;
 
-import java.util.Arrays;
-import java.util.List;
-
+import org.sonar.api.Plugin;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
-import org.sonar.api.SonarPlugin;
+import org.sonar.plugins.java.Java;
 
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
-import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 
 /**
  * @author rust
@@ -51,22 +48,20 @@ import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 
 		) })
 
-public class XanitizerSonarQubePlugin extends SonarPlugin {
+public class XanitizerSonarQubePlugin implements Plugin {
+	
+	public static final String SUPPORTED_LANGUAGES[] = {
+            Java.KEY, "scala", "xml"
+    };
 
 	public static final String XAN_XML_REPORT_FILE = "sonar.xanitizer.xmlReportFile";
 
 	@Override
-	public List<Class<?>> getExtensions() {
-		return Arrays.asList(
-
-				XanitizerRulesDefinition.class,
+	public void define(Context context) {
+		context.addExtensions(XanitizerRulesDefinition.class,
 
 				XanitizerSensor.class,
 
-				XanitizerMetrics.class,
-
-				XanitizerWidget.class
-
-		);
+				XanitizerMetrics.class);
 	}
 }

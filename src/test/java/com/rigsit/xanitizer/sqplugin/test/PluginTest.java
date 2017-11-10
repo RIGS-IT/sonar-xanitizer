@@ -24,27 +24,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
-import org.sonar.api.SonarPlugin;
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.fs.internal.DefaultFileSystem;
+import org.sonar.api.Plugin;
+import org.sonar.api.SonarQubeSide;
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.Severity;
-import org.sonar.api.config.Settings;
+import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.config.internal.MapSettings;
+import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Repository;
+import org.sonar.api.utils.Version;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
-import com.rigsit.xanitizer.sqplugin.ui.XanitizerWidget;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
 /**
@@ -56,12 +56,16 @@ public class PluginTest {
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void testExtensions() {
-		final SonarPlugin plugin = new XanitizerSonarQubePlugin();
-		final List extensions = plugin.getExtensions();
+
+		final SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7),
+				SonarQubeSide.SCANNER);
+		final Plugin.Context context = new Plugin.Context(runtime);
+		new XanitizerSonarQubePlugin().define(context);
+
+		final List extensions = context.getExtensions();
 		assertNotNull(extensions);
 
 		assertTrue(extensions.contains(XanitizerSensor.class));
-		assertTrue(extensions.contains(XanitizerWidget.class));
 		assertTrue(extensions.contains(XanitizerMetrics.class));
 		assertTrue(extensions.contains(XanitizerRulesDefinition.class));
 	}
@@ -83,21 +87,21 @@ public class PluginTest {
 
 	@Test
 	public void testSettings() {
-		final SensorContext sensorContext = mock(SensorContext.class);
-		when(sensorContext.fileSystem()).thenReturn(new DefaultFileSystem(new File("")));
-		final Settings settings = new Settings();
-		assertNull(SensorUtil.geReportFile(sensorContext, settings));
+		final MapSettings settings = new MapSettings();
+		final SensorContextTester sensorContext = SensorContextTester.create(new File(""));
+		sensorContext.setSettings(settings);
+		assertNull(SensorUtil.geReportFile(sensorContext));
 
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "");
-		assertNull(SensorUtil.geReportFile(sensorContext, settings));
+		assertNull(SensorUtil.geReportFile(sensorContext));
 
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "/doesNotExist.xml");
-		assertNull(SensorUtil.geReportFile(sensorContext, settings));
+		assertNull(SensorUtil.geReportFile(sensorContext));
 
 		final String reportFileString = getClass()
 				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
-		final File reportFile = SensorUtil.geReportFile(sensorContext, settings);
+		final File reportFile = SensorUtil.geReportFile(sensorContext);
 		assertNotNull(reportFile);
 		assertTrue(reportFile.isFile());
 		assertEquals(new File(reportFileString), reportFile);
