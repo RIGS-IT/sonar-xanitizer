@@ -146,11 +146,7 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	public boolean shouldExecute() {
-		if (activeXanRuleNames.isEmpty() || reportFile == null) {
-			return false;
-		}
-
-		return true;
+		return !activeXanRuleNames.isEmpty() && reportFile != null;
 	}
 
 	private void createIssuesAndMeasures(final DefaultInputModule project,
