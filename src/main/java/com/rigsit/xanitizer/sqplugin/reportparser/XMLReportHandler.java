@@ -251,7 +251,6 @@ public class XMLReportHandler extends DefaultHandler {
 		classificationOrNull = null;
 		findingId = -1;
 		findingKind = null;
-		problemTypeId = null;
 		rating = 0;
 
 		matchCode = null;
