@@ -182,7 +182,7 @@ public class SensorTest {
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				mock(ActiveRules.class), context);
-		assertEquals(sensor.shouldExecute(), false);
+		assertEquals(false, sensor.shouldExecute());
 	}
 
 	@Test
@@ -192,7 +192,7 @@ public class SensorTest {
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(), context);
-		assertEquals(sensor.shouldExecute(), false);
+		assertEquals(false, sensor.shouldExecute());
 	}
 
 	@Test
@@ -201,7 +201,7 @@ public class SensorTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFile);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(), context);
-		assertEquals(sensor.shouldExecute(), false);
+		assertEquals(false, sensor.shouldExecute());
 	}
 
 	@Test
@@ -212,7 +212,7 @@ public class SensorTest {
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(), context);
-		assertEquals(sensor.shouldExecute(), true);
+		assertEquals(true, sensor.shouldExecute());
 	}
 
 	@Test
