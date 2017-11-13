@@ -16,7 +16,9 @@ This plugin integrates the results of the Xanitizer security analysis into Sonar
 
 
 ## Download and Installation
+The easiest way to install the plugin is via the SonarQube Update Center / Marketplace.
 
+If you want to install it manually, you can do it the following way:
 1. Download the appropriate `sonar-xanitizer-plugin${version}.jar` file from the [releases page](https://github.com/RIGS-IT/sonar-xanitizer/releases)
 2. Copy the plugin into `/path/to/sonarqube/extensions/plugins/`
 3. Remove older versions of the plugin from `/path/to/sonarqube/extensions/plugins/`, if present
@@ -37,7 +39,8 @@ This plugin integrates the results of the Xanitizer security analysis into Sonar
 
 3. Activate Xanitizer's rules in the quality profile that you are using:
 	1. Select the **“Rules”** menu item in the top-level bar.
-	2. Enter **“xanitizer”** in the edit text at left-hand side. Then, only the Xanitizer rules are displayed in the right-hand area.
+	2. Activate the checkbox for **Tags**.
+	2. Enter **“xanitizer”** in the search field. Then, only the Xanitizer rules are displayed in the right-hand area.
 	3. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
 	4. In the dialog that opens, select the quality profile that you use for your project.
 
