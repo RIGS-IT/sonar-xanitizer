@@ -42,7 +42,7 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 	private static final String SERVER_CONFIG_TAG = "server-configuration";
 	private static final String SECURITY_TAG = "security";
 	
-	private static final String REPOSITORY_NAME = "Xanitizer";
+	private static final String REPOSITORY_NAME = REPOSITORY_KEY;
 
 	@Override
 	public void define(final Context context) {

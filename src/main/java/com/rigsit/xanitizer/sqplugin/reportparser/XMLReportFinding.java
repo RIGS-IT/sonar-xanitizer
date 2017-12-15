@@ -106,10 +106,6 @@ public class XMLReportFinding {
 		return problemType;
 	}
 
-	public FindingKind getFindingKind() {
-		return findingKind;
-	}
-
 	public String getFindingClassificationOrNull() {
 		return classificationOrNull;
 	}

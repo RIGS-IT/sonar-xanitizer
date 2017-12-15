@@ -161,10 +161,10 @@ public class XanitizerSensor implements Sensor {
 		for (final XMLReportFinding f : content.getXMLReportFindings()) {
 			try {
 				generateIssueForFinding(f, metricValues, project, sensorContext);
-			} catch (Throwable t) {
+			} catch (Exception e) {
 				// if something is wrong for a single finding, continue with the
 				// next one
-				LOG.debug("Error generating issue for finding " + f.getFindingID(), t);
+				LOG.debug("Error generating issue for finding " + f.getFindingID(), e);
 			}
 		}
 
