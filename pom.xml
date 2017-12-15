@@ -40,7 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.buildVersion>6.7</sonar.buildVersion>
     <sonar-java.version>4.0</sonar-java.version>
-    <jdk.min.version>1.7</jdk.min.version>
+    <jdk.min.version>1.8</jdk.min.version>
   </properties>
 
   <dependencies>
