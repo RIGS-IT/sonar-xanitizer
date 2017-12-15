@@ -44,7 +44,7 @@ If you want to install it manually, you can do it the following way:
 	4. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
 	5. In the dialog that opens, select the quality profile that you use for your project.
 
-![alt tag] (https://cloud.githubusercontent.com/assets/20301605/17862219/97f4b98e-6894-11e6-9a63-2a0eaa9e3f0c.png)
+![alt tag](https://cloud.githubusercontent.com/assets/20301605/17862219/97f4b98e-6894-11e6-9a63-2a0eaa9e3f0c.png)
 	
 ## Adding the widget (Widget support has been removed since SonarQube 6.2 - this description is only valid for older versions)
 
@@ -54,7 +54,7 @@ In order to display the Xanitizer issues, a special widget is provided. It is ac
 3. Click on **“Configure widgets”** in the upper right corner.
 4. In the yellow area, type “xanitizer” into the search field. Now only the Xanitizer widget can be selected. Click on **“Add widget”**, and then on **“Back to dashboard”** in the upper right corner to display the Xanitizer widget.
 
-![alt tag] (https://cloud.githubusercontent.com/assets/20301605/16995223/766968d0-4eab-11e6-88ec-8b1eb23d5d06.png)
+![alt tag](https://cloud.githubusercontent.com/assets/20301605/16995223/766968d0-4eab-11e6-88ec-8b1eb23d5d06.png)
 
 ## Mapping of Xanitizer Findings to SonarQube Issues
 
