@@ -40,9 +40,9 @@ If you want to install it manually, you can do it the following way:
 3. Activate Xanitizer's rules in the quality profile that you are using:
 	1. Select the **“Rules”** menu item in the top-level bar.
 	2. Activate the checkbox for **Tags**.
-	2. Enter **“xanitizer”** in the search field. Then, only the Xanitizer rules are displayed in the right-hand area.
-	3. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
-	4. In the dialog that opens, select the quality profile that you use for your project.
+	3. Enter **“xanitizer”** in the search field. Then, only the Xanitizer rules are displayed in the right-hand area.
+	4. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
+	5. In the dialog that opens, select the quality profile that you use for your project.
 
 ![alt tag] (https://cloud.githubusercontent.com/assets/20301605/17862219/97f4b98e-6894-11e6-9a63-2a0eaa9e3f0c.png)
 	
