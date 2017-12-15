@@ -421,17 +421,10 @@ public class XanitizerSensor implements Sensor {
 	private static void incrementValue(final Metric<Serializable> metric,
 			final InputComponent resource,
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu) {
-		Map<InputComponent, Integer> innerMap = metricValuesAccu.get(metric);
-		if (innerMap == null) {
-			innerMap = new LinkedHashMap<>();
-			metricValuesAccu.put(metric, innerMap);
-		}
+		final Map<InputComponent, Integer> innerMap = metricValuesAccu.computeIfAbsent(metric,
+				k -> new LinkedHashMap<>());
 
-		Integer value = innerMap.get(resource);
-		if (value == null) {
-			value = 0;
-		}
-
+		final Integer value = innerMap.computeIfAbsent(resource, k -> 0);
 		innerMap.put(resource, 1 + value);
 	}
 
