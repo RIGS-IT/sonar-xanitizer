@@ -5,7 +5,7 @@ Integrates Xanitizer results into SonarQube
  [![Quality Gate](https://sonarqube.com/api/badges/gate?key=com.rigsit%3Asonar-xanitizer-plugin)](https://sonarcloud.io/dashboard?id=com.rigsit%3Asonar-xanitizer-plugin)
 
 - License: Apache License 2
-- Author: [RIGS IT](https://www.rigs-it.net)
+- Author: [RIGS IT](https://www.rigs-it.com)
 
 Requires at least Xanitizer 2.4
 
