@@ -9,7 +9,7 @@ Integrates Xanitizer results into SonarQube
 
 Requires at least Xanitizer 2.4
 
-Xanitizer can be downloaded for free at <a href="http://www.xanitizer.net" >http://www.xanitizer.net</a>.
+Xanitizer can be downloaded at <a href="http://www.xanitizer.com" >http://www.xanitizer.com</a>.
 
 ## Description
 This plugin integrates the results of the Xanitizer security analysis into SonarQube. It parses an XML report created by Xanitizer and creates SonarQube issues for the non-informational security findings.
