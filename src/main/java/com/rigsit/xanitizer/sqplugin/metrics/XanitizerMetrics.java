@@ -1,6 +1,6 @@
 /**
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,6 +47,8 @@ public final class XanitizerMetrics implements Metrics {
 	private static final Metric<Serializable> MAJOR_FINDINGS_METRIC;
 	private static final Metric<Serializable> MINOR_FINDINGS_METRIC;
 	private static final Metric<Serializable> INFO_FINDINGS_METRIC;
+	private static final Metric<Serializable> SPOTBUGS_FINDINGS_METRIC;
+	private static final Metric<Serializable> DEPENDENCY_CHECK_FINDINGS_METRIC;
 	
 	/*
 	 * There is a limit for metric names in SonarQube.
@@ -172,6 +174,38 @@ public final class XanitizerMetrics implements Metrics {
 						.setDomain(DOMAIN)
 
 						.create();
+		
+		SPOTBUGS_FINDINGS_METRIC =
+
+				new Metric.Builder(PFIX + "SpotBugs", "Xanitizer SpotBugs Findings", Metric.ValueType.INT)
+
+						.setDescription("Xanitizer findings that were detected by Spotbugs")
+
+						.setQualitative(true)
+
+						.setBestValue(0.0)
+
+						.setDirection(Metric.DIRECTION_WORST)
+
+						.setDomain(DOMAIN)
+
+						.create();
+		
+		DEPENDENCY_CHECK_FINDINGS_METRIC =
+
+				new Metric.Builder(PFIX + "DependencyCheck", "Xanitizer Dependency Check Findings", Metric.ValueType.INT)
+
+						.setDescription("Xanitizer findings that were detected by OWASP DEPENDENCY CHECK")
+
+						.setQualitative(true)
+
+						.setBestValue(0.0)
+
+						.setDirection(Metric.DIRECTION_WORST)
+
+						.setDomain(DOMAIN)
+
+						.create();
 	}
 
 	private final List<Metric> metrics;
@@ -188,6 +222,8 @@ public final class XanitizerMetrics implements Metrics {
 		metrics.add(MAJOR_FINDINGS_METRIC);
 		metrics.add(MINOR_FINDINGS_METRIC);
 		metrics.add(INFO_FINDINGS_METRIC);
+		metrics.add(SPOTBUGS_FINDINGS_METRIC);
+		metrics.add(DEPENDENCY_CHECK_FINDINGS_METRIC);
 
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			final Metric metricOrNull = mkMetricForProblemType(problemType);
@@ -209,6 +245,10 @@ public final class XanitizerMetrics implements Metrics {
 	 * @return
 	 */
 	public static Metric<Serializable> mkMetricForProblemType(final GeneratedProblemType problemType) {
+		
+		if (problemType == null) {
+			return null;
+		}
 
 		/*
 		 * We use mainly numeric ids in order to avoid long ids - SonarQube just
@@ -256,6 +296,14 @@ public final class XanitizerMetrics implements Metrics {
 	 */
 	public static Metric<Serializable> getMetricForNewXanFindings() {
 		return NEW_FINDINGS_METRIC;
+	}
+	
+	public static Metric<Serializable> getMetricForSpotBugsFindings() {
+		return SPOTBUGS_FINDINGS_METRIC;
+	}
+	
+	public static Metric<Serializable> getMetricForDependencyCheckFindings() {
+		return DEPENDENCY_CHECK_FINDINGS_METRIC;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /** 
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,6 +62,19 @@ public class SensorUtil {
 		final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return formatter.format(date);
 	}
+	
+	
+	public static boolean getImportAll(final SensorContext sensorContext) {
+		final Configuration config = sensorContext.config();
+		final Optional<Boolean> importAll = config
+				.getBoolean(XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS);
+		
+		if (!importAll.isPresent()) {
+			return false;
+		}
+		
+		return importAll.get();
+	}
 
 	/**
 	 * Extracts the XML report file from the SonarQube settings.
@@ -73,10 +86,10 @@ public class SensorUtil {
 	public static File geReportFile(final SensorContext sensorContext) {
 		final Configuration config = sensorContext.config();
 		final Optional<String> reportFileSetting = config
-				.get(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE);
+				.get(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE);
 
 		if (!reportFileSetting.isPresent() || reportFileSetting.get().isEmpty()) {
-			LOG.warn("Xanitizer parameter '" + XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE
+			LOG.warn("Xanitizer parameter '" + XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE
 					+ "' not specified in project settings. Skipping analysis.");
 			return null;
 		}
@@ -107,6 +120,8 @@ public class SensorUtil {
 
 		return reportFile;
 	}
+	
+	
 
 	private static boolean isFileName(final String fileString) {
 		return fileString.contains(".") && !fileString.contains(File.separator);

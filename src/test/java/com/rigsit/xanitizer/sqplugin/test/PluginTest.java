@@ -1,6 +1,6 @@
 /** 
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,15 +92,15 @@ public class PluginTest {
 		sensorContext.setSettings(settings);
 		assertNull(SensorUtil.geReportFile(sensorContext));
 
-		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "");
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, "");
 		assertNull(SensorUtil.geReportFile(sensorContext));
 
-		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, "/doesNotExist.xml");
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, "/doesNotExist.xml");
 		assertNull(SensorUtil.geReportFile(sensorContext));
 
 		final String reportFileString = getClass()
 				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
-		settings.setProperty(XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE, reportFileString);
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileString);
 		final File reportFile = SensorUtil.geReportFile(sensorContext);
 		assertNotNull(reportFile);
 		assertTrue(reportFile.isFile());
@@ -122,7 +122,7 @@ public class PluginTest {
 		final int allMetrics = metrics.getMetrics().size();
 
 		assertEquals(allMetrics, GeneratedProblemType.values().length + Severity.values().length
-				+ 2 /* all and new findings */);
+				+ 4 /* all and new findings, SpotBugs, Dependency Check */);
 
 	}
 }

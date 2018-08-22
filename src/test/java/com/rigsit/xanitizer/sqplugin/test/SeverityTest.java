@@ -1,6 +1,6 @@
 /** 
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,7 +75,7 @@ public class SeverityTest {
 	}
 
 	private XMLReportFinding mkFinding(final String classification, final double rating) {
-		return new XMLReportFinding(-1, GeneratedProblemType.values()[0], FindingKind.OTHER,
+		return new XMLReportFinding(-1, GeneratedProblemType.values()[0].name(), FindingKind.OTHER,
 				classification, rating, null, null);
 	}
 }

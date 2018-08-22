@@ -38,7 +38,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.buildVersion>6.7</sonar.buildVersion>
+    <sonar.buildVersion>7.3</sonar.buildVersion>
+    <sonar.minVersion>6.7</sonar.minVersion>
     <sonar-java.version>4.0</sonar-java.version>
     <jdk.min.version>1.8</jdk.min.version>
   </properties>
@@ -92,6 +93,7 @@
           <pluginKey>xanitizer</pluginKey>
           <pluginName>Xanitizer</pluginName>
           <pluginDescription>Imports Xanitizer security reports.</pluginDescription>
+          <sonarQubeMinVersion>${sonar.minVersion}</sonarQubeMinVersion>  <!-- allow to depend on API 6.7+ but run on LTS(6.7) -->
         </configuration>
       </plugin>
       <plugin>

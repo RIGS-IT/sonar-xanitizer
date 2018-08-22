@@ -1,6 +1,6 @@
 /**
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +51,6 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
-import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
@@ -70,6 +69,7 @@ public class XanitizerSensor implements Sensor {
 
 	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
+	private final boolean importAllFindings;
 
 	private final Set<String> activeXanRuleNames = new HashSet<>();
 
@@ -86,6 +86,8 @@ public class XanitizerSensor implements Sensor {
 	public XanitizerSensor(final JavaResourceLocator javaResourceLocator,
 			final ActiveRules activeRules, final SensorContext sensorContext) {
 		this.javaResourceLocator = javaResourceLocator;
+
+		this.importAllFindings = SensorUtil.getImportAll(sensorContext);
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
 			if (activeRule.ruleKey().repository().equals(XanitizerRulesDefinition.REPOSITORY_KEY)) {
@@ -139,14 +141,59 @@ public class XanitizerSensor implements Sensor {
 		final String analysisDatePresentation = SensorUtil
 				.convertToDateWithTimeString(new Date(analysisEndDate));
 		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation);
-		LOG.debug("Create issues for " + content.getXMLReportFindings().size()
-				+ " Xanitizer findings.");
+		LOG.info("Collected " + content.getXMLReportFindings().size() + " Xanitizer findings.");
 		createIssuesAndMeasures(project, sensorContext, content);
 		LOG.info("Created " + alreadyCreatedIssues.size() + " issues.");
 	}
 
 	public boolean shouldExecute() {
 		return !activeXanRuleNames.isEmpty() && reportFile != null;
+	}
+
+	private boolean skipFinding(final XMLReportFinding finding) {
+
+		if (finding.isSpotBugsFinding()) {
+			if (!importAllFindings) {
+				LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
+						+ ": Ignoring SpotBugs finding.");
+				return true;
+			}
+			if (!activeXanRuleNames.contains(XanitizerRulesDefinition.SPOTBUGS_RULE)) {
+				LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
+						+ ": Rule for Xanitizer findings detected by SpotBugs is disabled.");
+				return true;
+			}
+			return false;
+		}
+
+		if (finding.isDependencyCheckFinding()) {
+			if (!importAllFindings) {
+				LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
+						+ ": Ignoring OWASP Dependency Check finding.");
+				return true;
+			}
+			if (!activeXanRuleNames
+					.contains(XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE)) {
+				LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
+						+ ": Rule for Xanitizer findings detected by OWASP Dependency Check is disabled.");
+				return true;
+			}
+			return false;
+		}
+
+		if (finding.getProblemTypeOrNull() == null) {
+			LOG.warn(SKIP_FINDING_MESSAGE + finding.getFindingID() + ": Unknown problem type '"
+					+ finding.getProblemTypeString() + "'.");
+			return true;
+		}
+
+		if (!activeXanRuleNames.contains(finding.getProblemTypeOrNull().name())) {
+			LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
+					+ ": Rule for corresponding problem type is disabled.");
+			return true;
+		}
+
+		return false;
 	}
 
 	private void createIssuesAndMeasures(final DefaultInputModule project,
@@ -201,21 +248,24 @@ public class XanitizerSensor implements Sensor {
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu,
 			final DefaultInputModule project, final SensorContext sensorContext) {
 
-		if (!activeXanRuleNames.contains(xanFinding.getProblemType().name())) {
-			LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
-					+ ": Rule for corresponding problem type is disabled.");
+		if (skipFinding(xanFinding)) {
 			return;
 		}
 
 		final InputFile inputFile = mkInputFileOrNull(xanFinding.getLocation(), sensorContext);
-		if (inputFile == null) {
-			/*
-			 * Do not generate issues without code location
-			 */
-			LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
-					+ ": Corresponding file could not be found in project.");
 
-			return;
+		if (inputFile == null) {
+			if (importAllFindings) {
+
+			} else {
+				/*
+				 * Do not generate issues without code location
+				 */
+				LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
+						+ ": Corresponding file could not be found in project.");
+
+				return;
+			}
 		}
 
 		final boolean issueCreated = createNewIssue(inputFile, xanFinding, sensorContext);
@@ -248,7 +298,7 @@ public class XanitizerSensor implements Sensor {
 			final DefaultInputModule project, final InputFile inputFile) {
 		final Severity severity = SensorUtil.mkSeverity(xanFinding);
 
-		final List<Metric<Serializable>> metrics = mkMetrics(xanFinding.getProblemType());
+		final List<Metric<Serializable>> metrics = mkMetrics(xanFinding);
 		for (final Metric<Serializable> metric : metrics) {
 			incrementValueForFileAndProject(metric, inputFile, project, metricValuesAccu);
 		}
@@ -334,8 +384,7 @@ public class XanitizerSensor implements Sensor {
 	private boolean createNewIssue(final InputFile inputFile, final XMLReportFinding xanFinding,
 			final SensorContext sensorContext) {
 
-		final GeneratedProblemType pt = xanFinding.getProblemType();
-		final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY, pt.name());
+		final RuleKey ruleKey = mkRuleKey(xanFinding);
 		final int lineNo = normalizeLineNo(xanFinding.getLocation().getLineNoOrMinus1());
 		final Severity severity = SensorUtil.mkSeverity(xanFinding);
 
@@ -346,7 +395,7 @@ public class XanitizerSensor implements Sensor {
 			addSecondaryLocation(alreadyCreatedIssue, xanFinding, sensorContext);
 
 			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
-					+ pt.getPresentationName());
+					+ xanFinding.getProblemTypeString());
 			return false;
 		}
 
@@ -364,13 +413,14 @@ public class XanitizerSensor implements Sensor {
 			newIssueLocation.at(textRange);
 		}
 
-		newIssueLocation.message(pt.getMessage());
+		newIssueLocation.message(mkMessage(xanFinding));
 		newIssue.at(newIssueLocation);
 		addSecondaryLocation(newIssue, xanFinding, sensorContext);
 
 		alreadyCreatedIssues.put(issueKey, newIssue);
 
-		LOG.debug("Issue saved: " + inputFile + ":" + lineNo + " - " + pt.getPresentationName());
+		LOG.debug("Issue created: " + inputFile + ":" + lineNo + " - "
+				+ xanFinding.getProblemTypeString());
 		return true;
 	}
 
@@ -398,17 +448,49 @@ public class XanitizerSensor implements Sensor {
 		return ruleKey.toString() + ":" + file.toString() + ":" + lineNo;
 	}
 
-	private List<Metric<Serializable>> mkMetrics(final GeneratedProblemType problemType) {
+	private List<Metric<Serializable>> mkMetrics(final XMLReportFinding finding) {
 		final List<Metric<Serializable>> result = new ArrayList<>();
 		result.add(XanitizerMetrics.getMetricForAllXanFindings());
 
-		final Metric<Serializable> metricOrNull = XanitizerMetrics
-				.mkMetricForProblemType(problemType);
-		if (metricOrNull != null) {
-			result.add(metricOrNull);
+		if (finding.isDependencyCheckFinding()) {
+			result.add(XanitizerMetrics.getMetricForDependencyCheckFindings());
+		} else if (finding.isSpotBugsFinding()) {
+			result.add(XanitizerMetrics.getMetricForSpotBugsFindings());
+		} else {
+			final Metric<Serializable> metricOrNull = XanitizerMetrics
+					.mkMetricForProblemType(finding.getProblemTypeOrNull());
+			if (metricOrNull != null) {
+				result.add(metricOrNull);
+			}
 		}
 
 		return result;
+	}
+
+	private RuleKey mkRuleKey(final XMLReportFinding finding) {
+		final String rule;
+		if (finding.isDependencyCheckFinding()) {
+			rule = XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE;
+		} else if (finding.isSpotBugsFinding()) {
+			rule = XanitizerRulesDefinition.SPOTBUGS_RULE;
+		} else {
+			rule = finding.getProblemTypeOrNull().name();
+		}
+
+		return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY, rule);
+	}
+
+	private String mkMessage(final XMLReportFinding finding) {
+		if (finding.isDependencyCheckFinding()) {
+			return "Remove outdated library.";
+		}
+
+		if (finding.isSpotBugsFinding()) {
+			return "Check SpotBugs documentation how to resolve '" + finding.getProblemTypeString()
+					+ "' problems.";
+		}
+
+		return finding.getProblemTypeOrNull().getMessage();
 	}
 
 	private static void incrementValueForFileAndProject(final Metric<Serializable> metric,

@@ -1,6 +1,6 @@
 /**
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ package com.rigsit.xanitizer.sqplugin;
 import org.sonar.api.Plugin;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
+import org.sonar.api.PropertyType;
 
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 
@@ -29,10 +30,10 @@ import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
  * @author rust
  * 
  */
-@Properties({ @Property(key = XanitizerSonarQubePlugin.XAN_XML_REPORT_FILE,
+@Properties({ @Property(key = XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE,
 
 		name = "Xanitizer XML Report File",
-
+		
 		// HTML format.
 		description = "The Xanitizer XML report file from which to read the findings, eiter relative to the "
 				+ "sonar-project.properties file or as an absolute path.</BR></BR>"
@@ -45,11 +46,32 @@ import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 		// This is a project-level property.
 		global = false, project = true
 
-		) })
+		),
+
+@Property(key = XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS,
+
+name = "Import all Findings",
+
+// HTML format.
+description = "By default, the Xanitizer plugin only create an issue for a finding, when a corresponding source code position can be detected in"
+		+ "the context of SonarQube. Additionally, findings from integrated tools, that have their own SonarQube plugin, like OWASP "
+		+ "Dependency Check or FindSecBugs, are ignored.</BR></BR>"
+		+ "To enforce that SonarQube also contains issues for these findings so that you see the same numbers in SonarQube as in Xanitizer, "
+		+ "set this option to 'true'.",
+
+defaultValue = "false",
+
+type = PropertyType.BOOLEAN,
+
+// This is a project-level property.
+global = false, project = true
+
+) })
 
 public class XanitizerSonarQubePlugin implements Plugin {
 	
-	public static final String XAN_XML_REPORT_FILE = "sonar.xanitizer.xmlReportFile";
+	public static final String XANITIZER_XML_REPORT_FILE = "sonar.xanitizer.xmlReportFile";
+	public static final String XANITIZER_IMPORT_ALL_FINDINGS = "sonar.xanitizer.importAllFindings";
 
 	@Override
 	public void define(Context context) {

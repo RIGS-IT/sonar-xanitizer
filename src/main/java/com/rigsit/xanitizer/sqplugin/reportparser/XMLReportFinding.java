@@ -1,6 +1,6 @@
 /**
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,20 +29,22 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
  *
  */
 public class XMLReportFinding {
-	
+
 	private static final String RESOURCE_LEAK_LABEL = "Resource Leak";
 
 	private final int findingID;
-	private final GeneratedProblemType problemType;
+	private final String problemTypeString;
+	private final GeneratedProblemType problemTypeOrNull;
 	private final FindingKind findingKind;
 
 	private final String classificationOrNull;
 	private final double rating;
 	private final String matchCode;
+	private final String producer;
 
-	private final XMLReportNode nodeOrNull;
-	private final XMLReportNode startNodeOfPathOrNull;
-	private final XMLReportNode endNodeOfPathOrNull;
+	private XMLReportNode nodeOrNull;
+	private XMLReportNode startNodeOfPathOrNull;
+	private XMLReportNode endNodeOfPathOrNull;
 
 	/**
 	 * 
@@ -52,58 +54,46 @@ public class XMLReportFinding {
 	 * @param classificationOrNull
 	 * @param rating
 	 * @param matchCode
-	 * @param node
+	 * @param producer
 	 */
-	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
+	public XMLReportFinding(final int findingID, final String problemTypeString,
 			final FindingKind findingKind, final String classificationOrNull, final double rating,
-			final String matchCode, final XMLReportNode node) {
+			final String matchCode, final String producer) {
 		this.findingID = findingID;
-		this.problemType = problemType;
+		this.problemTypeString = problemTypeString;
 		this.findingKind = findingKind;
+
+		this.problemTypeOrNull = GeneratedProblemType.getForId(problemTypeString);
 
 		this.classificationOrNull = classificationOrNull;
 		this.rating = rating;
 		this.matchCode = matchCode;
-
-		this.nodeOrNull = node;
-		this.startNodeOfPathOrNull = null;
-		this.endNodeOfPathOrNull = null;
+		this.producer = producer;
 	}
 
-	/**
-	 * 
-	 * @param findingID
-	 * @param problemType
-	 * @param findingKind
-	 * @param classificationOrNull
-	 * @param rating
-	 * @param matchCode
-	 * @param startNodeOfPathOrNull
-	 * @param endNodeOfPathOrNull
-	 */
-	public XMLReportFinding(final int findingID, final GeneratedProblemType problemType,
-			final FindingKind findingKind, final String classificationOrNull, final double rating,
-			final String matchCode, final XMLReportNode startNodeOfPath,
-			final XMLReportNode endNodeOfPath) {
-		this.findingID = findingID;
-		this.problemType = problemType;
-		this.findingKind = findingKind;
+	public void setSingleNode(final XMLReportNode node) {
+		this.nodeOrNull = node;
+	}
 
-		this.classificationOrNull = classificationOrNull;
-		this.rating = rating;
-		this.matchCode = matchCode;
+	public void setStartAndEnd(final XMLReportNode start, final XMLReportNode end) {
+		this.startNodeOfPathOrNull = start;
+		this.endNodeOfPathOrNull = end;
+	}
 
-		this.nodeOrNull = null;
-		this.startNodeOfPathOrNull = startNodeOfPath;
-		this.endNodeOfPathOrNull = endNodeOfPath;
+	public String getProducer() {
+		return producer;
 	}
 
 	public int getFindingID() {
 		return findingID;
 	}
 
-	public GeneratedProblemType getProblemType() {
-		return problemType;
+	public String getProblemTypeString() {
+		return problemTypeString;
+	}
+
+	public GeneratedProblemType getProblemTypeOrNull() {
+		return problemTypeOrNull;
 	}
 
 	public String getFindingClassificationOrNull() {
@@ -118,9 +108,14 @@ public class XMLReportFinding {
 		return matchCode;
 	}
 
+	public boolean isResourceLeakFinding() {
+		return problemTypeOrNull != null
+				&& problemTypeOrNull.getPresentationName().contains(RESOURCE_LEAK_LABEL);
+	}
+
 	public XMLReportNode getLocation() {
 		if (findingKind == FindingKind.PATH) {
-			if (problemType.getPresentationName().contains(RESOURCE_LEAK_LABEL)) {
+			if (isResourceLeakFinding()) {
 				return startNodeOfPathOrNull;
 			}
 			return endNodeOfPathOrNull;
@@ -130,22 +125,30 @@ public class XMLReportFinding {
 
 	public XMLReportNode getSecondaryLocationOrNull() {
 		if (findingKind == FindingKind.PATH) {
-			if (problemType.getPresentationName().contains(RESOURCE_LEAK_LABEL)) {
+			if (isResourceLeakFinding()) {
 				return endNodeOfPathOrNull;
 			}
 			return startNodeOfPathOrNull;
 		}
 		return null;
 	}
-	
+
 	public String getSecondaryLocationMessage() {
 		if (findingKind == FindingKind.PATH) {
-			if (problemType.getPresentationName().contains(RESOURCE_LEAK_LABEL)) {
+			if (isResourceLeakFinding()) {
 				return "Last usage position w/o being closed";
 			}
 			return "Corresponding Taint Source";
 		}
 		return null;
+	}
+
+	public boolean isSpotBugsFinding() {
+		return "PlugIn:Findbugs".equals(producer) || "PlugIn:SpotBugs".equals(producer);
+	}
+
+	public boolean isDependencyCheckFinding() {
+		return "PlugIn:OWASPDependencyCheck".equals(producer);
 	}
 
 }

@@ -1,6 +1,6 @@
 /** 
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2016 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
 /**
@@ -38,7 +37,7 @@ import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 public class XMLReportHandler extends DefaultHandler {
 
 	private static final Logger LOG = Loggers.get(XMLReportHandler.class);
-	
+
 	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
 
 	private final XMLReportContent xmlReportContent;
@@ -182,20 +181,12 @@ public class XMLReportHandler extends DefaultHandler {
 			return;
 		}
 
-		final GeneratedProblemType problemType = GeneratedProblemType.getForId(problemTypeId);
-		if (problemType == null) {
-			LOG.warn("Xanitizer: Unknown problem type '" + problemTypeId + "'. Skipping finding "
-					+ findingId);
-			return;
-		}
-
-		final XMLReportFinding f;
+		final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId, findingKind,
+				classificationOrNull, rating, matchCode, producer);
 		if (findingKind == FindingKind.PATH) {
-			f = new XMLReportFinding(findingId, problemType, findingKind, classificationOrNull,
-					rating, matchCode, startNodeOrNull, endNodeOrNull);
+			f.setStartAndEnd(startNodeOrNull, endNodeOrNull);
 		} else {
-			f = new XMLReportFinding(findingId, problemType, findingKind, classificationOrNull,
-					rating, matchCode, nodeOrNull);
+			f.setSingleNode(nodeOrNull);
 		}
 
 		xmlReportContent.addFinding(f);
@@ -208,17 +199,6 @@ public class XMLReportHandler extends DefaultHandler {
 	 * @return
 	 */
 	private boolean shouldSkipFinding() {
-		if ("PlugIn:Findbugs".equals(producer)) {
-			LOG.debug(SKIP_FINDING_MESSAGE + findingId + ": Ignoring Findbugs finding.");
-			return true;
-		}
-
-		if ("PlugIn:OWASPDependencyCheck".equals(producer)) {
-			LOG.debug(SKIP_FINDING_MESSAGE + findingId
-					+ ": Ignoring OWASP Dependency check finding.");
-			return true;
-		}
-
 		switch (classificationOrNull) {
 		case "Information":
 		case "Duplicate":
