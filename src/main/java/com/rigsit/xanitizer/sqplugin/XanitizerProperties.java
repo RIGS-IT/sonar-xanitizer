@@ -61,6 +61,12 @@ public class XanitizerProperties {
 	private static final String JAVA_SUBCATEGORY = "Java";
 
 	private static final Logger LOG = Loggers.get(XanitizerProperties.class);
+	
+	
+	private XanitizerProperties() {
+		// hide default constructor
+	}
+	
 
 	public static void define(final Context context) {
 		context.addExtension(PropertyDefinition.builder(XANITIZER_XML_REPORT_FILE)
