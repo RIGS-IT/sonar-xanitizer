@@ -7,35 +7,35 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 
 
-/***************************************************************************************************
- * 
- * 
+/**
+ *************************************************************************************************
+ *
+ *
  * This file is part of WebGoat, an Open Web Application Security Project utility. For details,
  * please see http://www.owasp.org/
- * 
- * Copyright (c) 2002 - 2007 Bruce Mayhew
- * 
+ *
+ * Copyright (c) 2002 - 20014 Bruce Mayhew
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program; if
  * not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
- * 
+ *
  * Getting Source ==============
- * 
- * Source for this application is maintained at code.google.com, a repository for free software
+ *
+ * Source for this application is maintained at https://github.com/WebGoat/WebGoat, a repository for free software
  * projects.
- * 
- * For details, please see http://code.google.com/p/webgoat/
- * 
+ *
  * @author Bruce Mayhew <a href="http://code.google.com/p/webgoat">WebGoat</a>
- * @created October 29, 2003
+ * @since October 29, 2003
+ * @version $Id: $Id
  */
 public class LessonTracker
 {
@@ -62,7 +62,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the completed attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The completed value
 	 */
 	public boolean getCompleted()
@@ -72,7 +72,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the maxHintLevel attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The maxHintLevel value
 	 */
 	public int getMaxHintLevel()
@@ -82,7 +82,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the numVisits attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The numVisits value
 	 */
 	public int getNumVisits()
@@ -92,7 +92,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the viewedCookies attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The viewedCookies value
 	 */
 	public boolean getViewedCookies()
@@ -102,7 +102,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the viewedHtml attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The viewedHtml value
 	 */
 	public boolean getViewedHtml()
@@ -112,7 +112,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the viewedLessonPlan attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The viewedLessonPlan value
 	 */
 	public boolean getViewedLessonPlan()
@@ -122,7 +122,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the viewedParameters attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The viewedParameters value
 	 */
 	public boolean getViewedParameters()
@@ -132,7 +132,7 @@ public class LessonTracker
 
 	/**
 	 * Gets the viewedSource attribute of the LessonTracker object
-	 * 
+	 *
 	 * @return The viewedSource value
 	 */
 	public boolean getViewedSource()
@@ -140,6 +140,11 @@ public class LessonTracker
 		return viewedSource;
 	}
 
+	/**
+	 * <p>Getter for the field <code>viewedSolution</code>.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean getViewedSolution()
 	{
 		return viewedSource;
@@ -155,9 +160,10 @@ public class LessonTracker
 
 	/**
 	 * Sets the properties attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param props
 	 *            The new properties value
+	 * @param screen a {@link org.owasp.webgoat.session.Screen} object.
 	 */
 	protected void setProperties(Properties props, Screen screen)
 	{
@@ -171,6 +177,12 @@ public class LessonTracker
 		viewedSource = Boolean.valueOf(props.getProperty(screen.getTitle() + ".viewedSource", "false")).booleanValue();
 	}
 
+	/**
+	 * <p>getUserDir.</p>
+	 *
+	 * @param s a {@link org.owasp.webgoat.session.WebSession} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getUserDir(WebSession s)
 	{
 		return s.getContext().getRealPath("users") + "/";
@@ -183,12 +195,23 @@ public class LessonTracker
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
+	 * @param screen
+	 *            Description of the Parameter
+	 * @param screen
+	 *            Description of the Parameter
+	 * @param screen
+	 *            Description of the Parameter
+	 * @param screen
+	 *            Description of the Parameter
+	 * @param screen
+	 *            Description of the Parameter
 	 * @param screen
 	 *            Description of the Parameter
 	 * @param s
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
+	 * @param user a {@link java.lang.String} object.
 	 */
 	public static LessonTracker load(WebSession s, String user, Screen screen)
 	{
@@ -229,7 +252,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the completed attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param completed
 	 *            The new completed value
 	 */
@@ -240,7 +263,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the maxHintLevel attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param maxHintLevel
 	 *            The new maxHintLevel value
 	 */
@@ -251,7 +274,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the viewedCookies attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param viewedCookies
 	 *            The new viewedCookies value
 	 */
@@ -262,7 +285,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the viewedHtml attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param viewedHtml
 	 *            The new viewedHtml value
 	 */
@@ -273,7 +296,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the viewedLessonPlan attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param viewedLessonPlan
 	 *            The new viewedLessonPlan value
 	 */
@@ -284,7 +307,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the viewedParameters attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param viewedParameters
 	 *            The new viewedParameters value
 	 */
@@ -295,7 +318,7 @@ public class LessonTracker
 
 	/**
 	 * Sets the viewedSource attribute of the LessonTracker object
-	 * 
+	 *
 	 * @param viewedSource
 	 *            The new viewedSource value
 	 */
@@ -306,9 +329,8 @@ public class LessonTracker
 
 	/**
 	 * Sets the viewedSource attribute of the LessonTracker object
-	 * 
-	 * @param viewedSource
-	 *            The new viewedSource value
+	 *
+	 * @param viewedSolution a boolean.
 	 */
 	public void setViewedSolution(boolean viewedSolution)
 	{
@@ -317,9 +339,11 @@ public class LessonTracker
 
 	/**
 	 * Allows the storing of properties for the logged in and a screen.
-	 * 
+	 *
 	 * @param s
 	 *            Description of the Parameter
+	 * @param screen a {@link org.owasp.webgoat.session.Screen} object.
+	 * @param screen a {@link org.owasp.webgoat.session.Screen} object.
 	 */
 	public void store(WebSession s, Screen screen)
 	{
@@ -328,9 +352,12 @@ public class LessonTracker
 
 	/**
 	 * Allows the storing of properties for a user and a screen.
-	 * 
+	 *
 	 * @param s
 	 *            Description of the Parameter
+	 * @param screen a {@link org.owasp.webgoat.session.Screen} object.
+	 * @param screen a {@link org.owasp.webgoat.session.Screen} object.
+	 * @param user a {@link java.lang.String} object.
 	 */
 	public void store(WebSession s, Screen screen, String user)
 	{
@@ -367,7 +394,7 @@ public class LessonTracker
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @return Description of the Return Value
 	 */
 	public String toString()
@@ -386,6 +413,8 @@ public class LessonTracker
 	}
 
 	/**
+	 * <p>Getter for the field <code>lessonProperties</code>.</p>
+	 *
 	 * @return Returns the lessonProperties.
 	 */
 	public Properties getLessonProperties()
@@ -394,6 +423,8 @@ public class LessonTracker
 	}
 
 	/**
+	 * <p>Setter for the field <code>lessonProperties</code>.</p>
+	 *
 	 * @param lessonProperties
 	 *            The lessonProperties to set.
 	 */

@@ -60,11 +60,11 @@ public class ParserTest {
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
-			assertEquals("version 2.3.1, build no. 86 of 23.08.16", content.getToolVersionOrNull());
-			assertEquals("2.3.1", content.getToolVersionShortOrNull());
+			assertEquals("version 4.0.2, build no. 34 of 25.07.18", content.getToolVersionOrNull());
+			assertEquals("4.0.2", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(725, findings.size());
+			assertEquals(556, findings.size());
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -152,14 +152,35 @@ public class ParserTest {
 			assertEquals("version 2.3.0, build no. 84 of 01.07.16", content.getToolVersionOrNull());
 			assertEquals("2.3.0", content.getToolVersionShortOrNull());
 
-			// FindBugs findings are not created
+			// 2 findings, 1 is classified as falsely reported and should not be imported
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(0, findings.size());
+			assertEquals(1, findings.size());
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testSpotbugs() {
+		final XMLReportParser parser = new XMLReportParser();
+		final File reportFile = new File(
+				getClass().getResource("/webgoat/webgoat-Findings-List-spotbugs.xml").getFile());
+		try {
+			final XMLReportContent content = parser.parse(reportFile);
+
+			assertEquals("version 4.0.2, build no. 34 of 25.07.18", content.getToolVersionOrNull());
+			assertEquals("4.0.2", content.getToolVersionShortOrNull());
+
+			// 2 findings, 1 is classified as to ignore and should not be imported
+			final List<XMLReportFinding> findings = content.getXMLReportFindings();
+			assertEquals(1, findings.size());
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			LOG.error("Error parsing report file", e);
+			fail(e.getMessage());
+		}
+	}
+
 
 	@Test
 	public void testOWASP() {

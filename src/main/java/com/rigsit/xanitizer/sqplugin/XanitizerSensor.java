@@ -263,15 +263,14 @@ public class XanitizerSensor implements Sensor {
 				 */
 				LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
 						+ ": Corresponding file could not be found in project.");
-
-				return;
 			}
 		}
+		else {
+			final boolean issueCreated = createNewFileIssue(inputFile, xanFinding, sensorContext);
 
-		final boolean issueCreated = createNewIssue(inputFile, xanFinding, sensorContext);
-
-		if (issueCreated) {
-			incrementMetrics(xanFinding, metricValuesAccu, project, inputFile);
+			if (issueCreated) {
+				incrementMetrics(xanFinding, metricValuesAccu, project, inputFile);
+			}
 		}
 	}
 
@@ -380,8 +379,51 @@ public class XanitizerSensor implements Sensor {
 		}
 		return null;
 	}
+	
+	private boolean createNewProjectIssue(final DefaultInputModule project, final XMLReportFinding xanFinding,
+			final SensorContext sensorContext) {
 
-	private boolean createNewIssue(final InputFile inputFile, final XMLReportFinding xanFinding,
+		final RuleKey ruleKey = mkRuleKey(xanFinding);
+		final int lineNo = normalizeLineNo(xanFinding.getLocation().getLineNoOrMinus1());
+		final Severity severity = SensorUtil.mkSeverity(xanFinding);
+
+		final String issueKey = mkIssueKey(ruleKey, inputFile, lineNo);
+		final NewIssue alreadyCreatedIssue = alreadyCreatedIssues.get(issueKey);
+		if (alreadyCreatedIssue != null) {
+
+			addSecondaryLocation(alreadyCreatedIssue, xanFinding, sensorContext);
+
+			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
+					+ xanFinding.getProblemTypeString());
+			return false;
+		}
+
+		final NewIssue newIssue = sensorContext.newIssue();
+		newIssue.forRule(ruleKey);
+		newIssue.overrideSeverity(severity);
+
+		final NewIssueLocation newIssueLocation = newIssue.newLocation();
+		newIssueLocation.on(inputFile);
+
+		// If line number exceeds the current length of the file,
+		// SonarQube will crash. So check length for robustness.
+		if (lineNo <= inputFile.lines()) {
+			final TextRange textRange = inputFile.selectLine(lineNo);
+			newIssueLocation.at(textRange);
+		}
+
+		newIssueLocation.message(mkMessage(xanFinding));
+		newIssue.at(newIssueLocation);
+		addSecondaryLocation(newIssue, xanFinding, sensorContext);
+
+		alreadyCreatedIssues.put(issueKey, newIssue);
+
+		LOG.debug("Issue created: " + inputFile + ":" + lineNo + " - "
+				+ xanFinding.getProblemTypeString());
+		return true;
+	}
+
+	private boolean createNewFileIssue(final InputFile inputFile, final XMLReportFinding xanFinding,
 			final SensorContext sensorContext) {
 
 		final RuleKey ruleKey = mkRuleKey(xanFinding);

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 4.0.2, build no. 34 of 25.07.18" xanitizerVersionShort="4.0.2" timeStamp="2018-08-22 18:23:30" timeStampLong="1534955010902" allFindings="2" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+
+
+  <finding id="329" kind="GENERIC">
+    <problemType>FindSecBugs: Cipher with no integrity</problemType>
+    <problemTypeId>CIPHER_INTEGRITY</problemTypeId>
+    <producer>PlugIn:SpotBugs</producer>
+    <category>SpotBugs Security Issues</category>
+    <rating>8.00</rating>
+    <classification>Ignore</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Reviewed</reviewed>
+    <date>2018-04-06 18:49:19 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>321</line>
+    <cweNumber>CWE-353</cweNumber>
+    <description><![CDATA[
+A finding identified by the external 'SpotBugs' plugin
+
+- In method org.owasp.webgoat.plugin.EncodingLesson.decryptString(String, String)
+
+]]></description>
+    <node lineNo="321" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/nwe/Desktop/Xanitizer/Xanitizer-4.0.2/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="330" kind="GENERIC">
+    <problemType>FindSecBugs: Cipher with no integrity</problemType>
+    <problemTypeId>CIPHER_INTEGRITY</problemTypeId>
+    <producer>PlugIn:SpotBugs</producer>
+    <category>SpotBugs Security Issues</category>
+    <rating>8.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-04-06 18:49:19 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>366</line>
+    <cweNumber>CWE-353</cweNumber>
+    <description><![CDATA[
+A finding identified by the external 'SpotBugs' plugin
+
+- In method org.owasp.webgoat.plugin.EncodingLesson.encryptString(String, String)
+
+]]></description>
+    <node lineNo="366" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/nwe/Desktop/Xanitizer/Xanitizer-4.0.2/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+</XanitizerFindingsList>

@@ -201,7 +201,7 @@ public class SensorTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		assertEquals(false, sensor.shouldExecute());
 	}
 
@@ -210,7 +210,7 @@ public class SensorTest {
 		final String reportFile = "webgoat/missing.xml";
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		assertEquals(false, sensor.shouldExecute());
 	}
 
@@ -221,7 +221,7 @@ public class SensorTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
 
@@ -230,7 +230,7 @@ public class SensorTest {
 		final String reportFileName = "WEB-INF" + File.separator + "nested-Findings-List.xml";
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileName);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
 
@@ -240,7 +240,7 @@ public class SensorTest {
 				+ "nested-Findings-List.xml";
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileName);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
 
@@ -250,21 +250,64 @@ public class SensorTest {
 		final String reportFileName = "nested-Findings-List.xml";
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileName);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
 
 	@Test
-	public void testAnalyze() {
+	public void testAnalyzeWOPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 
 		sensor.execute(context);
-		assertEquals(180, createdIssues);
+		assertEquals(191, createdIssues);
+	}
+	
+	@Test
+	public void testAnalyzeWithPluginRules() {
+		final String reportFile = new File(resourcesDirectory,
+				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				getActiveRules(true, true), context);
+
+		sensor.execute(context);
+		assertEquals(191, createdIssues);
+	}
+	
+	@Test
+	public void testAnalyzeImportAllWOPluginRules() {
+		final String reportFile = new File(resourcesDirectory,
+				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS, true);
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				getActiveRules(false, false), context);
+
+		sensor.execute(context);
+		assertEquals(191, createdIssues);
+	}
+	
+	@Test
+	public void testAnalyzeImportAllWithPluginRules() {
+		final String reportFile = new File(resourcesDirectory,
+				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		
+		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS, true);
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				getActiveRules(true, true), context);
+
+		sensor.execute(context);
+		assertEquals(191, createdIssues);
 	}
 
 	@Test
@@ -278,7 +321,7 @@ public class SensorTest {
 			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
 					problemType.name());
 			final NewActiveRule activeRule = builder.create(ruleKey);
-			if (problemType.getPresentationName().contains("SQL Injection")) {
+			if ("ci:SQLInjection".equals(problemType.getId())) {
 				activeRule.activate();
 			}
 		}
@@ -287,7 +330,7 @@ public class SensorTest {
 				builder.build(), context);
 
 		sensor.execute(context);
-		assertEquals(26, createdIssues);
+		assertEquals(23, createdIssues);
 	}
 
 	@Test
@@ -297,7 +340,7 @@ public class SensorTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		sensor.execute(context);
 		assertEquals(0, createdIssues);
 	}
@@ -309,12 +352,12 @@ public class SensorTest {
 		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
-				getActiveRules(), context);
+				getActiveRules(false, false), context);
 		sensor.execute(context);
 		assertEquals(0, createdIssues);
 	}
 
-	private ActiveRules getActiveRules() {
+	private ActiveRules getActiveRules(final boolean appendSpotBugs, final boolean appendDependencyCheck) {
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
@@ -322,6 +365,21 @@ public class SensorTest {
 			final NewActiveRule activeRule = builder.create(ruleKey);
 			activeRule.activate();
 		}
+		
+		if (appendSpotBugs) {
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+					XanitizerRulesDefinition.SPOTBUGS_RULE);
+			final NewActiveRule activeRule = builder.create(ruleKey);
+			activeRule.activate();
+		}
+		
+		if (appendDependencyCheck) {
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+			final NewActiveRule activeRule = builder.create(ruleKey);
+			activeRule.activate();
+		}
+		
 		return builder.build();
 	}
 }

@@ -22,37 +22,36 @@ import org.apache.ecs.html.TR;
 import org.apache.ecs.html.U;
 
 
-/***************************************************************************************************
- * 
- * 
+/**
+ *************************************************************************************************
+ *
+ *
  * This file is part of WebGoat, an Open Web Application Security Project utility. For details,
  * please see http://www.owasp.org/
- * 
- * Copyright (c) 2002 - 2007 Bruce Mayhew
- * 
+ *
+ * Copyright (c) 2002 - 20014 Bruce Mayhew
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program; if
  * not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
- * 
+ *
  * Getting Source ==============
- * 
- * Source for this application is maintained at code.google.com, a repository for free software
+ *
+ * Source for this application is maintained at https://github.com/WebGoat/WebGoat, a repository for free software
  * projects.
- * 
- * For details, please see http://code.google.com/p/webgoat/
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
- * @created October 29, 2003
+ * @since October 29, 2003
+ * @version $Id: $Id
  */
-
 public class ECSFactory
 {
 
@@ -78,14 +77,13 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param name
 	 *            Description of the Parameter
 	 * @param value
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeBox(String name, String value)
 	{
 
@@ -98,12 +96,11 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param text
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeButton(String text)
 	{
 
@@ -116,6 +113,13 @@ public class ECSFactory
 		return (b);
 	}
 
+	/**
+	 * <p>makeButton.</p>
+	 *
+	 * @param text a {@link java.lang.String} object.
+	 * @param onClickFunction a {@link java.lang.String} object.
+	 * @return a {@link org.apache.ecs.Element} object.
+	 */
 	public static Element makeButton(String text, String onClickFunction)
 	{
 
@@ -127,7 +131,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param labeltext
 	 *            Description of the Parameter
 	 * @param value
@@ -136,7 +140,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static TR makeField(String labeltext, String value, Element e)
 	{
 
@@ -161,7 +164,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param labeltext
 	 *            Description of the Parameter
 	 * @param name
@@ -172,7 +175,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static TR makeField(String labeltext, String name, String value, int size)
 	{
 
@@ -192,7 +194,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param label
 	 *            Description of the Parameter
 	 * @param type
@@ -207,7 +209,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeInput(String label, String type, String name, boolean value, boolean selected,
 			String alignment)
 	{
@@ -217,7 +218,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param label
 	 *            Description of the Parameter
 	 * @param type
@@ -228,7 +229,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeInput(String label, String type, String name, String value)
 	{
 
@@ -237,7 +237,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param label
 	 *            Description of the Parameter
 	 * @param type
@@ -252,7 +252,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeInput(String label, String type, String name, String value, boolean selected,
 			String alignment)
 	{
@@ -289,7 +288,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param text
 	 *            Description of the Parameter
 	 * @param name
@@ -298,7 +297,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static A makeLink(String text, String name, String value)
 	{
 
@@ -322,7 +320,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param text
 	 *            Description of the Parameter
 	 * @param name
@@ -331,7 +329,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static A makeLink(String text, String name, int value)
 	{
 
@@ -340,7 +337,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param text
 	 *            Description of the Parameter
 	 * @param name
@@ -349,7 +346,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static A makeLink(String text, String name, boolean value)
 	{
 
@@ -358,7 +354,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param text
 	 *            Description of the Parameter
 	 * @param clickAction
@@ -367,7 +363,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Input makeOnClickInput(String text, String clickAction, String type)
 	{
 
@@ -384,7 +379,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param labeltext
 	 *            Description of the Parameter
 	 * @param value
@@ -393,7 +388,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static TR makeOption(String labeltext, String value, Element e)
 	{
 
@@ -418,14 +412,13 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param label
 	 *            Description of the Parameter
 	 * @param value
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Option makeOption(String label, boolean value)
 	{
 
@@ -467,14 +460,13 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param name
 	 *            Description of the Parameter
 	 * @param options
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makePulldown(String name, List<String> options)
 	{
 
@@ -487,12 +479,12 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param results
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
+	 * @param name a {@link java.lang.String} object.
 	 */
-
 	public static Element makePulldown(String name, String results)
 	{
 
@@ -520,7 +512,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param name
 	 *            Description of the Parameter
 	 * @param list
@@ -531,7 +523,6 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Select makePulldown(String name, Object[] list, String selected, int rowsShowing)
 	{
 
@@ -562,10 +553,18 @@ public class ECSFactory
 
 	/**
 	 * Default size of 1 for rows showing in select box.
-	 * 
+	 *
 	 * @param diffNames
 	 *            Description of the Parameter
 	 * @param select
+	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
+	 * @param selected
 	 *            Description of the Parameter
 	 * @param name
 	 *            Description of the Parameter
@@ -575,9 +574,10 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @param selected
 	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeSelect(boolean diffNames, Select select, String name, Vector<Option> options,
 			String[] list, String selected)
 	{
@@ -587,10 +587,18 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param diffNames
 	 *            Description of the Parameter
 	 * @param select
+	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
+	 * @param selected
 	 *            Description of the Parameter
 	 * @param name
 	 *            Description of the Parameter
@@ -600,11 +608,12 @@ public class ECSFactory
 	 *            Description of the Parameter
 	 * @param selected
 	 *            Description of the Parameter
+	 * @param selected
+	 *            Description of the Parameter
 	 * @param rowsShowing
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Select makeSelect(boolean diffNames, Select select, String name, Vector<Option> options,
 			String[] list, String selected, int rowsShowing)
 	{
@@ -697,7 +706,7 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param title
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
@@ -715,14 +724,13 @@ public class ECSFactory
 
 	/**
 	 * Description of the Method
-	 * 
+	 *
 	 * @param title
 	 *            Description of the Parameter
 	 * @param text
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-
 	public static Element makeTextArea(String title, String text)
 	{
 
