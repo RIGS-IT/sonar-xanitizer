@@ -40,12 +40,12 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Repository;
 import org.sonar.api.utils.Version;
 
+import com.rigsit.xanitizer.sqplugin.XanitizerProperties;
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
-import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
 
 /**
  * @author nwe
@@ -90,18 +90,18 @@ public class PluginTest {
 		final MapSettings settings = new MapSettings();
 		final SensorContextTester sensorContext = SensorContextTester.create(new File(""));
 		sensorContext.setSettings(settings);
-		assertNull(SensorUtil.geReportFile(sensorContext));
+		assertNull(XanitizerProperties.geReportFile(sensorContext));
 
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, "");
-		assertNull(SensorUtil.geReportFile(sensorContext));
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, "");
+		assertNull(XanitizerProperties.geReportFile(sensorContext));
 
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, "/doesNotExist.xml");
-		assertNull(SensorUtil.geReportFile(sensorContext));
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, "/doesNotExist.xml");
+		assertNull(XanitizerProperties.geReportFile(sensorContext));
 
 		final String reportFileString = getClass()
 				.getResource("/webgoat/webgoat-Findings-List-all.xml").getFile();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileString);
-		final File reportFile = SensorUtil.geReportFile(sensorContext);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileString);
+		final File reportFile = XanitizerProperties.geReportFile(sensorContext);
 		assertNotNull(reportFile);
 		assertTrue(reportFile.isFile());
 		assertEquals(new File(reportFileString), reportFile);

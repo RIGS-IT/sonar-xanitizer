@@ -61,9 +61,9 @@ import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
+import com.rigsit.xanitizer.sqplugin.XanitizerProperties;
 import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
-import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 
 /**
@@ -188,7 +188,7 @@ public class SensorTest {
 
 		final File reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml");
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE,
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				mock(ActiveRules.class), context);
@@ -198,7 +198,7 @@ public class SensorTest {
 	@Test
 	public void missingReportFileAbsolute() throws Exception {
 		final File reportFile = new File(resourcesDirectory, "webgoat/missing.xml");
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE,
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
@@ -208,7 +208,7 @@ public class SensorTest {
 	@Test
 	public void missingReportFileRelative() throws Exception {
 		final String reportFile = "webgoat/missing.xml";
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
 		assertEquals(false, sensor.shouldExecute());
@@ -218,7 +218,7 @@ public class SensorTest {
 	public void existingReportFileAbsolute() throws Exception {
 		final File reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml");
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE,
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
@@ -228,7 +228,7 @@ public class SensorTest {
 	@Test
 	public void existingReportFileRelative() throws Exception {
 		final String reportFileName = "WEB-INF" + File.separator + "nested-Findings-List.xml";
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileName);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileName);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
@@ -238,7 +238,7 @@ public class SensorTest {
 	public void existingReportFileNested() throws Exception {
 		final String reportFileName = "." + File.separator + "WEB-INF" + File.separator
 				+ "nested-Findings-List.xml";
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileName);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileName);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
@@ -248,7 +248,7 @@ public class SensorTest {
 	public void existingReportFileOnlyName() throws Exception {
 
 		final String reportFileName = "nested-Findings-List.xml";
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFileName);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileName);
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
@@ -258,7 +258,7 @@ public class SensorTest {
 	public void testAnalyzeWOPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
@@ -271,7 +271,7 @@ public class SensorTest {
 	public void testAnalyzeWithPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(true, true), context);
@@ -284,9 +284,9 @@ public class SensorTest {
 	public void testAnalyzeImportAllWOPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 		
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS, true);
+		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
@@ -299,9 +299,9 @@ public class SensorTest {
 	public void testAnalyzeImportAllWithPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 		
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS, true);
+		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(true, true), context);
@@ -314,7 +314,7 @@ public class SensorTest {
 	public void testSingleActiveRule() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
@@ -337,7 +337,7 @@ public class SensorTest {
 	public void testAnalyzeOldReportFile() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-oldversion.xml").getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);
@@ -349,7 +349,7 @@ public class SensorTest {
 	public void testReportFileWOAnalysis() {
 		final String reportFile = new File(resourcesDirectory, "webgoat/empty-Findings-List.xml")
 				.getAbsolutePath();
-		settings.setProperty(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE, reportFile);
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
 				getActiveRules(false, false), context);

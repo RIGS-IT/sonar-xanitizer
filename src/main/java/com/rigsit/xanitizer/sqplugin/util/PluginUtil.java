@@ -24,31 +24,23 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sonar.api.batch.rule.Severity;
-import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.config.Configuration;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
-import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 
 /**
  * @author nwe
  *
  */
-public class SensorUtil {
-
-	private static final Logger LOG = Loggers.get(SensorUtil.class);
+public class PluginUtil {
 
 	private static final Pattern TOOL_VERSION_PATTERN = Pattern
 			.compile("([0-9]+)[.]([0-9]+)(?:[.]([0-9]+))?");
 
-	private SensorUtil() {
+	private PluginUtil() {
 		// hide constructor
 	}
 
@@ -63,71 +55,11 @@ public class SensorUtil {
 		return formatter.format(date);
 	}
 	
-	
-	public static boolean getImportAll(final SensorContext sensorContext) {
-		final Configuration config = sensorContext.config();
-		final Optional<Boolean> importAll = config
-				.getBoolean(XanitizerSonarQubePlugin.XANITIZER_IMPORT_ALL_FINDINGS);
-		
-		if (!importAll.isPresent()) {
-			return false;
-		}
-		
-		return importAll.get();
-	}
-
-	/**
-	 * Extracts the XML report file from the SonarQube settings.
-	 * 
-	 * @param sensorContext
-	 * @param settings
-	 * @return
-	 */
-	public static File geReportFile(final SensorContext sensorContext) {
-		final Configuration config = sensorContext.config();
-		final Optional<String> reportFileSetting = config
-				.get(XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE);
-
-		if (!reportFileSetting.isPresent() || reportFileSetting.get().isEmpty()) {
-			LOG.warn("Xanitizer parameter '" + XanitizerSonarQubePlugin.XANITIZER_XML_REPORT_FILE
-					+ "' not specified in project settings. Skipping analysis.");
-			return null;
-		}
-
-		final String reportFileString = reportFileSetting.get();
-
-		File reportFile = new File(reportFileString);
-		if (!reportFile.isAbsolute()) {
-
-			reportFile = new File(sensorContext.fileSystem().baseDir(), reportFileString);
-
-			// recursively check the files below the base dir, if they contain a
-			// file with the same name
-			if (!reportFile.isFile() && isFileName(reportFileString)) {
-				final File temp = searchRecursivlyInDir(sensorContext.fileSystem().baseDir(),
-						reportFileString);
-				if (temp != null && temp.isFile()) {
-					reportFile = temp;
-				}
-			}
-		}
-
-		if (!reportFile.isFile()) {
-			LOG.warn(
-					"Xanitizer XML report file '" + reportFile + "' not found. Skipping analysis.");
-			return null;
-		}
-
-		return reportFile;
-	}
-	
-	
-
-	private static boolean isFileName(final String fileString) {
+	public static boolean isFileName(final String fileString) {
 		return fileString.contains(".") && !fileString.contains(File.separator);
 	}
 
-	private static File searchRecursivlyInDir(final File dir, final String filename) {
+	public static File searchRecursivlyInDir(final File dir, final String filename) {
 		if (!dir.exists()) {
 			return null;
 		}

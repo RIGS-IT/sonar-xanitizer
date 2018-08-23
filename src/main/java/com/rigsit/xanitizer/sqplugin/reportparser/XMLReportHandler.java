@@ -26,7 +26,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
+import com.rigsit.xanitizer.sqplugin.util.PluginUtil;
 
 /**
  * Event handler for parsing the XML report file
@@ -100,7 +100,7 @@ public class XMLReportHandler extends DefaultHandler {
 					"No attribute 'xanitizerVersionShort' found in XML report file.");
 		}
 
-		final String errMsgOrNull = SensorUtil.checkVersion(toolVersionShortOrNull, 2, 3, -1);
+		final String errMsgOrNull = PluginUtil.checkVersion(toolVersionShortOrNull, 2, 3, -1);
 		if (errMsgOrNull != null) {
 			throw new XMLReportException(
 					"Error parsing attribute 'xanitizerVersionShort' in XML report file: "

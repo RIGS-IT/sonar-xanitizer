@@ -28,7 +28,7 @@ import org.sonar.api.batch.rule.Severity;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.reportparser.FindingKind;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
-import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
+import com.rigsit.xanitizer.sqplugin.util.PluginUtil;
 
 /**
  * @author nwe
@@ -41,36 +41,36 @@ public class SeverityTest {
 
 		// always blockers
 		XMLReportFinding finding = mkFinding("Must Fix", 1);
-		Severity severity = SensorUtil.mkSeverity(finding);
+		Severity severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.BLOCKER, severity);
 
 		finding = mkFinding("Urgent Fix", 1);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.BLOCKER, severity);
 
 		// severity from rating
 		finding = mkFinding("Warning", 7.1);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.CRITICAL, severity);
 
 		finding = mkFinding("Warning", 7.0);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.MAJOR, severity);
 
 		finding = mkFinding("Warning", 4.1);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.MAJOR, severity);
 
 		finding = mkFinding("Warning", 4.0);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals( Severity.MINOR, severity);
 
 		finding = mkFinding("Warning", 1.1);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.MINOR, severity);
 
 		finding = mkFinding("Warning", 0.9);
-		severity = SensorUtil.mkSeverity(finding);
+		severity = PluginUtil.mkSeverity(finding);
 		assertEquals(Severity.INFO, severity);
 	}
 

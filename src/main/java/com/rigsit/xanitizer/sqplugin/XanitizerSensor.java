@@ -56,7 +56,7 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
-import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
+import com.rigsit.xanitizer.sqplugin.util.PluginUtil;
 
 /**
  * @author rust
@@ -87,7 +87,7 @@ public class XanitizerSensor implements Sensor {
 			final ActiveRules activeRules, final SensorContext sensorContext) {
 		this.javaResourceLocator = javaResourceLocator;
 
-		this.importAllFindings = SensorUtil.getImportAll(sensorContext);
+		this.importAllFindings = XanitizerProperties.getImportAll(sensorContext);
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
 			if (activeRule.ruleKey().repository().equals(XanitizerRulesDefinition.REPOSITORY_KEY)) {
@@ -101,7 +101,7 @@ public class XanitizerSensor implements Sensor {
 			 */
 			this.reportFile = null;
 		} else {
-			this.reportFile = SensorUtil.geReportFile(sensorContext);
+			this.reportFile = XanitizerProperties.geReportFile(sensorContext);
 		}
 	}
 
@@ -138,7 +138,7 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		final String analysisDatePresentation = SensorUtil
+		final String analysisDatePresentation = PluginUtil
 				.convertToDateWithTimeString(new Date(analysisEndDate));
 		LOG.info("Processing Xanitizer analysis results of " + analysisDatePresentation);
 		LOG.info("Collected " + content.getXMLReportFindings().size() + " Xanitizer findings.");
@@ -294,7 +294,7 @@ public class XanitizerSensor implements Sensor {
 	private void incrementMetrics(final XMLReportFinding xanFinding,
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu,
 			final DefaultInputModule project, final InputFile inputFile) {
-		final Severity severity = SensorUtil.mkSeverity(xanFinding);
+		final Severity severity = PluginUtil.mkSeverity(xanFinding);
 
 		final List<Metric<Serializable>> metrics = mkMetrics(xanFinding);
 		for (final Metric<Serializable> metric : metrics) {
@@ -395,7 +395,7 @@ public class XanitizerSensor implements Sensor {
 			final XMLReportFinding xanFinding, final SensorContext sensorContext) {
 
 		final RuleKey ruleKey = mkRuleKey(xanFinding);
-		final Severity severity = SensorUtil.mkSeverity(xanFinding);
+		final Severity severity = PluginUtil.mkSeverity(xanFinding);
 
 		final String issueKey = mkUniqueProjectKey();
 		final NewIssue newIssue = sensorContext.newIssue();
@@ -418,7 +418,7 @@ public class XanitizerSensor implements Sensor {
 
 		final RuleKey ruleKey = mkRuleKey(xanFinding);
 		final int lineNo = normalizeLineNo(xanFinding.getLocation().getLineNoOrMinus1());
-		final Severity severity = SensorUtil.mkSeverity(xanFinding);
+		final Severity severity = PluginUtil.mkSeverity(xanFinding);
 
 		final String issueKey = mkIssueKey(ruleKey, inputFile, lineNo);
 		final NewIssue alreadyCreatedIssue = alreadyCreatedIssues.get(issueKey);

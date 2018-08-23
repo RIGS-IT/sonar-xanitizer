@@ -42,7 +42,7 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportException;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
-import com.rigsit.xanitizer.sqplugin.util.SensorUtil;
+import com.rigsit.xanitizer.sqplugin.util.PluginUtil;
 
 /**
  * @author nwe
@@ -87,7 +87,7 @@ public class ParserTest {
 			assertEquals(1, findings.size());
 			final XMLReportFinding finding = findings.get(0);
 			assertEquals("Warning", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
+			final Severity severity = PluginUtil.mkSeverity(finding);
 			assertEquals(Severity.INFO, severity);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -110,7 +110,7 @@ public class ParserTest {
 			assertEquals(1, findings.size());
 			final XMLReportFinding finding = findings.get(0);
 			assertEquals("Must Fix", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
+			final Severity severity = PluginUtil.mkSeverity(finding);
 			assertEquals(Severity.BLOCKER, severity);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -133,7 +133,7 @@ public class ParserTest {
 			assertEquals(1, findings.size());
 			final XMLReportFinding finding = findings.get(0);
 			assertEquals("Urgent Fix", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
+			final Severity severity = PluginUtil.mkSeverity(finding);
 			assertEquals(Severity.BLOCKER, severity);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -217,7 +217,7 @@ public class ParserTest {
 			assertEquals(1, findings.size());
 			final XMLReportFinding finding = findings.get(0);
 			assertEquals("Could Improve", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
+			final Severity severity = PluginUtil.mkSeverity(finding);
 			assertEquals(Severity.CRITICAL, severity);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -240,7 +240,7 @@ public class ParserTest {
 			assertEquals(1, findings.size());
 			final XMLReportFinding finding = findings.get(0);
 			assertEquals("Needs Further Study", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
+			final Severity severity = PluginUtil.mkSeverity(finding);
 			assertEquals(Severity.MAJOR, severity);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
@@ -263,7 +263,7 @@ public class ParserTest {
 			assertEquals(1, findings.size());
 			final XMLReportFinding finding = findings.get(0);
 			assertEquals("Warning", finding.getFindingClassificationOrNull());
-			final Severity severity = SensorUtil.mkSeverity(finding);
+			final Severity severity = PluginUtil.mkSeverity(finding);
 			assertEquals(Severity.CRITICAL, severity);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
