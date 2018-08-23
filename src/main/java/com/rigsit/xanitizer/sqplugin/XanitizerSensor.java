@@ -514,7 +514,7 @@ public class XanitizerSensor implements Sensor {
 
 	private String mkMessage(final XMLReportFinding finding) {
 		if (finding.isDependencyCheckFinding()) {
-			return "Remove outdated library.";
+			return "Remove outdated library '" + finding.getLocation().getRelativePathOrNull() + "'";
 		}
 
 		if (finding.isSpotBugsFinding()) {
