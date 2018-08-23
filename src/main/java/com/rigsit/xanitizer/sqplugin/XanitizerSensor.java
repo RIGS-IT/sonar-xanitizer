@@ -254,9 +254,10 @@ public class XanitizerSensor implements Sensor {
 
 		final InputFile inputFile = mkInputFileOrNull(xanFinding.getLocation(), sensorContext);
 
+		boolean issueCreated = false;
 		if (inputFile == null) {
 			if (importAllFindings) {
-
+				issueCreated = createNewProjectIssue(project, xanFinding, sensorContext);
 			} else {
 				/*
 				 * Do not generate issues without code location
@@ -264,13 +265,11 @@ public class XanitizerSensor implements Sensor {
 				LOG.debug(SKIP_FINDING_MESSAGE + xanFinding.getFindingID()
 						+ ": Corresponding file could not be found in project.");
 			}
+		} else {
+			issueCreated = createNewFileIssue(inputFile, xanFinding, sensorContext);
 		}
-		else {
-			final boolean issueCreated = createNewFileIssue(inputFile, xanFinding, sensorContext);
-
-			if (issueCreated) {
-				incrementMetrics(xanFinding, metricValuesAccu, project, inputFile);
-			}
+		if (issueCreated) {
+			incrementMetrics(xanFinding, metricValuesAccu, project, inputFile);
 		}
 	}
 
@@ -379,47 +378,38 @@ public class XanitizerSensor implements Sensor {
 		}
 		return null;
 	}
-	
-	private boolean createNewProjectIssue(final DefaultInputModule project, final XMLReportFinding xanFinding,
-			final SensorContext sensorContext) {
+
+	private String mkUniqueProjectKey() {
+		final String projectKeyPrefix = "projectIssue";
+		int i = 0;
+		while (true) {
+			final String key = projectKeyPrefix + i;
+			if (!alreadyCreatedIssues.containsKey(key)) {
+				return key;
+			}
+			i++;
+		}
+	}
+
+	private boolean createNewProjectIssue(final DefaultInputModule project,
+			final XMLReportFinding xanFinding, final SensorContext sensorContext) {
 
 		final RuleKey ruleKey = mkRuleKey(xanFinding);
-		final int lineNo = normalizeLineNo(xanFinding.getLocation().getLineNoOrMinus1());
 		final Severity severity = SensorUtil.mkSeverity(xanFinding);
 
-		final String issueKey = mkIssueKey(ruleKey, inputFile, lineNo);
-		final NewIssue alreadyCreatedIssue = alreadyCreatedIssues.get(issueKey);
-		if (alreadyCreatedIssue != null) {
-
-			addSecondaryLocation(alreadyCreatedIssue, xanFinding, sensorContext);
-
-			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
-					+ xanFinding.getProblemTypeString());
-			return false;
-		}
-
+		final String issueKey = mkUniqueProjectKey();
 		final NewIssue newIssue = sensorContext.newIssue();
 		newIssue.forRule(ruleKey);
 		newIssue.overrideSeverity(severity);
 
 		final NewIssueLocation newIssueLocation = newIssue.newLocation();
-		newIssueLocation.on(inputFile);
-
-		// If line number exceeds the current length of the file,
-		// SonarQube will crash. So check length for robustness.
-		if (lineNo <= inputFile.lines()) {
-			final TextRange textRange = inputFile.selectLine(lineNo);
-			newIssueLocation.at(textRange);
-		}
+		newIssueLocation.on(project);
 
 		newIssueLocation.message(mkMessage(xanFinding));
 		newIssue.at(newIssueLocation);
-		addSecondaryLocation(newIssue, xanFinding, sensorContext);
-
 		alreadyCreatedIssues.put(issueKey, newIssue);
 
-		LOG.debug("Issue created: " + inputFile + ":" + lineNo + " - "
-				+ xanFinding.getProblemTypeString());
+		LOG.debug("Issue created on project level: " + xanFinding.getProblemTypeString());
 		return true;
 	}
 
@@ -538,7 +528,11 @@ public class XanitizerSensor implements Sensor {
 	private static void incrementValueForFileAndProject(final Metric<Serializable> metric,
 			final InputFile resource, final InputModule project,
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu) {
-		incrementValue(metric, resource, metricValuesAccu);
+
+		if (resource != null) {
+			incrementValue(metric, resource, metricValuesAccu);
+		}
+
 		incrementValue(metric, project, metricValuesAccu);
 	}
 
