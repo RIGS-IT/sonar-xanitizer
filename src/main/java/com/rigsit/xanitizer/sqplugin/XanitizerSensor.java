@@ -518,8 +518,7 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		if (finding.isSpotBugsFinding()) {
-			return "Check SpotBugs documentation how to resolve '" + finding.getProblemTypeString()
-					+ "' problems.";
+			return finding.getProblemTypeString();
 		}
 
 		return finding.getProblemTypeOrNull().getMessage();
