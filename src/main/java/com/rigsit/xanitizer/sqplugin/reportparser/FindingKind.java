@@ -27,7 +27,7 @@ import org.sonar.api.utils.log.Loggers;
  *
  */
 public enum FindingKind {
-	PATH, SPECIAL, USER, GENERIC, NON_TAINTED, SANITIZER, OTHER,
+	PATH, SPECIAL, USER, GENERIC, NON_TAINTED, SANITIZER, OTHER, PROTOCOL_CHECK
 
 	;
 
