@@ -21,6 +21,7 @@ package com.rigsit.xanitizer.sqplugin;
 
 import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.rule.Severity;
+import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.plugins.java.Java;
 
@@ -64,6 +65,7 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 			newRule.setSeverity(Severity.MAJOR);
 			newRule.setStatus(RuleStatus.READY);
 			newRule.setTags(XANITIZER_TAG, SECURITY_TAG);
+			newRule.setType(RuleType.VULNERABILITY);
 
 			if (problemType.getPresentationName().startsWith("Application Server:")) {
 				newRule.addTags(SERVER_CONFIG_TAG);
@@ -92,7 +94,8 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 
 		final NewRule spotbugsRule = repository.createRule(SPOTBUGS_RULE);
 		spotbugsRule.setName("Xanitizer SpotBugs Findings");
-		spotbugsRule.setHtmlDescription("SpotBugs findings that are determined via Xanitizer");
+		spotbugsRule.setHtmlDescription(
+				"SpotBugs findings that are determined via Xanitizer. Check SpotBugs documentation for details.");
 		spotbugsRule.setSeverity(Severity.MAJOR);
 		spotbugsRule.setStatus(RuleStatus.READY);
 		spotbugsRule.setTags(XANITIZER_TAG, SECURITY_TAG, SPOTBUGS_TAG);
