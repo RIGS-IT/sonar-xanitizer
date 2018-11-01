@@ -224,6 +224,22 @@ public class ParserTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testProtocolChecks() {
+		final XMLReportParser parser = new XMLReportParser();
+		final File reportFile = new File(
+				getClass().getResource("/webgoat/webgoat-Findings-List-protocols.xml").getFile());
+		try {
+			final XMLReportContent content = parser.parse(reportFile);
+
+			final List<XMLReportFinding> findings = content.getXMLReportFindings();
+			assertEquals(8, findings.size());
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			LOG.error("Error parsing report file", e);
+			fail(e.getMessage());
+		}
+	}
 
 	@Test
 	public void testTaintPaths() {
