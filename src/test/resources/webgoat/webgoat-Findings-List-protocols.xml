@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 4.1.0, build no. 120 of 28.09.18" xanitizerVersionShort="4.1.0" timeStamp="2018-11-01 15:46:38" timeStampLong="1541083598405" allFindings="8" findingsNotRemovedByFilter="8" problemFindingsNotRemovedByFilter="8">
+
+
+  <finding id="25" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Check that only allowed crypto algorithms are used</problemType>
+    <problemTypeId>protocolCheckProblemType:OnlyAllowedCryptoAlgorithms</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>319</line>
+    <cweNumber>CWE-327</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Check that only allowed crypto algorithms are used'.
+The protocol check detected something wrong when encountering symbol 'AnyAlgorithm_SecretKeyFactoryGetInstance'.
+
+Violated protocol: Check Allowed Cryptography Algorithms
+Protocol description: 
+Allow only a given set of cryptography algorithm names where algorithm names are expected.
+
+The algorithm names are configured via constant value constraint variables.
+
+Names to be checked against can be found here: https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+
+Matching pattern in protocol check kind 'AnyAlgorithm_SecretKeyFactoryGetInstance':
+static javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory.getInstance(java.lang.String, ***)
+]]></description>
+    <node lineNo="319" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="26" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Check that only allowed crypto algorithms are used</problemType>
+    <problemTypeId>protocolCheckProblemType:OnlyAllowedCryptoAlgorithms</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>321</line>
+    <cweNumber>CWE-327</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Check that only allowed crypto algorithms are used'.
+The protocol check detected something wrong when encountering symbol 'AnyAlgorithm_CipherConstruction': 
+Only AES is allowed as algorithm for encryption or decryption.
+
+Violated protocol: Check Allowed Cryptography Algorithms
+Protocol description: 
+Allow only a given set of cryptography algorithm names where algorithm names are expected.
+
+The algorithm names are configured via constant value constraint variables.
+
+Names to be checked against can be found here: https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+
+Matching pattern in protocol check kind 'AnyAlgorithm_CipherConstruction':
+static javax.crypto.Cipher javax.crypto.Cipher.getInstance(java.lang.String, ***)
+]]></description>
+    <node lineNo="321" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="27" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Check that only allowed crypto algorithms are used</problemType>
+    <problemTypeId>protocolCheckProblemType:OnlyAllowedCryptoAlgorithms</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>364</line>
+    <cweNumber>CWE-327</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Check that only allowed crypto algorithms are used'.
+The protocol check detected something wrong when encountering symbol 'AnyAlgorithm_SecretKeyFactoryGetInstance'.
+
+Violated protocol: Check Allowed Cryptography Algorithms
+Protocol description: 
+Allow only a given set of cryptography algorithm names where algorithm names are expected.
+
+The algorithm names are configured via constant value constraint variables.
+
+Names to be checked against can be found here: https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+
+Matching pattern in protocol check kind 'AnyAlgorithm_SecretKeyFactoryGetInstance':
+static javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory.getInstance(java.lang.String, ***)
+]]></description>
+    <node lineNo="364" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="28" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Check that only allowed crypto algorithms are used</problemType>
+    <problemTypeId>protocolCheckProblemType:OnlyAllowedCryptoAlgorithms</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>366</line>
+    <cweNumber>CWE-327</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Check that only allowed crypto algorithms are used'.
+The protocol check detected something wrong when encountering symbol 'AnyAlgorithm_CipherConstruction': 
+Only AES is allowed as algorithm for encryption or decryption.
+
+Violated protocol: Check Allowed Cryptography Algorithms
+Protocol description: 
+Allow only a given set of cryptography algorithm names where algorithm names are expected.
+
+The algorithm names are configured via constant value constraint variables.
+
+Names to be checked against can be found here: https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+
+Matching pattern in protocol check kind 'AnyAlgorithm_CipherConstruction':
+static javax.crypto.Cipher javax.crypto.Cipher.getInstance(java.lang.String, ***)
+]]></description>
+    <node lineNo="366" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="30" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Check that only allowed hash algorithms are used</problemType>
+    <problemTypeId>protocolCheckProblemType:OnlyAllowedHashAlgorithms</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>461</line>
+    <cweNumber>CWE-328</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Check that only allowed hash algorithms are used'.
+The protocol check detected something wrong when encountering symbol 'AnyAlgorithm_MessageDigestGetInstance'.
+
+Violated protocol: Check Allowed Hash Algorithms
+Protocol description: 
+Allow only a given set of hash algorithm names where algorithm names are expected.
+
+The algorithm names are configured via constant value constraint variables.
+
+Names to be checked against can be found here: https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+
+Matching pattern in protocol check kind 'AnyAlgorithm_MessageDigestGetInstance':
+static java.security.MessageDigest java.security.MessageDigest.getInstance(java.lang.String, ***)
+]]></description>
+    <node lineNo="461" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="29" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Check that only allowed hash algorithms are used</problemType>
+    <problemTypeId>protocolCheckProblemType:OnlyAllowedHashAlgorithms</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>HttpOnly</class>
+    <file>HttpOnly.java</file>
+    <line>186</line>
+    <cweNumber>CWE-328</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Check that only allowed hash algorithms are used'.
+The protocol check detected something wrong when encountering symbol 'AnyAlgorithm_MessageDigestGetInstance'.
+
+Violated protocol: Check Allowed Hash Algorithms
+Protocol description: 
+Allow only a given set of hash algorithm names where algorithm names are expected.
+
+The algorithm names are configured via constant value constraint variables.
+
+Names to be checked against can be found here: https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+
+Matching pattern in protocol check kind 'AnyAlgorithm_MessageDigestGetInstance':
+static java.security.MessageDigest java.security.MessageDigest.getInstance(java.lang.String, ***)
+]]></description>
+    <node lineNo="186" classFQN="org.owasp.webgoat.plugin.HttpOnly" relativePath="plugin_extracted/http-only-1.0/org/owasp/webgoat/plugin/HttpOnly.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/http-only-1.0/org/owasp/webgoat/plugin/HttpOnly.java"/>
+  </finding>
+
+
+  <finding id="31" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Password-Based Encryption</problemType>
+    <problemTypeId>protocolCheckProblemType:PBE</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>327</line>
+    <cweNumber>CWE-327</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Password-Based Encryption'.
+Spec being used is not ready for use.
+
+Violated protocol: Creation and use of a PBE Cipher
+Protocol description: 
+Creation of a cipher for PBE consists of creating an uninitialized cipher, and then initializing it properly.
+
+Matching pattern in protocol check kind 'CipherInitialization':
+void javax.crypto.Cipher.init(int, java.security.Key, java.security.spec.AlgorithmParameterSpec)
+]]></description>
+    <node lineNo="327" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+
+
+  <finding id="32" kind="PROTOCOL_CHECK">
+    <problemType>Cryptography: Password-Based Encryption</problemType>
+    <problemTypeId>protocolCheckProblemType:PBE</problemTypeId>
+    <producer>BuiltIn:PROTOCOL_CHECK</producer>
+    <category>Protocol Check Findings</category>
+    <rating>5.00</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2018-09-28 12:55:50 - fully matched</date>
+    <package>org.owasp.webgoat.plugin</package>
+    <class>EncodingLesson</class>
+    <file>EncodingLesson.java</file>
+    <line>372</line>
+    <cweNumber>CWE-327</cweNumber>
+    <description><![CDATA[
+An identified location for problem type 'Cryptography: Password-Based Encryption'.
+Spec being used is not ready for use.
+
+Violated protocol: Creation and use of a PBE Cipher
+Protocol description: 
+Creation of a cipher for PBE consists of creating an uninitialized cipher, and then initializing it properly.
+
+Matching pattern in protocol check kind 'CipherInitialization':
+void javax.crypto.Cipher.init(int, java.security.Key, java.security.spec.AlgorithmParameterSpec)
+]]></description>
+    <node lineNo="372" classFQN="org.owasp.webgoat.plugin.EncodingLesson" relativePath="plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java" absolutePath="C:/Users/norma/Desktop/Xanitizer/Xanitizer-4.1.0/examples/webgoat/plugin_extracted/encoding-1.0/org/owasp/webgoat/plugin/EncodingLesson.java"/>
+  </finding>
+</XanitizerFindingsList>

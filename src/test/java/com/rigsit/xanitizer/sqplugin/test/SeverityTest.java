@@ -63,7 +63,7 @@ public class SeverityTest {
 
 		finding = mkFinding("Warning", 4.0);
 		severity = PluginUtil.mkSeverity(finding);
-		assertEquals( Severity.MINOR, severity);
+		assertEquals(Severity.MINOR, severity);
 
 		finding = mkFinding("Warning", 1.1);
 		severity = PluginUtil.mkSeverity(finding);
@@ -75,7 +75,8 @@ public class SeverityTest {
 	}
 
 	private XMLReportFinding mkFinding(final String classification, final double rating) {
-		return new XMLReportFinding(-1, GeneratedProblemType.values()[0].name(), FindingKind.OTHER,
+		return new XMLReportFinding(-1, GeneratedProblemType.values()[0].name(),
+				GeneratedProblemType.values()[0].getPresentationName(), FindingKind.OTHER,
 				classification, rating, null, null);
 	}
 }
