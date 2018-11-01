@@ -33,7 +33,8 @@ public class XMLReportFinding {
 	private static final String RESOURCE_LEAK_LABEL = "Resource Leak";
 
 	private final int findingID;
-	private final String problemTypeString;
+	private final String problemTypeId;
+	private final String problemTypeName;
 	private final GeneratedProblemType problemTypeOrNull;
 	private final FindingKind findingKind;
 
@@ -56,14 +57,15 @@ public class XMLReportFinding {
 	 * @param matchCode
 	 * @param producer
 	 */
-	public XMLReportFinding(final int findingID, final String problemTypeString,
+	public XMLReportFinding(final int findingID, final String problemTypeId, final String problemTypeName,
 			final FindingKind findingKind, final String classificationOrNull, final double rating,
 			final String matchCode, final String producer) {
 		this.findingID = findingID;
-		this.problemTypeString = problemTypeString;
+		this.problemTypeId = problemTypeId;
+		this.problemTypeName = problemTypeName;
 		this.findingKind = findingKind;
 
-		this.problemTypeOrNull = GeneratedProblemType.getForId(problemTypeString);
+		this.problemTypeOrNull = GeneratedProblemType.getForId(problemTypeId);
 
 		this.classificationOrNull = classificationOrNull;
 		this.rating = rating;
@@ -88,8 +90,12 @@ public class XMLReportFinding {
 		return findingID;
 	}
 
-	public String getProblemTypeString() {
-		return problemTypeString;
+	public String getProblemTypeId() {
+		return problemTypeId;
+	}
+	
+	public String getProblemTypeName() {
+		return problemTypeName;
 	}
 
 	public GeneratedProblemType getProblemTypeOrNull() {

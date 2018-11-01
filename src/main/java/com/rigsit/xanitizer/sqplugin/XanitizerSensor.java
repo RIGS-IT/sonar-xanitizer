@@ -183,7 +183,7 @@ public class XanitizerSensor implements Sensor {
 
 		if (finding.getProblemTypeOrNull() == null) {
 			LOG.warn(SKIP_FINDING_MESSAGE + finding.getFindingID() + ": Unknown problem type '"
-					+ finding.getProblemTypeString() + "'.");
+					+ finding.getProblemTypeId() + "'.");
 			return true;
 		}
 
@@ -409,7 +409,7 @@ public class XanitizerSensor implements Sensor {
 		newIssue.at(newIssueLocation);
 		alreadyCreatedIssues.put(issueKey, newIssue);
 
-		LOG.debug("Issue created on project level: " + xanFinding.getProblemTypeString());
+		LOG.debug("Issue created on project level: " + xanFinding.getProblemTypeId());
 		return true;
 	}
 
@@ -427,7 +427,7 @@ public class XanitizerSensor implements Sensor {
 			addSecondaryLocation(alreadyCreatedIssue, xanFinding, sensorContext);
 
 			LOG.debug("Issue already exists: " + inputFile + ":" + lineNo + " - "
-					+ xanFinding.getProblemTypeString());
+					+ xanFinding.getProblemTypeId());
 			return false;
 		}
 
@@ -452,7 +452,7 @@ public class XanitizerSensor implements Sensor {
 		alreadyCreatedIssues.put(issueKey, newIssue);
 
 		LOG.debug("Issue created: " + inputFile + ":" + lineNo + " - "
-				+ xanFinding.getProblemTypeString());
+				+ xanFinding.getProblemTypeId());
 		return true;
 	}
 
@@ -518,7 +518,7 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		if (finding.isSpotBugsFinding()) {
-			return finding.getProblemTypeString();
+			return finding.getProblemTypeName();
 		}
 
 		return finding.getProblemTypeOrNull().getMessage();

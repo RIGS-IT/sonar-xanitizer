@@ -44,6 +44,7 @@ public class XMLReportHandler extends DefaultHandler {
 	private final StringBuilder collectedCharacters = new StringBuilder();
 
 	private String problemTypeId;
+	private String problemTypeName;
 	private int findingId = -1;
 	private FindingKind findingKind;
 	private String producer;
@@ -140,6 +141,9 @@ public class XMLReportHandler extends DefaultHandler {
 		case "problemTypeId":
 			problemTypeId = collectedCharacters.toString();
 			break;
+		case "problemType":
+			problemTypeName = collectedCharacters.toString();
+			break;
 		case "classification":
 			classificationOrNull = collectedCharacters.toString();
 			break;
@@ -181,8 +185,8 @@ public class XMLReportHandler extends DefaultHandler {
 			return;
 		}
 
-		final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId, findingKind,
-				classificationOrNull, rating, matchCode, producer);
+		final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId, problemTypeName,
+				findingKind, classificationOrNull, rating, matchCode, producer);
 		if (findingKind == FindingKind.PATH) {
 			f.setStartAndEnd(startNodeOrNull, endNodeOrNull);
 		} else {
@@ -216,8 +220,8 @@ public class XMLReportHandler extends DefaultHandler {
 	}
 
 	private boolean hasCollectedAllRelevantData() {
-		if (problemTypeId == null || findingId < 0 || findingKind == null || producer == null
-				|| matchCode == null) {
+		if (problemTypeId == null || problemTypeName == null || findingId < 0 || findingKind == null
+				|| producer == null || matchCode == null) {
 			return false;
 		}
 		if (findingKind == FindingKind.PATH) {
@@ -228,6 +232,7 @@ public class XMLReportHandler extends DefaultHandler {
 
 	private void resetData() {
 		problemTypeId = null;
+		problemTypeName = null;
 		classificationOrNull = null;
 		findingId = -1;
 		findingKind = null;
