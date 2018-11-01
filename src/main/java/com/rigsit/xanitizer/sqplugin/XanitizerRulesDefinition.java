@@ -81,16 +81,24 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 			if (cwe > 0) {
 				newRule.addTags(CWE_TAG);
 				newRule.addCwe(cwe);
+
+				final String sansCategory = getSansCategory(cwe);
+				if (!sansCategory.isEmpty()) {
+					newRule.addTags(sansCategory);
+				}
 			}
 		}
 
 		final NewRule dependencyCheckRule = repository.createRule(OWASP_DEPENDENCY_CHECK_RULE);
 		dependencyCheckRule.setName("Xanitizer OWASP Dependency Check Findings");
 		dependencyCheckRule.setHtmlDescription(
-				"OWASP dependency check findings that are determined via Xanitizer");
+				"OWASP dependency check findings that are determined via Xanitizer.");
 		dependencyCheckRule.setSeverity(Severity.MAJOR);
 		dependencyCheckRule.setStatus(RuleStatus.READY);
-		dependencyCheckRule.setTags(XANITIZER_TAG, SECURITY_TAG, DEPENDENCY_CHECK_TAG);
+		dependencyCheckRule.setTags(XANITIZER_TAG, SECURITY_TAG, DEPENDENCY_CHECK_TAG, CWE_TAG);
+		dependencyCheckRule.addTags(OWASP_TAG_PREFIX + 9);
+		dependencyCheckRule.addOwaspTop10(OwaspTop10.A9);
+		dependencyCheckRule.addCwe(937);
 
 		final NewRule spotbugsRule = repository.createRule(SPOTBUGS_RULE);
 		spotbugsRule.setName("Xanitizer SpotBugs Findings");
@@ -101,5 +109,40 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 		spotbugsRule.setTags(XANITIZER_TAG, SECURITY_TAG, SPOTBUGS_TAG);
 
 		repository.done();
+	}
+
+	private String getSansCategory(final int cwe) {
+		switch (cwe) {
+		case 78:
+		case 79:
+		case 89:
+		case 352:
+		case 434:
+		case 601:
+			return "sans-top25-insecure";
+		case 22:
+		case 120:
+		case 131:
+		case 134:
+		case 190:
+		case 494:
+		case 676:
+		case 829:
+			return "sans-top25-risky";
+		case 250:
+		case 306:
+		case 307:
+		case 311:
+		case 327:
+		case 732:
+		case 759:
+		case 798:
+		case 807:
+		case 862:
+		case 863:
+			return "sans-top25-porous";
+		default:
+			return "";
+		}
 	}
 }
