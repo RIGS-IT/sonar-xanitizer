@@ -94,6 +94,7 @@
           <pluginName>Xanitizer</pluginName>
           <pluginDescription>Imports Xanitizer security reports.</pluginDescription>
           <sonarQubeMinVersion>${sonar.minVersion}</sonarQubeMinVersion>  <!-- allow to depend on API 6.7+ but run on LTS(6.7) -->
+          <requirePlugins>java:${sonar-java.version}</requirePlugins>
         </configuration>
       </plugin>
       <plugin>
