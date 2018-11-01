@@ -60,8 +60,8 @@ public class ParserTest {
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
-			assertEquals("version 4.0.2, build no. 34 of 25.07.18", content.getToolVersionOrNull());
-			assertEquals("4.0.2", content.getToolVersionShortOrNull());
+			assertEquals("version 4.1.0, build no. 120 of 28.09.18", content.getToolVersionOrNull());
+			assertEquals("4.1.0", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
 			assertEquals(556, findings.size());

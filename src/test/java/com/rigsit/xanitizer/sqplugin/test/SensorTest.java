@@ -264,7 +264,7 @@ public class SensorTest {
 				getActiveRules(false, false), context);
 
 		sensor.execute(context);
-		assertEquals(191, createdIssues);
+		assertEquals(198, createdIssues);
 	}
 	
 	@Test
@@ -277,7 +277,7 @@ public class SensorTest {
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
-		assertEquals(191, createdIssues);
+		assertEquals(198, createdIssues);
 	}
 	
 	@Test
@@ -292,7 +292,7 @@ public class SensorTest {
 				getActiveRules(false, false), context);
 
 		sensor.execute(context);
-		assertEquals(244, createdIssues);
+		assertEquals(251, createdIssues);
 	}
 	
 	@Test
@@ -307,7 +307,7 @@ public class SensorTest {
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
-		assertEquals(402, createdIssues);
+		assertEquals(409, createdIssues);
 	}
 
 	@Test
