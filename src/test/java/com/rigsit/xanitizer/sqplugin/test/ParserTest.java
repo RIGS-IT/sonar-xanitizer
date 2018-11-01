@@ -64,7 +64,7 @@ public class ParserTest {
 			assertEquals("4.1.0", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
-			assertEquals(556, findings.size());
+			assertEquals(560, findings.size());
 
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			LOG.error("Error parsing report file", e);
