@@ -420,7 +420,7 @@ public class XanitizerSensor implements Sensor {
 		final int lineNo = normalizeLineNo(xanFinding.getLocation().getLineNoOrMinus1());
 		final Severity severity = PluginUtil.mkSeverity(xanFinding);
 
-		final String issueKey = mkIssueKey(ruleKey, inputFile, lineNo);
+		final String issueKey = mkIssueKey(xanFinding.getProblemTypeId(), inputFile, lineNo);
 		final NewIssue alreadyCreatedIssue = alreadyCreatedIssues.get(issueKey);
 		if (alreadyCreatedIssue != null) {
 
@@ -476,8 +476,8 @@ public class XanitizerSensor implements Sensor {
 		}
 	}
 
-	private String mkIssueKey(final RuleKey ruleKey, final InputFile file, final int lineNo) {
-		return ruleKey.toString() + ":" + file.toString() + ":" + lineNo;
+	private String mkIssueKey(final String problemTypeId, final InputFile file, final int lineNo) {
+		return problemTypeId + ":" + file.toString() + ":" + lineNo;
 	}
 
 	private List<Metric<Serializable>> mkMetrics(final XMLReportFinding finding) {
@@ -514,7 +514,8 @@ public class XanitizerSensor implements Sensor {
 
 	private String mkMessage(final XMLReportFinding finding) {
 		if (finding.isDependencyCheckFinding()) {
-			return "Remove outdated library '" + finding.getLocation().getRelativePathOrNull() + "'";
+			return "Remove outdated library '" + finding.getLocation().getRelativePathOrNull()
+					+ "'";
 		}
 
 		if (finding.isSpotBugsFinding()) {

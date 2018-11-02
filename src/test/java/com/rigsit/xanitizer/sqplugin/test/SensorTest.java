@@ -307,7 +307,7 @@ public class SensorTest {
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
-		assertEquals(409, createdIssues);
+		assertEquals(418, createdIssues);
 	}
 
 	@Test
