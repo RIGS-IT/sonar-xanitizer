@@ -9,4 +9,10 @@ cache:
   directories:
   - $HOME/.m2
 
-script: mvn clean install org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=ced3d872d85444b0755597e10e612e4b429374fa
+addons:
+  sonarcloud:
+    organization: "rigs-it" # the key of the org you chose at step #3
+    token:
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
