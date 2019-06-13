@@ -66,7 +66,7 @@ public class XMLReportParser {
 		 * Could cause a ParserConfigurationException for certain implementations of SAXParserFactory
 		 */
 		try {
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		} catch (Exception e) {
 			LOG.info("Could not deactivate secure XML processing.");
 		}

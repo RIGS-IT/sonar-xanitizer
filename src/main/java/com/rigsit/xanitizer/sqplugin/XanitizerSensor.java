@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -367,12 +368,12 @@ public class XanitizerSensor implements Sensor {
 
 		if (relativePath != null) {
 
-			final Iterable<InputFile> inputFilesIterable = sensorContext.fileSystem()
-					.inputFiles(fs.predicates().hasRelativePath(relativePath));
+			final Iterator<InputFile> inputFilesIterator = sensorContext.fileSystem()
+					.inputFiles(fs.predicates().hasRelativePath(relativePath)).iterator();
 
-			// Use first matching input file
-			for (final InputFile inputFile : inputFilesIterable) {
-				return inputFile;
+			if (inputFilesIterator != null && inputFilesIterator.hasNext()) {
+				// Use first matching input file
+				return inputFilesIterator.next();
 			}
 
 		}
