@@ -1,6 +1,6 @@
 /** 
  * SonarQube Xanitizer Plugin
- * Copyright 2012-2018 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+ * Copyright 2012-2019 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
  * mailto: info@rigs-it.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
