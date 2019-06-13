@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
  */
 public class XMLReportParser {
 	
-	private static final Logger LOG = Loggers.get(XMLReportContent.class);
+	private static final Logger LOG = Loggers.get(XMLReportParser.class);
 
 	/**
 	 * Parses the given XML report file and stores the extracted information in
