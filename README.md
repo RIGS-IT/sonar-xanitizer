@@ -60,9 +60,9 @@ In order to display the Xanitizer issues, a special widget is provided. It is ac
 ## Mapping of Xanitizer Findings to SonarQube Issues
 
 SonarQube issues are computed in the following way from Xanitizer findings:
-- Only if a corresponding file could be found a SonarQube issue will be created for Xanitizer finding.
 - Only for findings with problem classifications (e. g. “Warning”, “Must fix” etc.), issues are generated.
-- Issues for SpotBugs and OWASP Dependency Check findings are not only created, when the option **Xanitizer Import All** is turned on, because separate SonarQube plugins are available for these tools.
+- If the corresponding file of a Xanitizer finding could not be found a SonarQube issue will only be created, when the option **Xanitizer Import All** is turned on.
+- Issues for SpotBugs and OWASP Dependency Check findings are only created, when the option **Xanitizer Import All** is turned on, because separate SonarQube plugins are available for these tools.
 - For taint path findings, the location of the issue is the the taint sink. The taint source is registered as secondary location.
 - For a single location, only one issue per problem type is created. So even if there are several taint paths with the same taint sink they result in one SonarQube issue (but with several taint sources as secondary locations).
 - Issues for Xanitizer findings with classifications “must fix” and “urgent fix” get SonarQube severity “blocker”.
