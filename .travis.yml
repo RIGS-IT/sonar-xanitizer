@@ -1,18 +1,15 @@
 language: java
-
 sudo: false
-
 jdk:
-  - oraclejdk8
-  
+- oraclejdk8
 cache:
   directories:
-  - $HOME/.m2
-
+  - "$HOME/.m2"
 addons:
   sonarcloud:
-    organization: "rigs-it" # the key of the org you chose at step #3
+    organization: rigs-it
     token:
+    	secure: y5r6HlxzdpR9aPqhO/8WGxUSYvj8hwfrR8OSucWNiPR9OrL2VieW8G9oF12LoLnNxVJTsJsUJ44hJKjdiaXtOJ91stZGCZGpvGY/nRbwWDIb3BGJVxwI9k8fH7vVBSsv2ZkmUw7xjvISf93t50SlezcOTAjTdH9oH+UcxeHNpprjriHOxSruQPOUGt+tE71Ircg4d2nR1tsI7gVj17aVmicSmN7v8XpJd4BvnDEyT8HumKB1N6ieWHuLycYLby7vQd4fBDCsPvbMrqaO7YPZW9N0/Xt/0KBQl2vSXKhfVWteBmEwqRngPFOjdlgu+Xn/lZfjQghhbWcBHvpxWLp8VvvRZfUibzvlp+fBepUXxOgYifbJzR4McbdWrMcsRWAmjFRLl+ipI5YvMZ50bLmeGTFAWOKzGPcb6V1h+S/Rj5m6jjumEcpSTKQwYI8UFZQsgCyYfzA/ITrYXiuGxydUAzov3gfF1rmxuNdZG0epzYaZNhgjQ7n/+GqHvGTBgwBhCXFt671Quvt3jaJTK6gjzF1U+bGMnGERbkK3i60du/y00QwjkjxgNvmkVt1Wlz5bSXSkSAqmwEVCMtub7FxwEPKf+OF2hY5eL9OaVF4YxTDNOE1wfRutzhfjuiHVqKkd7il+VLSVP3z3NHS3bwapmHKF6Ovu15tpAfAJoKgdq4k=
+    	
 script:
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
