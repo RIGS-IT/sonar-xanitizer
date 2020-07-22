@@ -38,7 +38,7 @@ public class FindingKindTest {
 	public void testUnknownKind() {
 		
 		final FindingKind kind = FindingKind.mk("unknown");
-		assertSame(kind, FindingKind.OTHER);
+		assertSame(FindingKind.OTHER, kind);
 	}
 	
 	@Test
