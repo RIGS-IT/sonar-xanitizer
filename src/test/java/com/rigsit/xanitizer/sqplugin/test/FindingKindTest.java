@@ -20,7 +20,8 @@
  */
 package com.rigsit.xanitizer.sqplugin.test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
@@ -37,14 +38,14 @@ public class FindingKindTest {
 	public void testUnknownKind() {
 		
 		final FindingKind kind = FindingKind.mk("unknown");
-		assertTrue(kind == FindingKind.OTHER);
+		assertSame(kind, FindingKind.OTHER);
 	}
 	
 	@Test
 	public void testNull() {
 		
 		final FindingKind kind = FindingKind.mk(null);
-		assertTrue(kind == null);
+		assertNull(kind);
 	}
 	
 	@Test
@@ -52,7 +53,7 @@ public class FindingKindTest {
 		
 		for (FindingKind value : FindingKind.values()) {
 			final FindingKind kind = FindingKind.mk(value.toString());
-			assertTrue(kind == value);
+			assertSame(kind, value);
 		}
 		
 	}
