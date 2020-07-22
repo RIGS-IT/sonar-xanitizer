@@ -42,7 +42,7 @@
     <sonar.buildVersion>7.9</sonar.buildVersion>
     <sonar.minVersion>7.6</sonar.minVersion>
     <sonar-java.version>4.0</sonar-java.version>
-    <jdk.min.version>1.8</jdk.min.version>
+    <jdk.min.version>1.11</jdk.min.version>
   </properties>
 
   <dependencies>
