@@ -61,7 +61,6 @@ public class XMLReportParser {
 		final XMLReportHandler handler = new XMLReportHandler(xmlReportContent);
 
 		final SAXParserFactory factory = SAXParserFactory.newInstance();
-		
 		/*
 		 * Could cause a ParserConfigurationException for certain implementations of SAXParserFactory
 		 */
@@ -71,7 +70,8 @@ public class XMLReportParser {
 			LOG.info("Could not deactivate secure XML processing.");
 		}
 		final SAXParser saxParser = factory.newSAXParser();
-
+		saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Compliant
+		saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
 		saxParser.parse(reportFile, handler);
 
 		return xmlReportContent;
