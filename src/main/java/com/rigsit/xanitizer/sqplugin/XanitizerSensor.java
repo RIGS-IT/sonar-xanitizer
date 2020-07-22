@@ -34,9 +34,8 @@ import java.util.Set;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.fs.TextRange;
-import org.sonar.api.batch.fs.internal.DefaultInputModule;
+import org.sonar.api.batch.fs.internal.DefaultInputProject;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.Severity;
@@ -48,6 +47,7 @@ import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.measure.NewMeasure;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
@@ -118,7 +118,7 @@ public class XanitizerSensor implements Sensor {
 			return;
 		}
 
-		final DefaultInputModule project = (DefaultInputModule) sensorContext.module();
+		final DefaultInputProject project = (DefaultInputProject) sensorContext.project();
 		LOG.info("Reading Xanitizer findings from '" + reportFile + "' for project '"
 				+ project.getName() + "'");
 
@@ -197,7 +197,7 @@ public class XanitizerSensor implements Sensor {
 		return false;
 	}
 
-	private void createIssuesAndMeasures(final DefaultInputModule project,
+	private void createIssuesAndMeasures(final InputProject project,
 			final SensorContext sensorContext, final XMLReportContent content) {
 
 		final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValues = new LinkedHashMap<>();
@@ -247,7 +247,7 @@ public class XanitizerSensor implements Sensor {
 
 	private void generateIssueForFinding(final XMLReportFinding xanFinding,
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu,
-			final DefaultInputModule project, final SensorContext sensorContext) {
+			final InputProject project, final SensorContext sensorContext) {
 
 		if (skipFinding(xanFinding)) {
 			return;
@@ -277,7 +277,7 @@ public class XanitizerSensor implements Sensor {
 	@SuppressWarnings("unchecked")
 	private void initializeMetrics(
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu,
-			final DefaultInputModule project) {
+			final InputProject project) {
 
 		for (Metric<Serializable> metric : new XanitizerMetrics().getMetrics()) {
 			initializeMetric(metricValuesAccu, project, metric);
@@ -294,7 +294,7 @@ public class XanitizerSensor implements Sensor {
 
 	private void incrementMetrics(final XMLReportFinding xanFinding,
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu,
-			final DefaultInputModule project, final InputFile inputFile) {
+			final InputProject project, final InputFile inputFile) {
 		final Severity severity = PluginUtil.mkSeverity(xanFinding);
 
 		final List<Metric<Serializable>> metrics = mkMetrics(xanFinding);
@@ -392,7 +392,7 @@ public class XanitizerSensor implements Sensor {
 		}
 	}
 
-	private boolean createNewProjectIssue(final DefaultInputModule project,
+	private boolean createNewProjectIssue(final InputProject project,
 			final XMLReportFinding xanFinding, final SensorContext sensorContext) {
 
 		final RuleKey ruleKey = mkRuleKey(xanFinding);
@@ -527,7 +527,7 @@ public class XanitizerSensor implements Sensor {
 	}
 
 	private static void incrementValueForFileAndProject(final Metric<Serializable> metric,
-			final InputFile resource, final InputModule project,
+			final InputFile resource, final InputProject project,
 			final Map<Metric<Serializable>, Map<InputComponent, Integer>> metricValuesAccu) {
 
 		if (resource != null) {

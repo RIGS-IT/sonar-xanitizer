@@ -28,6 +28,7 @@ import org.sonar.api.batch.rule.Severity;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.reportparser.FindingKind;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportHandler;
 import com.rigsit.xanitizer.sqplugin.util.PluginUtil;
 
 /**
@@ -75,7 +76,8 @@ public class SeverityTest {
 	}
 
 	private XMLReportFinding mkFinding(final String classification, final double rating) {
-		return new XMLReportFinding(-1, GeneratedProblemType.values()[0].name(),
+		return new XMLReportFinding(XMLReportHandler.UNDEFINED_ID,
+				GeneratedProblemType.values()[0].name(),
 				GeneratedProblemType.values()[0].getPresentationName(), FindingKind.OTHER,
 				classification, rating, null, null);
 	}

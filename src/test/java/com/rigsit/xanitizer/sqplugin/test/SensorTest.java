@@ -33,10 +33,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.fs.internal.DefaultInputModule;
+import org.sonar.api.batch.fs.internal.DefaultInputProject;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
@@ -48,17 +47,19 @@ import org.sonar.api.batch.sensor.cpd.internal.DefaultCpdTokens;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.internal.DefaultHighlighting;
 import org.sonar.api.batch.sensor.internal.SensorStorage;
-import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.batch.sensor.issue.internal.DefaultExternalIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.batch.sensor.measure.Measure;
 import org.sonar.api.batch.sensor.measure.NewMeasure;
 import org.sonar.api.batch.sensor.measure.internal.DefaultMeasure;
+import org.sonar.api.batch.sensor.rule.internal.DefaultAdHocRule;
 import org.sonar.api.batch.sensor.symbol.internal.DefaultSymbolTable;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerProperties;
@@ -78,16 +79,17 @@ public class SensorTest {
 	private MapSettings settings;
 	private int createdIssues;
 
+	@SuppressWarnings("deprecation")
 	@Before
 	public void setup() {
 		context = mock(SensorContext.class);
 		settings = new MapSettings();
 		when(context.config()).thenReturn(settings.asConfig());
 
-		final InputModule module = new DefaultInputModule(
-				ProjectDefinition.create().setKey("projectKey").setBaseDir(webgoatDir)
-						.setWorkDir(new File(webgoatDir, ".sonar")));
-		when(context.module()).thenReturn(module);
+		final InputProject project = new DefaultInputProject(
+				ProjectDefinition.create().setKey("projectKey").setName("projectName")
+						.setBaseDir(webgoatDir).setWorkDir(new File(webgoatDir, ".sonar")));
+		when(context.project()).thenReturn(project);
 
 		final SensorStorage storage = new SensorStorage() {
 
@@ -128,11 +130,16 @@ public class SensorTest {
 			}
 
 			@Override
-			public void store(ExternalIssue issue) {
+			public void store(DefaultSignificantCode significantCode) {
 			}
 
 			@Override
-			public void store(DefaultSignificantCode significantCode) {
+			public void store(DefaultExternalIssue issue) {
+
+			}
+
+			@Override
+			public void store(DefaultAdHocRule adHocRule) {
 			}
 		};
 
@@ -266,7 +273,7 @@ public class SensorTest {
 		sensor.execute(context);
 		assertEquals(198, createdIssues);
 	}
-	
+
 	@Test
 	public void testAnalyzeWithPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
@@ -279,13 +286,22 @@ public class SensorTest {
 		sensor.execute(context);
 		assertEquals(198, createdIssues);
 	}
-	
+
+	@Test
+	public void testAnalyzeWithoutSpecifiedReportFile() {
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				getActiveRules(true, true), context);
+
+		sensor.execute(context);
+		assertEquals(522, createdIssues);
+	}
+
 	@Test
 	public void testAnalyzeImportAllWOPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
-		
+
 		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
@@ -294,13 +310,13 @@ public class SensorTest {
 		sensor.execute(context);
 		assertEquals(251, createdIssues);
 	}
-	
+
 	@Test
 	public void testAnalyzeImportAllWithPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
-		
+
 		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 
 		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
@@ -318,11 +334,13 @@ public class SensorTest {
 
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
-					problemType.name());
-			final NewActiveRule activeRule = builder.create(ruleKey);
 			if ("ci:SQLInjection".equals(problemType.getId())) {
-				activeRule.activate();
+				final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+						problemType.name());
+				final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
+				activeRuleBuilder.setRuleKey(ruleKey);
+				final NewActiveRule activeRule = activeRuleBuilder.build();
+				builder.addRule(activeRule);
 			}
 		}
 
@@ -357,29 +375,37 @@ public class SensorTest {
 		assertEquals(0, createdIssues);
 	}
 
-	private ActiveRules getActiveRules(final boolean appendSpotBugs, final boolean appendDependencyCheck) {
+	private ActiveRules getActiveRules(final boolean appendSpotBugs,
+			final boolean appendDependencyCheck) {
+
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
 					problemType.name());
-			final NewActiveRule activeRule = builder.create(ruleKey);
-			activeRule.activate();
+			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
+			activeRuleBuilder.setRuleKey(ruleKey);
+			final NewActiveRule activeRule = activeRuleBuilder.build();
+			builder.addRule(activeRule);
 		}
-		
+
 		if (appendSpotBugs) {
 			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
 					XanitizerRulesDefinition.SPOTBUGS_RULE);
-			final NewActiveRule activeRule = builder.create(ruleKey);
-			activeRule.activate();
+			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
+			activeRuleBuilder.setRuleKey(ruleKey);
+			final NewActiveRule activeRule = activeRuleBuilder.build();
+			builder.addRule(activeRule);
 		}
-		
+
 		if (appendDependencyCheck) {
 			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
 					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
-			final NewActiveRule activeRule = builder.create(ruleKey);
-			activeRule.activate();
+			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
+			activeRuleBuilder.setRuleKey(ruleKey);
+			final NewActiveRule activeRule = activeRuleBuilder.build();
+			builder.addRule(activeRule);
 		}
-		
+
 		return builder.build();
 	}
 }

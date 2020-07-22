@@ -39,13 +39,14 @@ public class XMLReportHandler extends DefaultHandler {
 	private static final Logger LOG = Loggers.get(XMLReportHandler.class);
 
 	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
+	public static final String UNDEFINED_ID = "<none>";
 
 	private final XMLReportContent xmlReportContent;
 	private final StringBuilder collectedCharacters = new StringBuilder();
 
 	private String problemTypeId;
 	private String problemTypeName;
-	private int findingId = -1;
+	private String findingId = UNDEFINED_ID;
 	private FindingKind findingKind;
 	private String producer;
 	private double rating;
@@ -85,7 +86,7 @@ public class XMLReportHandler extends DefaultHandler {
 			endNodeOrNull = mkNodeFromAttributes(attributes);
 			break;
 		case "finding":
-			findingId = Integer.parseInt(attributes.getValue("id"));
+			findingId = attributes.getValue("id");
 			findingKind = FindingKind.mk(attributes.getValue("kind"));
 			break;
 		default:
@@ -220,8 +221,8 @@ public class XMLReportHandler extends DefaultHandler {
 	}
 
 	private boolean hasCollectedAllRelevantData() {
-		if (problemTypeId == null || problemTypeName == null || findingId < 0 || findingKind == null
-				|| producer == null || matchCode == null) {
+		if (problemTypeId == null || problemTypeName == null || UNDEFINED_ID.equals(findingId)
+				|| findingKind == null || producer == null || matchCode == null) {
 			return false;
 		}
 		if (findingKind == FindingKind.PATH) {
@@ -234,7 +235,7 @@ public class XMLReportHandler extends DefaultHandler {
 		problemTypeId = null;
 		problemTypeName = null;
 		classificationOrNull = null;
-		findingId = -1;
+		findingId = UNDEFINED_ID;
 		findingKind = null;
 		rating = 0;
 

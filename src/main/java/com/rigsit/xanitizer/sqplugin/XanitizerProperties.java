@@ -103,13 +103,15 @@ public class XanitizerProperties {
 		final Configuration config = sensorContext.config();
 		final Optional<String> reportFileSetting = config.get(XANITIZER_XML_REPORT_FILE);
 
+		final String reportFileString;
 		if (!reportFileSetting.isPresent() || reportFileSetting.get().isEmpty()) {
-			LOG.warn("Xanitizer parameter '" + XANITIZER_XML_REPORT_FILE
-					+ "' not specified in project settings. Skipping analysis.");
-			return null;
+			LOG.info("Xanitizer parameter '" + XANITIZER_XML_REPORT_FILE
+					+ "' not specified. Default " + REPORT_FILE_DEFAULT + " is used.");
+			reportFileString = REPORT_FILE_DEFAULT;
 		}
-
-		final String reportFileString = reportFileSetting.get();
+		else {
+			reportFileString = reportFileSetting.get();
+		}
 
 		File reportFile = new File(reportFileString);
 		if (!reportFile.isAbsolute()) {

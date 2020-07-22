@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sonar.api.Plugin;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.Severity;
@@ -57,8 +58,8 @@ public class PluginTest {
 	@SuppressWarnings("rawtypes")
 	public void testExtensions() {
 
-		final SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7),
-				SonarQubeSide.SCANNER);
+		final SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9),
+				SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
 		final Plugin.Context context = new Plugin.Context(runtime);
 		new XanitizerSonarQubePlugin().define(context);
 
