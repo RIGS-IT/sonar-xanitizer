@@ -185,6 +185,10 @@ public class SensorTest {
 						.replace(webgoatDir.getAbsolutePath() + File.separator, "");
 				final DefaultInputFile inputFile = new TestInputFileBuilder("webgoat", relativePath)
 						.initMetadata("a\nb\nc\nd\ne\nf\ng\nh\ni\n").build();
+				if (relativePath.endsWith(".js")) {
+					System.out.println(inputFile);
+				}
+				
 				((DefaultFileSystem) context.fileSystem()).add(inputFile);
 			}
 		}
@@ -273,6 +277,19 @@ public class SensorTest {
 		sensor.execute(context);
 		assertEquals(198, createdIssues);
 	}
+	
+	@Test
+	public void testAnalyzeJavaScriptWOPluginRules() {
+		final String reportFile = new File(resourcesDirectory,
+				"webgoat/webgoat-Findings-List-javascript.xml").getAbsolutePath();
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
+
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				getActiveRules(false, false), context);
+
+		sensor.execute(context);
+		assertEquals(10, createdIssues);
+	}
 
 	@Test
 	public void testAnalyzeWithPluginRules() {
@@ -293,7 +310,7 @@ public class SensorTest {
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
-		assertEquals(522, createdIssues);
+		assertEquals(528, createdIssues);
 	}
 
 	@Test
@@ -335,7 +352,7 @@ public class SensorTest {
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			if ("ci:SQLInjection".equals(problemType.getId())) {
-				final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+				final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
 						problemType.name());
 				final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 				activeRuleBuilder.setRuleKey(ruleKey);
@@ -380,8 +397,15 @@ public class SensorTest {
 
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
-					problemType.name());
+			final String repositoryKey;
+			if (XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT
+					.equals(problemType.getLanguage())) {
+				repositoryKey = XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT;
+			} else {
+				repositoryKey = XanitizerRulesDefinition.REPOSITORY_KEY_JAVA;
+			}
+
+			final RuleKey ruleKey = RuleKey.of(repositoryKey, problemType.name());
 			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 			activeRuleBuilder.setRuleKey(ruleKey);
 			final NewActiveRule activeRule = activeRuleBuilder.build();
@@ -389,7 +413,7 @@ public class SensorTest {
 		}
 
 		if (appendSpotBugs) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
 					XanitizerRulesDefinition.SPOTBUGS_RULE);
 			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 			activeRuleBuilder.setRuleKey(ruleKey);
@@ -398,7 +422,7 @@ public class SensorTest {
 		}
 
 		if (appendDependencyCheck) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY,
+			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
 					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
 			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 			activeRuleBuilder.setRuleKey(ruleKey);

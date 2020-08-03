@@ -91,7 +91,10 @@ public class XanitizerSensor implements Sensor {
 		this.importAllFindings = XanitizerProperties.getImportAll(sensorContext);
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
-			if (activeRule.ruleKey().repository().equals(XanitizerRulesDefinition.REPOSITORY_KEY)) {
+			if (XanitizerRulesDefinition.REPOSITORY_KEY_JAVA
+					.equals(activeRule.ruleKey().repository())
+					|| XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT
+							.equals(activeRule.ruleKey().repository())) {
 				final String ruleAsString = activeRule.ruleKey().rule();
 				activeXanRuleNames.add(ruleAsString);
 			}
@@ -109,7 +112,7 @@ public class XanitizerSensor implements Sensor {
 	@Override
 	public void describe(SensorDescriptor descriptor) {
 		descriptor.name("Xanitizer Sensor");
-		descriptor.createIssuesForRuleRepository(XanitizerRulesDefinition.REPOSITORY_KEY);
+		descriptor.createIssuesForRuleRepository(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA);
 	}
 
 	@Override
@@ -510,7 +513,7 @@ public class XanitizerSensor implements Sensor {
 			rule = finding.getProblemTypeOrNull().name();
 		}
 
-		return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY, rule);
+		return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA, rule);
 	}
 
 	private String mkMessage(final XMLReportFinding finding) {

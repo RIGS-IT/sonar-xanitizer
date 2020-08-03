@@ -77,12 +77,29 @@ public class PluginTest {
 		final RulesDefinition.Context context = new RulesDefinition.Context();
 		rulesDefinition.define(context);
 
-		final Repository repository = context.repository(XanitizerRulesDefinition.REPOSITORY_KEY);
-		assertNotNull(XanitizerRulesDefinition.REPOSITORY_KEY, repository);
-		assertEquals(XanitizerRulesDefinition.LANGUAGE_KEY, repository.language());
+		final Repository javaRepository = context
+				.repository(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA);
+		final Repository javaScriptRepository = context
+				.repository(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT);
+
+		assertNotNull(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA, javaRepository);
+		assertEquals(XanitizerRulesDefinition.LANGUAGE_KEY_JAVA, javaRepository.language());
+
+		assertNotNull(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT, javaScriptRepository);
+		assertEquals(XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT,
+				javaScriptRepository.language());
 
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			assertNotNull(repository.rule(problemType.name()));
+
+			if (XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT
+					.equals(problemType.getLanguage())) {
+				assertNotNull(javaScriptRepository.rule(problemType.name()));
+				assertNull(javaRepository.rule(problemType.name()));
+			} else {
+				assertNotNull(javaRepository.rule(problemType.name()));
+				assertNull(javaScriptRepository.rule(problemType.name()));
+			}
+
 		}
 	}
 

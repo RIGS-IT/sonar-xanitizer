@@ -36,8 +36,10 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
  */
 public final class XanitizerRulesDefinition implements RulesDefinition {
 
-	public static final String REPOSITORY_KEY = "Xanitizer";
-	public static final String LANGUAGE_KEY = Java.KEY;
+	public static final String REPOSITORY_KEY_JAVA = "Xanitizer";
+	public static final String REPOSITORY_KEY_JAVA_SCRIPT = "Xanitizer_JavaScript";
+	public static final String LANGUAGE_KEY_JAVA = Java.KEY;
+	public static final String LANGUAGE_KEY_JAVA_SCRIPT = "js";
 
 	public static final String SPOTBUGS_RULE = "spotbugs-finding";
 	public static final String OWASP_DEPENDENCY_CHECK_RULE = "dependency-check-finding";
@@ -50,16 +52,26 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 	private static final String CWE_TAG = "cwe";
 	private static final String OWASP_TAG_PREFIX = "owasp-a";
 
-	private static final String REPOSITORY_NAME = REPOSITORY_KEY;
-
 	@Override
 	public void define(final Context context) {
 
-		final NewRepository repository = context.createRepository(REPOSITORY_KEY, LANGUAGE_KEY)
-				.setName(REPOSITORY_NAME);
+		final NewRepository javaRepository = context
+				.createRepository(REPOSITORY_KEY_JAVA, LANGUAGE_KEY_JAVA)
+				.setName(REPOSITORY_KEY_JAVA);
+		final NewRepository javaScriptRepository = context
+				.createRepository(REPOSITORY_KEY_JAVA_SCRIPT, LANGUAGE_KEY_JAVA_SCRIPT)
+				.setName(REPOSITORY_KEY_JAVA_SCRIPT);
 
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final NewRule newRule = repository.createRule(problemType.name());
+
+			final NewRepository repositoryToUse;
+			if (LANGUAGE_KEY_JAVA_SCRIPT.equals(problemType.getLanguage())) {
+				repositoryToUse = javaScriptRepository;
+			} else {
+				repositoryToUse = javaRepository;
+			}
+
+			final NewRule newRule = repositoryToUse.createRule(problemType.name());
 			newRule.setName(problemType.getPresentationName());
 			newRule.setHtmlDescription(problemType.getDescription());
 			newRule.setSeverity(Severity.MAJOR);
@@ -89,7 +101,7 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 			}
 		}
 
-		final NewRule dependencyCheckRule = repository.createRule(OWASP_DEPENDENCY_CHECK_RULE);
+		final NewRule dependencyCheckRule = javaRepository.createRule(OWASP_DEPENDENCY_CHECK_RULE);
 		dependencyCheckRule.setName("Xanitizer OWASP Dependency Check Findings");
 		dependencyCheckRule.setHtmlDescription(
 				"OWASP dependency check findings that are determined via Xanitizer.");
@@ -100,7 +112,7 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 		dependencyCheckRule.addOwaspTop10(OwaspTop10.A9);
 		dependencyCheckRule.addCwe(937);
 
-		final NewRule spotbugsRule = repository.createRule(SPOTBUGS_RULE);
+		final NewRule spotbugsRule = javaRepository.createRule(SPOTBUGS_RULE);
 		spotbugsRule.setName("Xanitizer SpotBugs Findings");
 		spotbugsRule.setHtmlDescription(
 				"SpotBugs findings that are determined via Xanitizer. Check SpotBugs documentation for details.");
@@ -108,7 +120,8 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 		spotbugsRule.setStatus(RuleStatus.READY);
 		spotbugsRule.setTags(XANITIZER_TAG, SECURITY_TAG, SPOTBUGS_TAG);
 
-		repository.done();
+		javaRepository.done();
+		javaScriptRepository.done();
 	}
 
 	private String getSansCategory(final int cwe) {
