@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 5.0.0, build no. 135 of 24.06.20" xanitizerVersionShort="5.0.0" timeStamp="2020-06-25 12:16:29" timeStampLong="1593080189298" allFindings="859" findingsNotRemovedByFilter="859" problemFindingsNotRemovedByFilter="846">
+
+
+  <finding id="6hkvks2ydr2387ixnrjd35ypf" kind="GENERIC">
+    <problemType>Cryptography: Pseudo-Random Bytes</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/PseudoRandomBytes</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>7.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>underscore-min.js</file>
+    <line>5</line>
+    <cweNumber>CWE-330</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+'Math.random()' call
+(column 4096)]]></description>
+    <node lineNo="5" relativePath="js/backbone/underscore-min.js"></node>
+  </finding>
+
+
+  <finding id="3ae2jwr209cznfwlks4cs6tbn" kind="GENERIC">
+    <problemType>Cryptography: Pseudo-Random Bytes</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/PseudoRandomBytes</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>7.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>underscore-min.js</file>
+    <line>5</line>
+    <cweNumber>CWE-330</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+'Math.random()' call
+(column 4096)]]></description>
+    <node lineNo="5" relativePath="js/libs/underscore-min.js"></node>
+  </finding>
+
+
+  <finding id="37kj1lippjkwh1fnyl6senx83" kind="GENERIC">
+    <problemType>Cryptography: Pseudo-Random Bytes</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/PseudoRandomBytes</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>7.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>underscore.js</file>
+    <line>1205</line>
+    <cweNumber>CWE-330</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+'Math.random()' call
+(column 29)]]></description>
+    <node lineNo="1205" relativePath="js/backbone/underscore.js"></node>
+  </finding>
+
+
+  <finding id="e7jw5r3g6ke6eq85b8whqmlv" kind="GENERIC">
+    <problemType>Cryptography: Pseudo-Random Bytes</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/PseudoRandomBytes</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>7.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>underscore.js</file>
+    <line>1205</line>
+    <cweNumber>CWE-330</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+'Math.random()' call
+(column 29)]]></description>
+    <node lineNo="1205" relativePath="js/libs/underscore.js"></node>
+  </finding>
+
+
+  <finding id="5cax8ovossp3f1vfi6zeovt9v" kind="GENERIC">
+    <problemType>General: Non-Literal 'require()' argument</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/RequireNonLiteral</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>7.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>main.js</file>
+    <line>33</line>
+    <cweNumber>&lt;none&gt;</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+Non-literal argument to 'require()' call
+(parameter 1, column 9)]]></description>
+    <node lineNo="33" relativePath="js/main.js"></node>
+  </finding>
+
+
+  <finding id="79ceftr3irgq3so1n6ymhwagj" kind="GENERIC">
+    <problemType>Injection: Command Injection Sinks</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjectionSinks</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>3.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>dom_injection.js</file>
+    <line>19</line>
+    <cweNumber>CWE-78</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+Command injection sinks
+(parameter 1, column 26)]]></description>
+    <node lineNo="19" relativePath="plugin_extracted/dom-injection-1.0/plugin/DOMInjection/js/dom_injection.js"></node>
+  </finding>
+
+
+  <finding id="3bbssm9f286c6082sgkv741yr" kind="GENERIC">
+    <problemType>Injection: Command Injection Sinks</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjectionSinks</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>3.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>eval.js</file>
+    <line>39</line>
+    <cweNumber>CWE-78</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+Command injection sinks
+(parameter 1, column 15)]]></description>
+    <node lineNo="39" relativePath="plugin_extracted/dangerous-eval-injection-1.0/plugin/DangerousEval/js/eval.js"></node>
+  </finding>
+
+
+  <finding id="5xgjtcp8ggwlwntalar7htjoz" kind="GENERIC">
+    <problemType>Injection: Command Injection Sinks</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjectionSinks</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>3.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>jsonInjection.js</file>
+    <line>25</line>
+    <cweNumber>CWE-78</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+Command injection sinks
+(parameter 1, column 29)]]></description>
+    <node lineNo="25" relativePath="plugin_extracted/json-injection-1.0/plugin/JSONInjection/js/jsonInjection.js"></node>
+  </finding>
+
+
+  <finding id="21bb6pb7vkkz9kwhb4d6lltkj" kind="GENERIC">
+    <problemType>Injection: Command Injection Sinks</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjectionSinks</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>3.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>makeWindow.js</file>
+    <line>6</line>
+    <cweNumber>CWE-78</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+Command injection sinks
+(parameter 1, column 7)]]></description>
+    <node lineNo="6" relativePath="js/makeWindow.js"></node>
+  </finding>
+
+
+  <finding id="3op3rtr11xo65jnkg8bgmly43" kind="GENERIC">
+    <problemType>Injection: Command Injection Sinks</problemType>
+    <problemTypeId>com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjectionSinks</problemTypeId>
+    <producer>BuiltIn:LANGUAGE_PLUGIN</producer>
+    <category>JavaScript Finding</category>
+    <rating>3.00</rating>
+    <classification>Warning</classification>
+    <matchCode>NOT</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-08-03 18:26:34 - new</date>
+    <file>require.js</file>
+    <line>2078</line>
+    <cweNumber>CWE-78</cweNumber>
+    <description><![CDATA[
+A finding identified by the JavaScript language plugin:
+Command injection sinks
+(parameter 1, column 21)]]></description>
+    <node lineNo="2078" relativePath="js/libs/require.js"></node>
+  </finding>
+</XanitizerFindingsList>
