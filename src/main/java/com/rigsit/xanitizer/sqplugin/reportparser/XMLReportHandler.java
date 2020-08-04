@@ -187,7 +187,11 @@ public class XMLReportHandler extends DefaultHandler {
 		}
 
 		final XMLReportFinding f = new XMLReportFinding(findingId, problemTypeId, problemTypeName,
-				findingKind, classificationOrNull, rating, matchCode, producer);
+				findingKind);
+		f.setClassification(classificationOrNull);
+		f.setRating(rating);
+		f.setMatchCode(matchCode);
+		f.setProducer(producer);
 		if (findingKind == FindingKind.PATH) {
 			f.setStartAndEnd(startNodeOrNull, endNodeOrNull);
 		} else {

@@ -1,61 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XanitizerFindingsList xanitizerVersion="version 2.3.0, build no. 84 of 01.07.16" xanitizerVersionShort="2.3.0" timeStamp="2016-07-01 16:42:25" timeStampLong="1467384145644" allFindings="3636" findingsNotRemovedByFilter="2" problemFindingsNotRemovedByFilter="1">
+<XanitizerFindingsList xanitizerVersion="version 5.0.0, build no. 135 of 24.06.20" xanitizerVersionShort="5.0.0" timeStamp="2020-06-25 12:16:29" timeStampLong="1593080189298" allFindings="859" findingsNotRemovedByFilter="859" problemFindingsNotRemovedByFilter="846">
 
 
-  <finding id="3560" kind="GENERIC">
-    <problemType>Libraries with known vulnerabilities</problemType>
+<finding id="1y5anj7u2v3qz8amk5xsql47p" kind="GENERIC">
+    <problemType>OWASP Dependency Check: Libraries with known vulnerabilities</problemType>
     <problemTypeId>OWASPDependencyCheckBugTypeID</problemTypeId>
     <producer>PlugIn:OWASPDependencyCheck</producer>
-    <category>Security: OWASP Dependency Check</category>
-    <rating>5.80</rating>
-    <classification>Could Fix</classification>
-    <matchCode>NOT</matchCode>
-    <xFilePersistence>XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar</xFilePersistence>
-    <reviewed>Reviewed</reviewed>
-    <date>2016-07-01 16:42:25 - new</date>
-    <file>axis-1.2.jar</file>
+    <category>OWASP Dependency Check</category>
+    <rating>6.40</rating>
+    <classification>Intended</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-06-24 10:00:25 - fully matched</date>
+    <file>netty-3.5.2.Final.jar</file>
     <line>-2</line>
+    <cweNumber>CWE-1,035</cweNumber>
     <description><![CDATA[
-axis-1.2.jar: CVE-2012-5784
-axis-1.2.jar (C:/Users/nwe/Desktop/Xanitizer-2.3.0/examples/webgoat/WEB-INF/lib)
+A finding identified by the external 'OWASP Dependency Check' plugin:
+netty-3.5.2.Final.jar
+
+=====================
+---------------------
+CVE-2014-3488
+---------------------
+CVSS V2 Score: 5.0
+CVSS V3 Score: not available
 
 National Vulnerability Database of NIST reports:
-Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.
-]]></description>
-    <extraDescription><![CDATA[
+The SslHandler in Netty before 3.9.2 allows remote attackers to cause a denial of service (infinite loop and CPU consumption) via a crafted SSLv2Hello message.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-119
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:netty:netty:* up to version 3.9.1.1
+=====================
+
+
+=====================
+---------------------
+CVE-2015-2156
+---------------------
+CVSS V2 Score: 4.3
+CVSS V3 Score: 7.5
+
 National Vulnerability Database of NIST reports:
-Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.]]></extraDescription>
-    <originalAbsFile><![CDATA[
-C:\Users\nwe\Desktop\Xanitizer-1.0.0\examples\webgoat\WEB-INF\lib\axis-1.2.jar]]></originalAbsFile>
-    <node lineNo="-2" classFQN="${INSTALL_DIR}/examples/webgoat/WEB-INF/lib/axis-1.2.jar" xFilePersistence="XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar"/>
+Netty before 3.9.8.Final, 3.10.x before 3.10.3.Final, 4.0.x before 4.0.28.Final, and 4.1.x before 4.1.0.Beta5 and Play Framework 2.x before 2.3.9 might allow remote attackers to bypass the httpOnly flag on cookies and obtain sensitive information by leveraging improper validation of cookie name and value characters.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-20
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:netty:netty:* up to version 3.9.7
+=====================
+
+
+=====================
+---------------------
+CVE-2019-16869
+---------------------
+CVSS V2 Score: 5.0
+CVSS V3 Score: 7.5
+
+National Vulnerability Database of NIST reports:
+Netty before 4.1.42.Final mishandles whitespace before the colon in HTTP headers (such as a "Transfer-Encoding : chunked" line), which leads to HTTP request smuggling.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-444
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:netty:netty:* up to but not including version 4.1.42
+=====================
+
+
+=====================
+---------------------
+CVE-2019-20444
+---------------------
+CVSS V2 Score: 6.4
+CVSS V3 Score: 9.1
+
+National Vulnerability Database of NIST reports:
+HttpObjectDecoder.java in Netty before 4.1.44 allows an HTTP header that lacks a colon, which might be interpreted as a separate header with an incorrect syntax, or might be interpreted as an "invalid fold."
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-444
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:netty:netty:* up to but not including version 4.1.44
+=====================
+
+
+=====================
+---------------------
+CVE-2019-20445
+---------------------
+CVSS V2 Score: 6.4
+CVSS V3 Score: 9.1
+
+National Vulnerability Database of NIST reports:
+HttpObjectDecoder.java in Netty before 4.1.44 allows a Content-Length header to be accompanied by a second Content-Length header, or by a Transfer-Encoding header.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-444
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:netty:netty:* up to but not including version 4.1.44
+=====================
+
+]]></description>
+    <node lineNo="-2" relativePath="WEB-INF/lib/netty-3.5.2.Final.jar"></node>
   </finding>
 
 
-  <finding id="3559" kind="GENERIC">
-    <problemType>Libraries with known vulnerabilities</problemType>
+    <finding id="6nob6fqhiv9l4d0x1of3dj3px" kind="GENERIC">
+    <problemType>OWASP Dependency Check: Libraries with known vulnerabilities</problemType>
     <problemTypeId>OWASPDependencyCheckBugTypeID</problemTypeId>
     <producer>PlugIn:OWASPDependencyCheck</producer>
-    <category>Security: OWASP Dependency Check</category>
+    <category>OWASP Dependency Check</category>
     <rating>5.80</rating>
-    <classification>Intended</classification>
-    <matchCode>NOT</matchCode>
-    <xFilePersistence>XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar</xFilePersistence>
-    <reviewed>Reviewed</reviewed>
-    <date>2016-07-01 16:42:25 - new</date>
-    <file>axis-1.2.jar</file>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-06-24 10:00:25 - fully matched</date>
+    <file>axis-1.4.jar</file>
     <line>-2</line>
+    <cweNumber>CWE-1,035</cweNumber>
     <description><![CDATA[
-axis-1.2.jar: CVE-2014-3596
-axis-1.2.jar (C:/Users/nwe/Desktop/Xanitizer-2.3.0/examples/webgoat/WEB-INF/lib)
+A finding identified by the external 'OWASP Dependency Check' plugin:
+axis-1.4.jar
+
+=====================
+---------------------
+CVE-2012-5784
+---------------------
+CVSS V2 Score: 5.8
+CVSS V3 Score: not available
 
 National Vulnerability Database of NIST reports:
-The getCN function in Apache Axis 1.4 and earlier does not properly verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via a certificate with a subject that specifies a common name in a field that is not the CN field.  NOTE: this issue exists because of an incomplete fix for CVE-2012-5784.
-]]></description>
-    <extraDescription><![CDATA[
+Apache Axis 1.4 and earlier, as used in PayPal Payments Pro, PayPal Mass Pay, PayPal Transactional Information SOAP, the Java Message Service implementation in Apache ActiveMQ, and other products, does not verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via an arbitrary valid certificate.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-20
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:apache:axis:* up to version 1.4
+=====================
+
+
+=====================
+---------------------
+CVE-2014-3596
+---------------------
+CVSS V2 Score: 5.8
+CVSS V3 Score: not available
+
 National Vulnerability Database of NIST reports:
-The getCN function in Apache Axis 1.4 and earlier does not properly verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via a certificate with a subject that specifies a common name in a field that is not the CN field.  NOTE: this issue exists because of an incomplete fix for CVE-2012-5784.]]></extraDescription>
-    <originalAbsFile><![CDATA[
-C:\Users\nwe\Desktop\Xanitizer-1.0.0\examples\webgoat\WEB-INF\lib\axis-1.2.jar]]></originalAbsFile>
-    <node lineNo="-2" classFQN="${INSTALL_DIR}/examples/webgoat/WEB-INF/lib/axis-1.2.jar" xFilePersistence="XanitizerPath:${INSTALL_DIR}examples/webgoat/WEB-INF/lib/axis-1.2.jar"/>
+The getCN function in Apache Axis 1.4 and earlier does not properly verify that the server hostname matches a domain name in the subject's Common Name (CN) or subjectAltName field of the X.509 certificate, which allows man-in-the-middle attackers to spoof SSL servers via a certificate with a subject that specifies a common name in a field that is not the CN field. NOTE: this issue exists because of an incomplete fix for CVE-2012-5784. <a href="http://cwe.mitre.org/data/definitions/297.html" target="_blank">CWE-297: Improper Validation of Certificate with Host Mismatch</a>
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: NVD-CWE-Other
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:apache:axis:* up to version 1.4
+=====================
+
+
+=====================
+---------------------
+CVE-2018-8032
+---------------------
+CVSS V2 Score: 4.3
+CVSS V3 Score: 6.1
+
+National Vulnerability Database of NIST reports:
+Apache Axis 1.x up to and including 1.4 is vulnerable to a cross-site scripting (XSS) attack in the default servlet/services.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-79
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:apache:axis:* from version 1.0 up to version 1.4
+=====================
+
+
+=====================
+---------------------
+CVE-2019-0227
+---------------------
+CVSS V2 Score: 5.4
+CVSS V3 Score: 7.5
+
+National Vulnerability Database of NIST reports:
+A Server Side Request Forgery (SSRF) vulnerability affected the Apache Axis 1.4 distribution that was last released in 2006. Security and bug commits commits continue in the projects Axis 1.x Subversion repository, legacy users are encouraged to build from source. The successor to Axis 1.x is Axis2, the latest version is 1.7.9 and is not vulnerable to this issue.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-918
+
+The confidence level 'HIGH' based on the following CPE:
+ cpe:2.3:a:apache:axis:1.4
+=====================
+
+]]></description>
+    <node lineNo="-2" relativePath="WEB-INF/lib/axis-1.4.jar"></node>
   </finding>
 </XanitizerFindingsList>

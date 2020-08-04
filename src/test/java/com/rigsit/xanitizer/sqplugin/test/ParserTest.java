@@ -190,8 +190,8 @@ public class ParserTest {
 		try {
 			final XMLReportContent content = parser.parse(reportFile);
 
-			assertEquals("version 2.3.0, build no. 84 of 01.07.16", content.getToolVersionOrNull());
-			assertEquals("2.3.0", content.getToolVersionShortOrNull());
+			assertEquals("version 5.0.0, build no. 135 of 24.06.20", content.getToolVersionOrNull());
+			assertEquals("5.0.0", content.getToolVersionShortOrNull());
 
 			final List<XMLReportFinding> findings = content.getXMLReportFindings();
 			// 2 findings, 1 is classified as intended and should not be imported

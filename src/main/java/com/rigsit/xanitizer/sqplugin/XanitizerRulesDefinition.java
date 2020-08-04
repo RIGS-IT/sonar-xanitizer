@@ -101,16 +101,8 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 			}
 		}
 
-		final NewRule dependencyCheckRule = javaRepository.createRule(OWASP_DEPENDENCY_CHECK_RULE);
-		dependencyCheckRule.setName("Xanitizer OWASP Dependency Check Findings");
-		dependencyCheckRule.setHtmlDescription(
-				"OWASP dependency check findings that are determined via Xanitizer.");
-		dependencyCheckRule.setSeverity(Severity.MAJOR);
-		dependencyCheckRule.setStatus(RuleStatus.READY);
-		dependencyCheckRule.setTags(XANITIZER_TAG, SECURITY_TAG, DEPENDENCY_CHECK_TAG, CWE_TAG);
-		dependencyCheckRule.addTags(OWASP_TAG_PREFIX + 9);
-		dependencyCheckRule.addOwaspTop10(OwaspTop10.A9);
-		dependencyCheckRule.addCwe(937);
+		createOWASPDependencyCheckRules(javaRepository);
+		createOWASPDependencyCheckRules(javaScriptRepository);
 
 		final NewRule spotbugsRule = javaRepository.createRule(SPOTBUGS_RULE);
 		spotbugsRule.setName("Xanitizer SpotBugs Findings");
@@ -122,6 +114,19 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 
 		javaRepository.done();
 		javaScriptRepository.done();
+	}
+	
+	private void createOWASPDependencyCheckRules(final NewRepository repository) {
+		final NewRule dependencyCheckRule = repository.createRule(OWASP_DEPENDENCY_CHECK_RULE);
+		dependencyCheckRule.setName("Xanitizer OWASP Dependency Check Findings");
+		dependencyCheckRule.setHtmlDescription(
+				"OWASP dependency check findings that are determined via Xanitizer.");
+		dependencyCheckRule.setSeverity(Severity.MAJOR);
+		dependencyCheckRule.setStatus(RuleStatus.READY);
+		dependencyCheckRule.setTags(XANITIZER_TAG, SECURITY_TAG, DEPENDENCY_CHECK_TAG, CWE_TAG);
+		dependencyCheckRule.addTags(OWASP_TAG_PREFIX + 9);
+		dependencyCheckRule.addOwaspTop10(OwaspTop10.A9);
+		dependencyCheckRule.addCwe(937);
 	}
 
 	private String getSansCategory(final int cwe) {

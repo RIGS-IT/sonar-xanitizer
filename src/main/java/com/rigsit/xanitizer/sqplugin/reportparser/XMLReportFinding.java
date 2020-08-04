@@ -38,10 +38,10 @@ public class XMLReportFinding {
 	private final GeneratedProblemType problemTypeOrNull;
 	private final FindingKind findingKind;
 
-	private final String classificationOrNull;
-	private final double rating;
-	private final String matchCode;
-	private final String producer;
+	private String classificationOrNull;
+	private double rating;
+	private String matchCode;
+	private String producer;
 
 	private XMLReportNode nodeOrNull;
 	private XMLReportNode startNodeOfPathOrNull;
@@ -58,20 +58,29 @@ public class XMLReportFinding {
 	 * @param producer
 	 */
 	public XMLReportFinding(final String findingID, final String problemTypeId,
-			final String problemTypeName, final FindingKind findingKind,
-			final String classificationOrNull, final double rating, final String matchCode,
-			final String producer) {
+			final String problemTypeName, final FindingKind findingKind) {
 		this.findingID = findingID;
 		this.problemTypeId = problemTypeId;
 		this.problemTypeName = problemTypeName;
 		this.findingKind = findingKind;
 
 		this.problemTypeOrNull = GeneratedProblemType.getForId(problemTypeId);
+	}
 
-		this.classificationOrNull = classificationOrNull;
-		this.rating = rating;
-		this.matchCode = matchCode;
+	public void setProducer(final String producer) {
 		this.producer = producer;
+	}
+
+	public void setClassification(final String classification) {
+		this.classificationOrNull = classification;
+	}
+
+	public void setRating(final double rating) {
+		this.rating = rating;
+	}
+
+	public void setMatchCode(final String matchCode) {
+		this.matchCode = matchCode;
 	}
 
 	public void setSingleNode(final XMLReportNode node) {
@@ -109,6 +118,13 @@ public class XMLReportFinding {
 
 	public double getRating() {
 		return rating;
+	}
+
+	public boolean isJavaScriptFinding() {
+		//TODO replace when report contains language information
+		final XMLReportNode location = getLocation();
+		return location != null && location.getRelativePathOrNull() != null
+				&& location.getRelativePathOrNull().endsWith(".js");
 	}
 
 	public String getMatchCode() {

@@ -185,10 +185,7 @@ public class SensorTest {
 						.replace(webgoatDir.getAbsolutePath() + File.separator, "");
 				final DefaultInputFile inputFile = new TestInputFileBuilder("webgoat", relativePath)
 						.initMetadata("a\nb\nc\nd\ne\nf\ng\nh\ni\n").build();
-				if (relativePath.endsWith(".js")) {
-					System.out.println(inputFile);
-				}
-				
+
 				((DefaultFileSystem) context.fileSystem()).add(inputFile);
 			}
 		}
@@ -277,7 +274,7 @@ public class SensorTest {
 		sensor.execute(context);
 		assertEquals(198, createdIssues);
 	}
-	
+
 	@Test
 	public void testAnalyzeJavaScriptWOPluginRules() {
 		final String reportFile = new File(resourcesDirectory,
@@ -289,6 +286,21 @@ public class SensorTest {
 
 		sensor.execute(context);
 		assertEquals(10, createdIssues);
+	}
+	
+	@Test
+	public void testAnalyzeJavaScriptOWASPRules() {
+		final String reportFile = new File(resourcesDirectory,
+				"webgoat/webgoat-Findings-List-owasp-javascript.xml").getAbsolutePath();
+		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
+
+		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
+		
+		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+				getActiveRules(false, true), context);
+
+		sensor.execute(context);
+		assertEquals(1, createdIssues);
 	}
 
 	@Test
@@ -422,12 +434,18 @@ public class SensorTest {
 		}
 
 		if (appendDependencyCheck) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
-					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
 			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
-			activeRuleBuilder.setRuleKey(ruleKey);
-			final NewActiveRule activeRule = activeRuleBuilder.build();
-			builder.addRule(activeRule);
+
+			final RuleKey ruleKeyJava = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
+					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+			final RuleKey ruleKeyJavaScript = RuleKey.of(
+					XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT,
+					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+
+			activeRuleBuilder.setRuleKey(ruleKeyJava);
+			builder.addRule(activeRuleBuilder.build());
+			activeRuleBuilder.setRuleKey(ruleKeyJavaScript);
+			builder.addRule(activeRuleBuilder.build());
 		}
 
 		return builder.build();

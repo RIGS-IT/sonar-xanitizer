@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XanitizerFindingsList xanitizerVersion="version 5.0.0, build no. 135 of 24.06.20" xanitizerVersionShort="5.0.0" timeStamp="2020-06-25 12:16:29" timeStampLong="1593080189298" allFindings="859" findingsNotRemovedByFilter="859" problemFindingsNotRemovedByFilter="846">
+
+
+<finding id="1a6v84ibu6mmzlu3coo0jzdli" kind="GENERIC">
+    <problemType>OWASP Dependency Check: Libraries with known vulnerabilities</problemType>
+    <problemTypeId>OWASPDependencyCheckBugTypeID</problemTypeId>
+    <producer>PlugIn:OWASPDependencyCheck</producer>
+    <category>OWASP Dependency Check</category>
+    <rating>4.30</rating>
+    <classification>Warning</classification>
+    <matchCode>COMPLETE</matchCode>
+    <reviewed>Not Reviewed</reviewed>
+    <date>2020-06-24 10:00:25 - fully matched</date>
+    <file>bootstrap.min.js</file>
+    <line>-2</line>
+    <cweNumber>CWE-1,035</cweNumber>
+    <description><![CDATA[
+A finding identified by the external 'OWASP Dependency Check' plugin:
+bootstrap.min.js
+
+=====================
+---------------------
+CVE-2018-14040
+---------------------
+CVSS V2 Score: 4.3
+CVSS V3 Score: 6.1
+
+National Vulnerability Database of NIST reports:
+In Bootstrap before 4.1.2, XSS is possible in the collapse data-parent attribute.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-79
+=====================
+
+
+=====================
+---------------------
+CVE-2018-14041
+---------------------
+CVSS V2 Score: 4.3
+CVSS V3 Score: 6.1
+
+National Vulnerability Database of NIST reports:
+In Bootstrap before 4.1.2, XSS is possible in the data-target property of scrollspy.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-79
+=====================
+
+
+=====================
+---------------------
+CVE-2018-14042
+---------------------
+CVSS V2 Score: 4.3
+CVSS V3 Score: 6.1
+
+National Vulnerability Database of NIST reports:
+In Bootstrap before 4.1.2, XSS is possible in the data-container property of tooltip.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-79
+=====================
+
+
+=====================
+---------------------
+CVE-2019-8331
+---------------------
+CVSS V2 Score: 4.3
+CVSS V3 Score: 6.1
+
+National Vulnerability Database of NIST reports:
+In Bootstrap before 3.4.1 and 4.3.x before 4.3.1, XSS is possible in the tooltip or popover data-template attribute.
+
+The vulnerability in the library is assigned by the National Vulnerability Database of NIST to the CWE: CWE-79
+=====================
+
+]]></description>
+    <node lineNo="-2" relativePath="plugins/bootstrap/js/bootstrap.min.js"></node>
+  </finding>
+
+</XanitizerFindingsList>

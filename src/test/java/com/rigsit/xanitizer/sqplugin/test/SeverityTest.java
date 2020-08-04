@@ -76,9 +76,11 @@ public class SeverityTest {
 	}
 
 	private XMLReportFinding mkFinding(final String classification, final double rating) {
-		return new XMLReportFinding(XMLReportHandler.UNDEFINED_ID,
+		final XMLReportFinding finding = new XMLReportFinding(XMLReportHandler.UNDEFINED_ID,
 				GeneratedProblemType.values()[0].name(),
-				GeneratedProblemType.values()[0].getPresentationName(), FindingKind.OTHER,
-				classification, rating, null, null);
+				GeneratedProblemType.values()[0].getPresentationName(), FindingKind.OTHER);
+		finding.setClassification(classification);
+		finding.setRating(rating);
+		return finding;
 	}
 }

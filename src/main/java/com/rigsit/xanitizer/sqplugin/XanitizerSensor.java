@@ -22,6 +22,7 @@ package com.rigsit.xanitizer.sqplugin;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
+import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportContent;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
@@ -67,6 +69,9 @@ public class XanitizerSensor implements Sensor {
 	private static final Logger LOG = Loggers.get(XanitizerSensor.class);
 
 	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
+
+	private static final String[] REPOSITORIES = { XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
+			XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT };
 
 	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
@@ -91,10 +96,8 @@ public class XanitizerSensor implements Sensor {
 		this.importAllFindings = XanitizerProperties.getImportAll(sensorContext);
 
 		for (final ActiveRule activeRule : activeRules.findAll()) {
-			if (XanitizerRulesDefinition.REPOSITORY_KEY_JAVA
-					.equals(activeRule.ruleKey().repository())
-					|| XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT
-							.equals(activeRule.ruleKey().repository())) {
+			final String repository = activeRule.ruleKey().repository();
+			if (Arrays.stream(REPOSITORIES).anyMatch(key -> key.equals(repository))) {
 				final String ruleAsString = activeRule.ruleKey().rule();
 				activeXanRuleNames.add(ruleAsString);
 			}
@@ -112,7 +115,7 @@ public class XanitizerSensor implements Sensor {
 	@Override
 	public void describe(SensorDescriptor descriptor) {
 		descriptor.name("Xanitizer Sensor");
-		descriptor.createIssuesForRuleRepository(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA);
+		descriptor.createIssuesForRuleRepository(REPOSITORIES);
 	}
 
 	@Override
@@ -506,14 +509,24 @@ public class XanitizerSensor implements Sensor {
 	private RuleKey mkRuleKey(final XMLReportFinding finding) {
 		final String rule;
 		if (finding.isDependencyCheckFinding()) {
-			rule = XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE;
+			if (finding.isJavaScriptFinding()) {
+				return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT,
+						XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+			}
+			return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
+					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
 		} else if (finding.isSpotBugsFinding()) {
-			rule = XanitizerRulesDefinition.SPOTBUGS_RULE;
+			return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
+					XanitizerRulesDefinition.SPOTBUGS_RULE);
 		} else {
-			rule = finding.getProblemTypeOrNull().name();
-		}
+			final GeneratedProblemType pt = finding.getProblemTypeOrNull();
+			rule = pt.name();
+			if (XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT.equals(pt.getLanguage())) {
+				return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT, rule);
+			}
 
-		return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA, rule);
+			return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA, rule);
+		}
 	}
 
 	private String mkMessage(final XMLReportFinding finding) {
