@@ -50,6 +50,7 @@ public class XMLReportHandler extends DefaultHandler {
 	private FindingKind findingKind;
 	private String producer;
 	private double rating;
+	private String language;
 
 	private String classificationOrNull;
 	private String matchCode;
@@ -157,6 +158,9 @@ public class XMLReportHandler extends DefaultHandler {
 		case "matchCode":
 			matchCode = collectedCharacters.toString();
 			break;
+		case "language":
+			language = collectedCharacters.toString();
+			break;
 		case "finding":
 			// Finishing a finding.
 			endFinding();
@@ -192,6 +196,7 @@ public class XMLReportHandler extends DefaultHandler {
 		f.setRating(rating);
 		f.setMatchCode(matchCode);
 		f.setProducer(producer);
+		f.setProgrammingLanguage(language);
 		if (findingKind == FindingKind.PATH) {
 			f.setStartAndEnd(startNodeOrNull, endNodeOrNull);
 		} else {
@@ -242,6 +247,7 @@ public class XMLReportHandler extends DefaultHandler {
 		findingId = UNDEFINED_ID;
 		findingKind = null;
 		rating = 0;
+		language = null;
 
 		matchCode = null;
 

@@ -54,10 +54,6 @@ public class XMLReportFinding {
 	 * @param findingID
 	 * @param problemType
 	 * @param findingKind
-	 * @param classificationOrNull
-	 * @param rating
-	 * @param matchCode
-	 * @param producer
 	 */
 	public XMLReportFinding(final String findingID, final String problemTypeId,
 			final String problemTypeName, final FindingKind findingKind) {
@@ -83,6 +79,10 @@ public class XMLReportFinding {
 
 	public void setMatchCode(final String matchCode) {
 		this.matchCode = matchCode;
+	}
+	
+	public void setProgrammingLanguage(final String language) {
+		this.language = language;
 	}
 
 	public void setSingleNode(final XMLReportNode node) {
