@@ -135,16 +135,12 @@
                 <version>0.8.5</version>
                 <executions>
                     <execution>
-                        <id>pre-unit-test</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>after-unit-test</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacoco.xml</destFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
