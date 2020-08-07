@@ -226,7 +226,7 @@ public final class XanitizerMetrics implements Metrics {
 		metrics.add(DEPENDENCY_CHECK_FINDINGS_METRIC);
 
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final Metric metricOrNull = mkMetricForProblemType(problemType);
+			final Metric<Serializable> metricOrNull = mkMetricForProblemType(problemType);
 			if (metricOrNull != null) {
 				metrics.add(metricOrNull);
 			}
