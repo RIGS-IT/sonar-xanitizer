@@ -12,5 +12,5 @@ addons:
       secure: "ZkYLhT6JODhlYR4hxdCSS2ofutZ3gNTirmOjlrhfAR6kRNgroYjM+SHZldPIxB/9No61uRkqdrpb4zrgM/DDOE5uF2/yCt4XLz7VS5s2OCyDa65NCrCHWJxxd9VWFCYn+oV+L2X2SQBYDMENCX16R+hKZH1hD9JQcfbwmSfHSbxsQFkFTOvlwlcUD2k3YzZh5/JswFkSo0oHiuzwZ/LGca+nZKMf39RLHcuFgV6JSqFppw627E9jiH3sihFnO+9wV+FjMF1wpEcfdBi8wLCyRMA4fZophizzBr/3pQzydJQV8xq2/QCOXvOQGA3P019X+A6KOedAEhnRSsa7VN0oFDs/USAbY1JDB3dVMVwZBgIoYF2Hb3Efd1sebHF1GHybHDjK2Lwkc9AFo7+KjUB6hIiMcoHmHk7/Zw70auKAG6fHqEOhpVO9QR4RmK2qePDRDqJYHlvQ3V3y01U8TXkSVTtdTjHyvMf8sKa1WVRygZllWk7w1Ec2Xl/V3um4yz3UoAnNYt7JrCyxCbJicZUmTPGEljaPMHAe3g+Me+St28HUYK0giccgMHlLSnwCc+vyJ+QJiE7FC8CYzyvkFy6TNUiJkaJpqJt9RT6YHNFmVAXMYttXHYGZLUPKy7feiaGa9M4QySLrmtPmc/aBkwBobe/uRQ3f+TQfLO+bPoN9mEs="
 
 script:
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco.xml
     
