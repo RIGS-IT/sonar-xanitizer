@@ -1,3 +1,22 @@
+/**
+* SonarQube Xanitizer Plugin
+* Copyright 2012-2020 by RIGS IT GmbH, Switzerland, www.rigs-it.ch.
+* mailto: info@rigs-it.com
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* Created on October 2, 2015
+*/
 package com.rigsit.xanitizer.sqplugin.metrics;
 
 /**
@@ -176,6 +195,8 @@ XANITIZER_PROBLEM_TYPE_89("com.rigsit.xanitizer.plugins.languages.js.JavaScriptL
 
 XANITIZER_PROBLEM_TYPE_90("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/ClientSideXSSSink", "XSS: Client-Side XSS Sink", "If tainted data reaches this spot, cross-site scripting might be possible.", "Inspect the code carefully, checking that no harmful command can be injected here.", 79, 7, 4, "js"),
 
+XANITIZER_PROBLEM_TYPE_116("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/ClientSideURLRedirection", "Phishing: Client-Side URL Redirection", "Data flow of tainted data in client from some taint source to some spot where it might lead to navigation to an untrusted site.", "Break the flow of the tainted data at some location.", 601, -1, 22, "js"),
+
 XANITIZER_PROBLEM_TYPE_91("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjection", "Injection: Command Injection", "Data flow of user-controlled data to some spot where that data is executed as a command.", "Break the flow of the tainted data at some location.", 78, 1, 2, "js"),
 
 XANITIZER_PROBLEM_TYPE_92("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/CommandInjectionSinks", "Injection: Command Injection Sinks", "If tainted data reaches this spot, a user-controlled command might be executed.", "Inspect the code carefully, checking that no harmful command can be executed here.", 78, 1, 2, "js"),
@@ -225,6 +246,8 @@ XANITIZER_PROBLEM_TYPE_113("com.rigsit.xanitizer.plugins.languages.js.JavaScript
 XANITIZER_PROBLEM_TYPE_114("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/InformationLeakage", "Information Leakage", "Possibly confidential information ends up in log files or at other places where it may inspected.", "Do not allow confidential information to end up in places where it may be inspected.", 214, -1, -1, "js"),
 
 XANITIZER_PROBLEM_TYPE_115("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/SuspiciousComment", "Suspicious Comment", "Comments that contain 'TODO', 'TOFIX', etc.", "Fix the issue and change the comment.", 546, -1, -1, "js"),
+
+XANITIZER_PROBLEM_TYPE_117("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/EvalInjection", "Eval Injection", "Tainted data reaches a location where it is executed as code.", "Do not execute tainted data.", 95, -1, -1, "js"),
 
     ;
 
