@@ -38,12 +38,12 @@ If you want to install it manually, you can do it the following way:
 	
 ![alt tag](https://user-images.githubusercontent.com/20301605/47866655-acc83100-ddff-11e8-990f-934a1be9991f.png)
 
-3. Activate Xanitizer's rules in the quality profile that you are using:
+3. Activate Xanitizer's rules in the quality profile(s) that you are using. At the moment, Xanitizer provides Rules for Java, JavaScript and TypeScript. For each language that is relevant to you, you have to perform the following steps:
 	1. Select the **“Rules”** menu item in the top-level bar.
 	2. Activate the checkbox for **Tags**.
 	3. Enter **“xanitizer”** in the search field. Then, only the Xanitizer rules are displayed in the right-hand area.
-	4. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile.
-	5. In the dialog that opens, select the quality profile that you use for your project.
+	4. Click on **“Bulk Change” > “Activate In...”** in the upper right corner. This allows to assign the displayed Xanitizer rules all at once to some quality profile (e.g. to the Java quality profile).
+	5. In the dialog that opens, select the quality profile that you use for the selected programming language in your project.
 
 ![alt tag](https://cloud.githubusercontent.com/assets/20301605/17862219/97f4b98e-6894-11e6-9a63-2a0eaa9e3f0c.png)
 	
@@ -74,8 +74,8 @@ SonarQube issues are computed in the following way from Xanitizer findings:
 
 This means that for Xanitizer findings that are not classified as “must fix” or “urgent fix”, a rating larger than 7 must be assigned if the SonarQube issue corresponding to that finding should be considered to be “critical” in SonarQube.
 
-## Issues for Non-Java Files
+## Issues for Resource Files
 
-Some of the Special Code problem types analyze non-Java files (e.g. to check the server configuration in the web.xml). To raise issues on these files, they have to be scanned by SonarQube. This can be reached by turning on the import of unknown files by setting the property "sonar.import_unknown_files" to "true" or <a href="http://docs.sonarqube.org/display/SONAR/Analyzing+Source+Code#AnalyzingSourceCode-Unrecognizedfiles">enable it via GUI</a>. 
+Some of the Special Code problem types analyze generic resource files with no corresponding programming language (e.g. to check the server configuration in the web.xml). To raise issues on these files, they have to be scanned by SonarQube. This can be reached by turning on the import of unknown files by setting the property "sonar.import_unknown_files" to "true" or <a href="http://docs.sonarqube.org/display/SONAR/Analyzing+Source+Code#AnalyzingSourceCode-Unrecognizedfiles">enable it via GUI</a>. 
 
 
