@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.sonar.api.batch.rule.Severity;
 
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
+import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 
 /**
  * @author nwe
@@ -54,7 +55,7 @@ public class PluginUtil {
 		final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return formatter.format(date);
 	}
-	
+
 	public static boolean isFileName(final String fileString) {
 		return fileString.contains(".") && !fileString.contains(File.separator);
 	}
@@ -171,5 +172,28 @@ public class PluginUtil {
 			return Severity.MINOR;
 		}
 		return Severity.INFO;
+	}
+
+	public static String getRepositoryKeyForFinding(final XMLReportFinding finding) {
+		final XMLReportNode location = finding.getLocation();
+		if (location != null && location.getRelativePathOrNull() != null) {
+			final String extension = getFileNameExtensionOrEmpty(location.getRelativePathOrNull());
+			switch (extension) {
+			case RepositoryConstants.LANGUAGE_KEY_JAVA_SCRIPT:
+				return RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT;
+			case RepositoryConstants.LANGUAGE_KEY_TYPE_SCRIPT:
+				return RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT;
+			default:
+				return RepositoryConstants.REPOSITORY_KEY_JAVA;
+			}
+		}
+		return RepositoryConstants.REPOSITORY_KEY_JAVA;
+	}
+
+	public static String getFileNameExtensionOrEmpty(final String fileName) {
+		final int idx = fileName.lastIndexOf('.');
+		if (idx == -1)
+			return "";
+		return fileName.substring(idx + 1);
 	}
 }

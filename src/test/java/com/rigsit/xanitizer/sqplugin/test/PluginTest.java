@@ -47,6 +47,7 @@ import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.XanitizerSonarQubePlugin;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
+import com.rigsit.xanitizer.sqplugin.util.RepositoryConstants;
 
 /**
  * @author nwe
@@ -78,26 +79,34 @@ public class PluginTest {
 		rulesDefinition.define(context);
 
 		final Repository javaRepository = context
-				.repository(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA);
+				.repository(RepositoryConstants.REPOSITORY_KEY_JAVA);
 		final Repository javaScriptRepository = context
-				.repository(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT);
+				.repository(RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT);
+		final Repository typeScriptRepository = context
+				.repository(RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT);
 
-		assertNotNull(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA, javaRepository);
-		assertEquals(XanitizerRulesDefinition.LANGUAGE_KEY_JAVA, javaRepository.language());
+		assertNotNull(RepositoryConstants.REPOSITORY_KEY_JAVA, javaRepository);
+		assertEquals(RepositoryConstants.LANGUAGE_KEY_JAVA, javaRepository.language());
 
-		assertNotNull(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT, javaScriptRepository);
-		assertEquals(XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT,
+		assertNotNull(RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT, javaScriptRepository);
+		assertEquals(RepositoryConstants.LANGUAGE_KEY_JAVA_SCRIPT,
 				javaScriptRepository.language());
+		
+		assertNotNull(RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT, typeScriptRepository);
+		assertEquals(RepositoryConstants.LANGUAGE_KEY_TYPE_SCRIPT,
+				typeScriptRepository.language());
 
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 
-			if (XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT
+			if (RepositoryConstants.LANGUAGE_KEY_JAVA_SCRIPT
 					.equals(problemType.getLanguage())) {
 				assertNotNull(javaScriptRepository.rule(problemType.name()));
+				assertNotNull(typeScriptRepository.rule(problemType.name()));
 				assertNull(javaRepository.rule(problemType.name()));
 			} else {
 				assertNotNull(javaRepository.rule(problemType.name()));
 				assertNull(javaScriptRepository.rule(problemType.name()));
+				assertNull(typeScriptRepository.rule(problemType.name()));
 			}
 
 		}

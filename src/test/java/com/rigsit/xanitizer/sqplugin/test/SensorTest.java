@@ -63,9 +63,9 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.plugins.java.api.JavaResourceLocator;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerProperties;
-import com.rigsit.xanitizer.sqplugin.XanitizerRulesDefinition;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
+import com.rigsit.xanitizer.sqplugin.util.RepositoryConstants;
 
 /**
  * @author nwe
@@ -364,7 +364,7 @@ public class SensorTest {
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
 			if ("ci:SQLInjection".equals(problemType.getId())) {
-				final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
+				final RuleKey ruleKey = RuleKey.of(RepositoryConstants.REPOSITORY_KEY_JAVA,
 						problemType.name());
 				final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 				activeRuleBuilder.setRuleKey(ruleKey);
@@ -409,24 +409,20 @@ public class SensorTest {
 
 		final ActiveRulesBuilder builder = new ActiveRulesBuilder();
 		for (GeneratedProblemType problemType : GeneratedProblemType.values()) {
-			final String repositoryKey;
-			if (XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT
+			if (RepositoryConstants.LANGUAGE_KEY_JAVA_SCRIPT
 					.equals(problemType.getLanguage())) {
-				repositoryKey = XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT;
+				addRule(builder, RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT, problemType.name());
+				addRule(builder, RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT, problemType.name());
 			} else {
-				repositoryKey = XanitizerRulesDefinition.REPOSITORY_KEY_JAVA;
+				addRule(builder, RepositoryConstants.REPOSITORY_KEY_JAVA, problemType.name());
 			}
 
-			final RuleKey ruleKey = RuleKey.of(repositoryKey, problemType.name());
-			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
-			activeRuleBuilder.setRuleKey(ruleKey);
-			final NewActiveRule activeRule = activeRuleBuilder.build();
-			builder.addRule(activeRule);
+			
 		}
 
 		if (appendSpotBugs) {
-			final RuleKey ruleKey = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
-					XanitizerRulesDefinition.SPOTBUGS_RULE);
+			final RuleKey ruleKey = RuleKey.of(RepositoryConstants.REPOSITORY_KEY_JAVA,
+					RepositoryConstants.SPOTBUGS_RULE);
 			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 			activeRuleBuilder.setRuleKey(ruleKey);
 			final NewActiveRule activeRule = activeRuleBuilder.build();
@@ -436,11 +432,11 @@ public class SensorTest {
 		if (appendDependencyCheck) {
 			final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
 
-			final RuleKey ruleKeyJava = RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
-					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+			final RuleKey ruleKeyJava = RuleKey.of(RepositoryConstants.REPOSITORY_KEY_JAVA,
+					RepositoryConstants.OWASP_DEPENDENCY_CHECK_RULE);
 			final RuleKey ruleKeyJavaScript = RuleKey.of(
-					XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT,
-					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+					RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT,
+					RepositoryConstants.OWASP_DEPENDENCY_CHECK_RULE);
 
 			activeRuleBuilder.setRuleKey(ruleKeyJava);
 			builder.addRule(activeRuleBuilder.build());
@@ -449,5 +445,13 @@ public class SensorTest {
 		}
 
 		return builder.build();
+	}
+	
+	private void addRule(final ActiveRulesBuilder builder, final String repositoryKey, final String ruleName) {
+		final RuleKey ruleKey = RuleKey.of(repositoryKey, ruleName);
+		final NewActiveRule.Builder activeRuleBuilder = new NewActiveRule.Builder();
+		activeRuleBuilder.setRuleKey(ruleKey);
+		final NewActiveRule activeRule = activeRuleBuilder.build();
+		builder.addRule(activeRule);
 	}
 }

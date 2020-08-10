@@ -60,6 +60,7 @@ import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportFinding;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportNode;
 import com.rigsit.xanitizer.sqplugin.reportparser.XMLReportParser;
 import com.rigsit.xanitizer.sqplugin.util.PluginUtil;
+import com.rigsit.xanitizer.sqplugin.util.RepositoryConstants;
 
 /**
  * @author rust
@@ -70,8 +71,9 @@ public class XanitizerSensor implements Sensor {
 
 	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
 
-	private static final String[] REPOSITORIES = { XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
-			XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT };
+	private static final String[] REPOSITORIES = { RepositoryConstants.REPOSITORY_KEY_JAVA,
+			RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT,
+			RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT };
 
 	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
@@ -165,7 +167,7 @@ public class XanitizerSensor implements Sensor {
 						+ ": Ignoring SpotBugs finding.");
 				return true;
 			}
-			if (!activeXanRuleNames.contains(XanitizerRulesDefinition.SPOTBUGS_RULE)) {
+			if (!activeXanRuleNames.contains(RepositoryConstants.SPOTBUGS_RULE)) {
 				LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
 						+ ": Rule for Xanitizer findings detected by SpotBugs is disabled.");
 				return true;
@@ -179,8 +181,7 @@ public class XanitizerSensor implements Sensor {
 						+ ": Ignoring OWASP Dependency Check finding.");
 				return true;
 			}
-			if (!activeXanRuleNames
-					.contains(XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE)) {
+			if (!activeXanRuleNames.contains(RepositoryConstants.OWASP_DEPENDENCY_CHECK_RULE)) {
 				LOG.debug(SKIP_FINDING_MESSAGE + finding.getFindingID()
 						+ ": Rule for Xanitizer findings detected by OWASP Dependency Check is disabled.");
 				return true;
@@ -508,24 +509,17 @@ public class XanitizerSensor implements Sensor {
 
 	private RuleKey mkRuleKey(final XMLReportFinding finding) {
 		final String rule;
+		final String repositoryKey = PluginUtil.getRepositoryKeyForFinding(finding);
+
 		if (finding.isDependencyCheckFinding()) {
-			if (finding.isJavaScriptFinding()) {
-				return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT,
-						XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
-			}
-			return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
-					XanitizerRulesDefinition.OWASP_DEPENDENCY_CHECK_RULE);
+			return RuleKey.of(repositoryKey, RepositoryConstants.OWASP_DEPENDENCY_CHECK_RULE);
 		} else if (finding.isSpotBugsFinding()) {
-			return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA,
-					XanitizerRulesDefinition.SPOTBUGS_RULE);
+			return RuleKey.of(RepositoryConstants.REPOSITORY_KEY_JAVA,
+					RepositoryConstants.SPOTBUGS_RULE);
 		} else {
 			final GeneratedProblemType pt = finding.getProblemTypeOrNull();
 			rule = pt.name();
-			if (XanitizerRulesDefinition.LANGUAGE_KEY_JAVA_SCRIPT.equals(pt.getLanguage())) {
-				return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA_SCRIPT, rule);
-			}
-
-			return RuleKey.of(XanitizerRulesDefinition.REPOSITORY_KEY_JAVA, rule);
+			return RuleKey.of(repositoryKey, rule);
 		}
 	}
 

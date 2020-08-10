@@ -23,9 +23,9 @@ import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.rule.Severity;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
-import org.sonar.plugins.java.Java;
 
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
+import com.rigsit.xanitizer.sqplugin.util.RepositoryConstants;
 
 /**
  * 
@@ -35,14 +35,6 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
  *
  */
 public final class XanitizerRulesDefinition implements RulesDefinition {
-
-	public static final String REPOSITORY_KEY_JAVA = "Xanitizer";
-	public static final String REPOSITORY_KEY_JAVA_SCRIPT = "Xanitizer_JavaScript";
-	public static final String LANGUAGE_KEY_JAVA = Java.KEY;
-	public static final String LANGUAGE_KEY_JAVA_SCRIPT = "js";
-
-	public static final String SPOTBUGS_RULE = "spotbugs-finding";
-	public static final String OWASP_DEPENDENCY_CHECK_RULE = "dependency-check-finding";
 
 	private static final String XANITIZER_TAG = "xanitizer";
 	private static final String SERVER_CONFIG_TAG = "server-configuration";
@@ -56,55 +48,39 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 	public void define(final Context context) {
 
 		final NewRepository javaRepository = context
-				.createRepository(REPOSITORY_KEY_JAVA, LANGUAGE_KEY_JAVA)
-				.setName(REPOSITORY_KEY_JAVA);
+				.createRepository(RepositoryConstants.REPOSITORY_KEY_JAVA,
+						RepositoryConstants.LANGUAGE_KEY_JAVA)
+				.setName(RepositoryConstants.REPOSITORY_KEY_JAVA);
 		final NewRepository javaScriptRepository = context
-				.createRepository(REPOSITORY_KEY_JAVA_SCRIPT, LANGUAGE_KEY_JAVA_SCRIPT)
-				.setName(REPOSITORY_KEY_JAVA_SCRIPT);
+				.createRepository(RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT,
+						RepositoryConstants.LANGUAGE_KEY_JAVA_SCRIPT)
+				.setName(RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT);
+		final NewRepository typeScriptRepository = context
+				.createRepository(RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT,
+						RepositoryConstants.LANGUAGE_KEY_TYPE_SCRIPT)
+				.setName(RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT);
 
 		for (final GeneratedProblemType problemType : GeneratedProblemType.values()) {
 
-			final NewRepository repositoryToUse;
-			if (LANGUAGE_KEY_JAVA_SCRIPT.equals(problemType.getLanguage())) {
-				repositoryToUse = javaScriptRepository;
+			if (RepositoryConstants.LANGUAGE_KEY_JAVA_SCRIPT.equals(problemType.getLanguage())) {
+				/*
+				 * In Xanitizer, there is no separation between JavaScript and
+				 * TypeScript problem types at the moment. So we have to
+				 * duplicate the rules.
+				 */
+				createRuleForProblemType(javaScriptRepository, problemType);
+				createRuleForProblemType(typeScriptRepository, problemType);
 			} else {
-				repositoryToUse = javaRepository;
+				createRuleForProblemType(javaRepository, problemType);
 			}
 
-			final NewRule newRule = repositoryToUse.createRule(problemType.name());
-			newRule.setName(problemType.getPresentationName());
-			newRule.setHtmlDescription(problemType.getDescription());
-			newRule.setSeverity(Severity.MAJOR);
-			newRule.setStatus(RuleStatus.READY);
-			newRule.setTags(XANITIZER_TAG, SECURITY_TAG);
-			newRule.setType(RuleType.VULNERABILITY);
-
-			if (problemType.getPresentationName().startsWith("Application Server:")) {
-				newRule.addTags(SERVER_CONFIG_TAG);
-			}
-
-			final int owaspCategory = problemType.getOWASPTopTen();
-			if (owaspCategory > 0) {
-				newRule.addTags(OWASP_TAG_PREFIX + owaspCategory);
-				newRule.addOwaspTop10(OwaspTop10.values()[owaspCategory - 1]);
-			}
-
-			final int cwe = problemType.getCWE();
-			if (cwe > 0) {
-				newRule.addTags(CWE_TAG);
-				newRule.addCwe(cwe);
-
-				final String sansCategory = getSansCategory(cwe);
-				if (!sansCategory.isEmpty()) {
-					newRule.addTags(sansCategory);
-				}
-			}
 		}
 
 		createOWASPDependencyCheckRules(javaRepository);
 		createOWASPDependencyCheckRules(javaScriptRepository);
+		createOWASPDependencyCheckRules(typeScriptRepository);
 
-		final NewRule spotbugsRule = javaRepository.createRule(SPOTBUGS_RULE);
+		final NewRule spotbugsRule = javaRepository.createRule(RepositoryConstants.SPOTBUGS_RULE);
 		spotbugsRule.setName("Xanitizer SpotBugs Findings");
 		spotbugsRule.setHtmlDescription(
 				"SpotBugs findings that are determined via Xanitizer. Check SpotBugs documentation for details.");
@@ -114,10 +90,44 @@ public final class XanitizerRulesDefinition implements RulesDefinition {
 
 		javaRepository.done();
 		javaScriptRepository.done();
+		typeScriptRepository.done();
 	}
-	
+
+	private void createRuleForProblemType(final NewRepository repository,
+			final GeneratedProblemType problemType) {
+		final NewRule newRule = repository.createRule(problemType.name());
+		newRule.setName(problemType.getPresentationName());
+		newRule.setHtmlDescription(problemType.getDescription());
+		newRule.setSeverity(Severity.MAJOR);
+		newRule.setStatus(RuleStatus.READY);
+		newRule.setTags(XANITIZER_TAG, SECURITY_TAG);
+		newRule.setType(RuleType.VULNERABILITY);
+
+		if (problemType.getPresentationName().startsWith("Application Server:")) {
+			newRule.addTags(SERVER_CONFIG_TAG);
+		}
+
+		final int owaspCategory = problemType.getOWASPTopTen();
+		if (owaspCategory > 0) {
+			newRule.addTags(OWASP_TAG_PREFIX + owaspCategory);
+			newRule.addOwaspTop10(OwaspTop10.values()[owaspCategory - 1]);
+		}
+
+		final int cwe = problemType.getCWE();
+		if (cwe > 0) {
+			newRule.addTags(CWE_TAG);
+			newRule.addCwe(cwe);
+
+			final String sansCategory = getSansCategory(cwe);
+			if (!sansCategory.isEmpty()) {
+				newRule.addTags(sansCategory);
+			}
+		}
+	}
+
 	private void createOWASPDependencyCheckRules(final NewRepository repository) {
-		final NewRule dependencyCheckRule = repository.createRule(OWASP_DEPENDENCY_CHECK_RULE);
+		final NewRule dependencyCheckRule = repository
+				.createRule(RepositoryConstants.OWASP_DEPENDENCY_CHECK_RULE);
 		dependencyCheckRule.setName("Xanitizer OWASP Dependency Check Findings");
 		dependencyCheckRule.setHtmlDescription(
 				"OWASP dependency check findings that are determined via Xanitizer.");

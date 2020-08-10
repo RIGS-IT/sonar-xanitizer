@@ -31,7 +31,6 @@ import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 public class XMLReportFinding {
 
 	private static final String RESOURCE_LEAK_LABEL = "Resource Leak";
-	private static final String JAVA_SCRIPT_LANGUAGE_STRING = "JavaScript";
 
 	private final String findingID;
 	private final String problemTypeId;
@@ -80,7 +79,7 @@ public class XMLReportFinding {
 	public void setMatchCode(final String matchCode) {
 		this.matchCode = matchCode;
 	}
-	
+
 	public void setProgrammingLanguage(final String language) {
 		this.language = language;
 	}
@@ -109,6 +108,10 @@ public class XMLReportFinding {
 	public String getProblemTypeName() {
 		return problemTypeName;
 	}
+	
+	public String getLanguage() {
+		return language;
+	}
 
 	public GeneratedProblemType getProblemTypeOrNull() {
 		return problemTypeOrNull;
@@ -120,15 +123,6 @@ public class XMLReportFinding {
 
 	public double getRating() {
 		return rating;
-	}
-
-	public boolean isJavaScriptFinding() {
-		if (language != null) {
-			return JAVA_SCRIPT_LANGUAGE_STRING.equals(language);
-		}
-		final XMLReportNode location = getLocation();
-		return location != null && location.getRelativePathOrNull() != null
-				&& location.getRelativePathOrNull().endsWith(".js");
 	}
 
 	public String getMatchCode() {
