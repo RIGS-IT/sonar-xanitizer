@@ -40,7 +40,6 @@ import org.sonar.api.batch.fs.internal.DefaultInputProject;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.Severity;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewIssue;
@@ -49,9 +48,9 @@ import org.sonar.api.batch.sensor.measure.NewMeasure;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.scanner.fs.InputProject;
+import org.sonar.api.scanner.sensor.ProjectSensor;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.plugins.java.api.JavaResourceLocator;
 
 import com.rigsit.xanitizer.sqplugin.metrics.GeneratedProblemType;
 import com.rigsit.xanitizer.sqplugin.metrics.XanitizerMetrics;
@@ -66,7 +65,7 @@ import com.rigsit.xanitizer.sqplugin.util.RepositoryConstants;
  * @author rust
  * 
  */
-public class XanitizerSensor implements Sensor {
+public class XanitizerSensor implements ProjectSensor {
 	private static final Logger LOG = Loggers.get(XanitizerSensor.class);
 
 	private static final String SKIP_FINDING_MESSAGE = "Xanitizer: Skipping finding ";
@@ -75,7 +74,6 @@ public class XanitizerSensor implements Sensor {
 			RepositoryConstants.REPOSITORY_KEY_JAVA_SCRIPT,
 			RepositoryConstants.REPOSITORY_KEY_TYPE_SCRIPT };
 
-	private final JavaResourceLocator javaResourceLocator;
 	private final File reportFile;
 	private final boolean importAllFindings;
 
@@ -86,14 +84,12 @@ public class XanitizerSensor implements Sensor {
 	/**
 	 * The Xanitizer sensor
 	 * 
-	 * @param javaResourceLocator
 	 * @param settings
 	 * @param activeRules
 	 * @param sensorContext
 	 */
-	public XanitizerSensor(final JavaResourceLocator javaResourceLocator,
+	public XanitizerSensor(
 			final ActiveRules activeRules, final SensorContext sensorContext) {
-		this.javaResourceLocator = javaResourceLocator;
 
 		this.importAllFindings = XanitizerProperties.getImportAll(sensorContext);
 
@@ -341,26 +337,11 @@ public class XanitizerSensor implements Sensor {
 		}
 
 		try {
-			final InputFile result = mkInputFileOrNullFromClass(node);
-			if (result == null) {
-				return mkInputFileOrNullFromPath(node, sensorContext);
-			}
-
-			return result;
+			return mkInputFileOrNullFromPath(node, sensorContext);
 		} catch (Exception e) {
 			LOG.debug("Error while detecting InputFile for node with " + node, e);
 		}
 		return null;
-	}
-
-	private InputFile mkInputFileOrNullFromClass(final XMLReportNode node) {
-
-		final String classFQNOrNull = node.getClassFQNOrNull();
-		if (classFQNOrNull == null) {
-			return null;
-		}
-
-		return javaResourceLocator.findResourceByClassName(classFQNOrNull);
 	}
 
 	private InputFile mkInputFileOrNullFromPath(final XMLReportNode node,

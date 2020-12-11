@@ -60,7 +60,6 @@ import org.sonar.api.batch.sensor.symbol.internal.DefaultSymbolTable;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.scanner.fs.InputProject;
-import org.sonar.plugins.java.api.JavaResourceLocator;
 
 import com.rigsit.xanitizer.sqplugin.XanitizerProperties;
 import com.rigsit.xanitizer.sqplugin.XanitizerSensor;
@@ -198,7 +197,7 @@ public class SensorTest {
 				"webgoat/webgoat-Findings-List-all.xml");
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				mock(ActiveRules.class), context);
 		assertEquals(false, sensor.shouldExecute());
 	}
@@ -208,7 +207,7 @@ public class SensorTest {
 		final File reportFile = new File(resourcesDirectory, "webgoat/missing.xml");
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		assertEquals(false, sensor.shouldExecute());
 	}
@@ -217,7 +216,7 @@ public class SensorTest {
 	public void missingReportFileRelative() throws Exception {
 		final String reportFile = "webgoat/missing.xml";
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		assertEquals(false, sensor.shouldExecute());
 	}
@@ -228,7 +227,7 @@ public class SensorTest {
 				"webgoat/webgoat-Findings-List-all.xml");
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE,
 				reportFile.getAbsolutePath());
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
@@ -237,7 +236,7 @@ public class SensorTest {
 	public void existingReportFileRelative() throws Exception {
 		final String reportFileName = "WEB-INF" + File.separator + "nested-Findings-List.xml";
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileName);
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
@@ -247,7 +246,7 @@ public class SensorTest {
 		final String reportFileName = "." + File.separator + "WEB-INF" + File.separator
 				+ "nested-Findings-List.xml";
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileName);
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
@@ -257,7 +256,7 @@ public class SensorTest {
 
 		final String reportFileName = "nested-Findings-List.xml";
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFileName);
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		assertEquals(true, sensor.shouldExecute());
 	}
@@ -268,7 +267,7 @@ public class SensorTest {
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 
 		sensor.execute(context);
@@ -281,7 +280,7 @@ public class SensorTest {
 				"webgoat/webgoat-Findings-List-javascript.xml").getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 
 		sensor.execute(context);
@@ -296,7 +295,7 @@ public class SensorTest {
 
 		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 		
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, true), context);
 
 		sensor.execute(context);
@@ -309,7 +308,7 @@ public class SensorTest {
 				"webgoat/webgoat-Findings-List-all.xml").getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
@@ -318,7 +317,7 @@ public class SensorTest {
 
 	@Test
 	public void testAnalyzeWithoutSpecifiedReportFile() {
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
@@ -333,7 +332,7 @@ public class SensorTest {
 
 		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 
 		sensor.execute(context);
@@ -348,7 +347,7 @@ public class SensorTest {
 
 		settings.setProperty(XanitizerProperties.XANITIZER_IMPORT_ALL_FINDINGS, true);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(true, true), context);
 
 		sensor.execute(context);
@@ -373,7 +372,7 @@ public class SensorTest {
 			}
 		}
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				builder.build(), context);
 
 		sensor.execute(context);
@@ -386,7 +385,7 @@ public class SensorTest {
 				"webgoat/webgoat-Findings-List-oldversion.xml").getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		sensor.execute(context);
 		assertEquals(0, createdIssues);
@@ -398,7 +397,7 @@ public class SensorTest {
 				.getAbsolutePath();
 		settings.setProperty(XanitizerProperties.XANITIZER_XML_REPORT_FILE, reportFile);
 
-		final XanitizerSensor sensor = new XanitizerSensor(mock(JavaResourceLocator.class),
+		final XanitizerSensor sensor = new XanitizerSensor(
 				getActiveRules(false, false), context);
 		sensor.execute(context);
 		assertEquals(0, createdIssues);
