@@ -20,8 +20,6 @@
  */
 package com.rigsit.xanitizer.sqplugin.util;
 
-import org.sonar.plugins.java.Java;
-
 /**
  * @author norma
  *
@@ -31,7 +29,7 @@ public class RepositoryConstants {
 	public static final String REPOSITORY_KEY_JAVA = "Xanitizer";
 	public static final String REPOSITORY_KEY_JAVA_SCRIPT = "Xanitizer_JavaScript";
 	public static final String REPOSITORY_KEY_TYPE_SCRIPT = "Xanitizer_TypeScript";
-	public static final String LANGUAGE_KEY_JAVA = Java.KEY;
+	public static final String LANGUAGE_KEY_JAVA = "java";
 	public static final String LANGUAGE_KEY_JAVA_SCRIPT = "js";
 	public static final String LANGUAGE_KEY_TYPE_SCRIPT = "ts";
 
