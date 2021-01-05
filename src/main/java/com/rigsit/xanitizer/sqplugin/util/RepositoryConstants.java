@@ -35,5 +35,9 @@ public class RepositoryConstants {
 
 	public static final String SPOTBUGS_RULE = "spotbugs-finding";
 	public static final String OWASP_DEPENDENCY_CHECK_RULE = "dependency-check-finding";
+	
+	private RepositoryConstants() {
+		// hide constructor
+	}
 
 }
