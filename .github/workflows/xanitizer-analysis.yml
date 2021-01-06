@@ -67,21 +67,21 @@ jobs:
         run: npm install
 
       # Run the security analysis with default settings
-      #- name: Xanitizer Security Analysis
-      #  uses: RIGS-IT/xanitizer-action@v1
-      #  with:
-      #    license: ${{ secrets.XANITIZER_LICENSE }}
-      #    configFile: ../../Sonar-Xanitizer-Plugin.XanitizerConfig
+      - name: Xanitizer Security Analysis
+        uses: RIGS-IT/xanitizer-action@v1
+        with:
+          license: ${{ secrets.XANITIZER_LICENSE }}
+          configFile: ../../Sonar-Xanitizer-Plugin.XanitizerConfig
 
       # Archiving the findings list reports
-      #- uses: actions/upload-artifact@v2
-      #  with:
-      #    name: Xanitizer-Reports
-      #    path: | 
-      #      *-Findings-List.pdf
-      #      *-Findings-List.sarif
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Xanitizer-Reports
+          path: | 
+            *-Findings-List.pdf
+            *-Findings-List.sarif
 
       # Uploads the findings into the GitHub code scanning alert section using the upload-sarif action
-      #- uses: github/codeql-action/upload-sarif@v1
-      #  with:
-      #    sarif_file: Xanitizer-Findings-List.sarif
+      - uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: Xanitizer-Findings-List.sarif
