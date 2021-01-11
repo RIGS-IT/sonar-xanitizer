@@ -71,7 +71,7 @@ jobs:
         uses: RIGS-IT/xanitizer-action@v1
         with:
           license: ${{ secrets.XANITIZER_LICENSE }}
-          configFile: ../../Sonar-Xanitizer-Plugin.XanitizerConfig
+          configFile: ./Sonar-Xanitizer-Plugin.XanitizerConfig
 
       # Archiving the findings list reports
       - uses: actions/upload-artifact@v2
