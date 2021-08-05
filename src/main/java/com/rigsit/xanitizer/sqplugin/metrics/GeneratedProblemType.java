@@ -193,7 +193,7 @@ XANITIZER_PROBLEM_TYPE_55("XPathSearch:directoryBrowsingEnabled", "Application S
 
 XANITIZER_PROBLEM_TYPE_89("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/ClientSideXSS", "XSS: Client-Side XSS", "Data flow of tainted data in client from some taint source to some XSS taint sink.", "Break the flow of the tainted data at some location.", 79, 7, 4, "js"),
 
-XANITIZER_PROBLEM_TYPE_90("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/ClientSideXSSSink", "XSS: Client-Side XSS Sink", "If tainted data reaches this spot, cross-site scripting might be possible.", "Inspect the code carefully, checking that no harmful command can be injected here.", 79, 7, 4, "js"),
+XANITIZER_PROBLEM_TYPE_90("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/ClientSideXSSSink", "XSS: Client-Side XSS Sink", "If tainted data reaches this spot, cross-site scripting might be possible.", "Inspect the code carefully, checking that no harmful data can be injected here.", 79, 7, 4, "js"),
 
 XANITIZER_PROBLEM_TYPE_116("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/ClientSideURLRedirection", "Phishing: Client-Side URL Redirection", "Data flow of tainted data in client from some taint source to some spot where it might lead to navigation to an untrusted site.", "Break the flow of the tainted data at some location.", 601, -1, 22, "js"),
 
@@ -248,6 +248,8 @@ XANITIZER_PROBLEM_TYPE_114("com.rigsit.xanitizer.plugins.languages.js.JavaScript
 XANITIZER_PROBLEM_TYPE_115("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/SuspiciousComment", "Suspicious Comment", "Comments that contain 'TODO', 'TOFIX', etc.", "Fix the issue and change the comment.", 546, -1, -1, "js"),
 
 XANITIZER_PROBLEM_TYPE_117("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/EvalInjection", "Eval Injection", "Tainted data reaches a location where it is executed as code.", "Do not execute tainted data.", 95, -1, -1, "js"),
+
+XANITIZER_PROBLEM_TYPE_118("com.rigsit.xanitizer.plugins.languages.js.JavaScriptLanguagePlugin/jsTaint/SessionHijacking", "Danger of Session Hijacking", "A 'session' cookie is not 'httpOnly'.", "For session cookies, 'httpOnly' should be false.", 287, 2, -1, "js"),
 
     ;
 
